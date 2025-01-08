@@ -1,89 +1,133 @@
-const httpStatus = require('http-status');
-const { User } = require('../models');
-const ApiError = require('../utils/ApiError');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+// Environment variables for secrets
+const JWT_SECRET = process.env.JWT_SECRET || 'default_jwt_secret';
+const RESET_SECRET = process.env.JWT_RESET_SECRET || 'reset_jwt_secret';
 
 /**
- * Create a user
- * @param {Object} userBody
- * @returns {Promise<User>}
+ * Find a user by their email.
+ * @param {string} email - User's email address.
+ * @returns {Object} User object or null.
  */
-const createUser = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
-  return User.create(userBody);
+exports.findUserByEmail = async (email) => {
+  return await User.findOne({ email });
 };
 
 /**
- * Query for users
- * @param {Object} filter - Mongo filter
- * @param {Object} options - Query options
- * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
- * @param {number} [options.limit] - Maximum number of results per page (default = 10)
- * @param {number} [options.page] - Current page (default = 1)
- * @returns {Promise<QueryResult>}
+ * Find a user by their ID.
+ * @param {string} userId - User's ID.
+ * @returns {Object} User object or null.
  */
-const queryUsers = async (filter, options) => {
-  const users = await User.paginate(filter, options);
-  return users;
+exports.findUserById = async (userId) => {
+  return await User.findById(userId);
 };
 
 /**
- * Get user by id
- * @param {ObjectId} id
- * @returns {Promise<User>}
+ * Create a new user.
+ * @param {Object} userData - User data to be created.
+ * @returns {Object} Newly created user.
  */
-const getUserById = async (id) => {
-  return User.findById(id);
+exports.createUser = async (userData) => {
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+  const user = new User({
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    username: userData.username,
+    email: userData.email,
+    passwordHash: hashedPassword,
+    gender: userData.gender,
+    birthday: userData.birthday,
+    bio: userData.bio,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  return await user.save();
 };
 
 /**
- * Get user by email
- * @param {string} email
- * @returns {Promise<User>}
+ * Generate a JWT for authentication.
+ * @param {string} userId - User's ID.
+ * @returns {string} JWT token.
  */
-const getUserByEmail = async (email) => {
-  return User.findOne({ email });
+exports.generateAuthToken = (userId) => {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
 };
 
 /**
- * Update user by id
- * @param {ObjectId} userId
- * @param {Object} updateBody
- * @returns {Promise<User>}
+ * Generate a reset token for password reset.
+ * @param {string} userId - User's ID.
+ * @returns {Object} Reset token and expiration.
  */
-const updateUserById = async (userId, updateBody) => {
-  const user = await getUserById(userId);
+exports.generateResetToken = (userId) => {
+  const token = jwt.sign({ userId }, RESET_SECRET, { expiresIn: '1h' });
+  const expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+
+  return { token, expiresAt };
+};
+
+/**
+ * Verify a JWT token.
+ * @param {string} token - JWT token.
+ * @param {string} secret - JWT secret to verify against.
+ * @returns {Object} Decoded payload.
+ */
+exports.verifyToken = (token, secret) => {
+  return jwt.verify(token, secret);
+};
+
+/**
+ * Compare plain text password with hashed password.
+ * @param {string} password - Plain text password.
+ * @param {string} hashedPassword - Hashed password.
+ * @returns {boolean} True if passwords match, false otherwise.
+ */
+exports.comparePassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword);
+};
+
+/**
+ * Update user fields.
+ * @param {string} userId - User's ID.
+ * @param {Object} updates - Fields to update.
+ * @returns {Object} Updated user object.
+ */
+exports.updateUser = async (userId, updates) => {
+  const user = await User.findById(userId);
+
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new Error('User not found');
   }
-  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
-  Object.assign(user, updateBody);
-  await user.save();
-  return user;
+
+  Object.keys(updates).forEach((key) => {
+    user[key] = updates[key];
+  });
+
+  user.updatedAt = new Date();
+  return await user.save();
 };
 
 /**
- * Delete user by id
- * @param {ObjectId} userId
- * @returns {Promise<User>}
+ * Update the password for a user.
+ * @param {string} userId - User's ID.
+ * @param {string} newPassword - New password.
+ * @returns {Object} Updated user object.
  */
-const deleteUserById = async (userId) => {
-  const user = await getUserById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  await user.remove();
-  return user;
-};
+exports.updatePassword = async (userId, newPassword) => {
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const user = await User.findById(userId);
 
-module.exports = {
-  createUser,
-  queryUsers,
-  getUserById,
-  getUserByEmail,
-  updateUserById,
-  deleteUserById,
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  user.passwordHash = hashedPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  user.updatedAt = new Date();
+
+  return await user.save();
 };

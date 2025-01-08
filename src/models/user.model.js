@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
+// Define the schema first
 const userSchema = mongoose.Schema(
   {
     firstName: {
@@ -79,24 +80,45 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// Add plugin that converts mongoose to JSON
-// userSchema.plugin(toJSON);
-// userSchema.plugin(paginate);
+// Apply the toJSON transformation
+userSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    // Remove the passwordHash field from the JSON output
+    delete ret.passwordHash;
+    return ret;
+  },
+});
+
+// Add pagination plugin (uncomment if needed)
+// userSchema.plugin(paginate);  
 
 /**
- * Check if email or username is taken
+ * Check if email is taken
  * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({
+    email,
+    _id: { $ne: excludeUserId },
+  });
+  return !!user;
+};
+
+/**
+ * Check if username is taken
  * @param {string} username - The user's username
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
-// userSchema.statics.isEmailOrUsernameTaken = async function (email, username, excludeUserId) {
-//   const user = await this.findOne({
-//     $or: [{ email }, { username }],
-//     _id: { $ne: excludeUserId },
-//   });
-//   return !!user;
-// };
+userSchema.statics.isUsernameTaken = async function (username, excludeUserId) {
+  const user = await this.findOne({
+    username,
+    _id: { $ne: excludeUserId },
+  });
+  return !!user;
+};
 
 /**
  * Check if password matches the user's passwordHash
