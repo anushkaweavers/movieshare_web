@@ -4,7 +4,7 @@ const config = require('./config/config');
 const logger = require('./config/logger');
 
 let server;
-mongoose.connect('mongodb://localhost:27017/movie_share', config.mongoose.options).then(() => {
+mongoose.connect('mongodb+srv://Anushka:Anushka@cluster0.iaqp2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);

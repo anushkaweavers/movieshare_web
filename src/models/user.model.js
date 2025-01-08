@@ -1,14 +1,24 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+/*const { toJSON, paginate } = require('./plugins'); // Ensure these plugins exist or remove if not needed*/
 
 const userSchema = mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       required: true,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
       trim: true,
     },
     email: {
@@ -23,7 +33,7 @@ const userSchema = mongoose.Schema(
         }
       },
     },
-    password: {
+    passwordHash: {
       type: String,
       required: true,
       trim: true,
@@ -35,10 +45,30 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
-    role: {
+    profilePicture: {
       type: String,
-      enum: roles,
-      default: 'user',
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+    },
+    birthday: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: ['Male', 'Female', 'Other'],
+    },
+    termsAccepted: {
+      type: Boolean,
+      required: true,
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
     },
     isEmailVerified: {
       type: Boolean,
@@ -46,39 +76,43 @@ const userSchema = mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Adds createdAt and updatedAt timestamps
   }
 );
 
-// add plugin that converts mongoose to json
+// Add plugin that converts mongoose to JSON
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 
 /**
- * Check if email is taken
+ * Check if email or username is taken
  * @param {string} email - The user's email
+ * @param {string} username - The user's username
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
-userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+userSchema.statics.isEmailOrUsernameTaken = async function (email, username, excludeUserId) {
+  const user = await this.findOne({
+    $or: [{ email }, { username }],
+    _id: { $ne: excludeUserId },
+  });
   return !!user;
 };
 
 /**
- * Check if password matches the user's password
+ * Check if password matches the user's passwordHash
  * @param {string} password
  * @returns {Promise<boolean>}
  */
 userSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
-  return bcrypt.compare(password, user.password);
+  return bcrypt.compare(password, user.passwordHash);
 };
 
 userSchema.pre('save', async function (next) {
   const user = this;
-  if (user.isModified('password')) {
-    user.password = await bcrypt.hash(user.password, 8);
+  if (user.isModified('passwordHash')) {
+    user.passwordHash = await bcrypt.hash(user.passwordHash, 8);
   }
   next();
 });
