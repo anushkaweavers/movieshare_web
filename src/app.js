@@ -44,7 +44,10 @@ app.options('*', cors());
 /* jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);*/
-
+// Health Check Endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send({ status: 'UP' });
+});
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
