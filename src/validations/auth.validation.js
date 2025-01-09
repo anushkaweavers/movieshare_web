@@ -12,6 +12,13 @@ const registerValidationRules = [
     .withMessage('Password must contain at least one number')
     .matches(/[a-zA-Z]/)
     .withMessage('Password must contain at least one letter'),
+  body('bio').notEmpty().withMessage('Bio is required'),
+  body('birthday').isDate().withMessage('A valid date is required for the birthday'),
+  body('gender')
+    .notEmpty()
+    .withMessage('Gender is required')
+    .isIn(['Male', 'Female', 'Other'])
+    .withMessage('Gender must be Male, Female, or Other'),
   body('termsAccepted')
     .isBoolean()
     .withMessage('Terms must be accepted')
@@ -19,6 +26,12 @@ const registerValidationRules = [
     .withMessage('Terms must be true'),
 ];
 
+const loginValidationRules = [
+  body('email').isEmail().withMessage('A valid email is required'),
+  body('passwordHash').notEmpty().withMessage('Password is required'),
+];
+
 module.exports = {
   registerValidationRules,
+  loginValidationRules,
 };

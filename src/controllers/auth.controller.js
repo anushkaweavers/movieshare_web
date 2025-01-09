@@ -1,5 +1,6 @@
 const userService = require('../services/user.service');
 const { validationResult } = require('express-validator');
+const User = require('../models/user.model');
 
 const register = async (req, res) => {
   try {
@@ -9,20 +10,29 @@ const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Extract data from the request body
-    const { firstName, lastName, username, email, passwordHash, termsAccepted } = req.body;
+    const { firstName, lastName, username, email, passwordHash, bio, birthday, gender, termsAccepted } = req.body;
 
-    // Call userService to register the user
+    // Check for duplicate username or email
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      return res.status(400).json({
+        message: 'Username or email already exists',
+      });
+    }
+
+    // Register the user
     const newUser = await userService.registerUser({
       firstName,
       lastName,
       username,
       email,
       passwordHash,
+      bio,
+      birthday,
+      gender,
       termsAccepted,
     });
 
-    // Respond with the newly created user (excluding sensitive fields like passwordHash)
     res.status(201).json({
       message: 'User registered successfully',
       user: {
@@ -39,6 +49,37 @@ const register = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { email, passwordHash } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(passwordHash, user.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Error in login:', error.message);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 module.exports = {
   register,
+  login,
 };
