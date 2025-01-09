@@ -45,8 +45,13 @@ exports.updateUserProfile = async (req, res) => {
 
 exports.requestPasswordReset = async (req, res) => {
     try {
-        const token = await userService.requestPasswordReset(req.body.email);
-        res.status(200).json({ message: 'Password reset link sent.', token });
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: 'Email is required' });
+
+        const token = await userService.requestPasswordReset(email);
+
+        // Respond with a success message
+        res.status(200).json({ message: 'Password reset link has been sent if the email is valid.', token });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -54,7 +59,13 @@ exports.requestPasswordReset = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     try {
-        await userService.resetPassword(req.params.token, req.body.newPassword);
+        const { token } = req.params;
+        const { newPassword } = req.body;
+
+        if (!newPassword) return res.status(400).json({ message: 'New password is required' });
+
+        await userService.resetPassword(token, newPassword);
+
         res.status(200).json({ message: 'Password reset successful.' });
     } catch (error) {
         res.status(500).json({ message: error.message });
