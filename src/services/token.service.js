@@ -13,7 +13,7 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   return jwt.sign(payload, secret);
 };
 
-// Function to generate authentication tokens (access and refresh tokens)
+
 const generateAuthTokens = async (user) => {
   const accessExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessExpires, tokenTypes.ACCESS);
