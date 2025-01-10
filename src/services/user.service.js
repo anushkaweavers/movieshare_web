@@ -1,92 +1,165 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const User = require('../models/user.model');
-const nodemailer = require('nodemailer');
+const httpStatus = require('http-status');
+const bcrypt = require('bcryptjs');
+const { User, SavedMovies, GroupedCollections, Ratings, Posts } = require('../models');
+const ApiError = require('../utils/ApiError');
 
-// Register a user
-exports.registerUser = async (userData) => {
-  const { firstName, lastName, username, email, passwordHash, termsAccepted } = userData;
-
-  // Check for existing user
-  const existingUser = await User.findOne({
-    $or: [{ email }, { username }],
-  });
-  if (existingUser) {
-    throw new Error('Email or username is already in use');
+/**
+ * Create a user
+ * @param {Object} userBody
+ * @returns {Promise<User>}
+ */
+const createUser = async (userBody) => {
+  if (await User.isEmailTaken(userBody.email)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
 
   // Hash the password
-  const hashedPassword = await bcrypt.hash(passwordHash, 10);
+  userBody.passwordHash = await bcrypt.hash(userBody.password, 8);
+  console.log('Generated password hash:', userBody.passwordHash);  // Debugging: log the generated hash
+  delete userBody.password; // Remove the plain text password for security
 
-  // Create a new user
-  const newUser = await User.create({
-    firstName,
-    lastName,
-    username,
-    email,
-    passwordHash: hashedPassword,
-    termsAccepted,
-  });
-
-  return newUser;
+  return User.create(userBody);
 };
 
-// Request password reset
-exports.requestPasswordReset = async (email) => {
-  const user = await User.findOne({ email });
+
+/**
+ * Query for users
+ * @param {Object} filter - MongoDB filter
+ * @param {Object} options - Query options
+ * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
+ * @param {number} [options.limit] - Maximum number of results per page (default = 10)
+ * @param {number} [options.page] - Current page (default = 1)
+ * @returns {Promise<QueryResult>}
+ */
+const queryUsers = async (filter, options) => {
+  const users = await User.paginate(filter, options);
+  return users;
+};
+
+/**
+ * Get user by id
+ * @param {ObjectId} id
+ * @returns {Promise<User>}
+ */
+const getUserById = async (id) => {
+  return User.findById(id);
+};
+
+/**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+const getUserByEmail = async (email) => {
+  return User.findOne({ email });
+};
+
+/**
+ * Update user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
+const updateUserById = async (userId, updateBody) => {
+  const user = await getUserById(userId);
   if (!user) {
-    throw new Error('No user found with this email');
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
 
-  // Generate reset token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  if (updateBody.password) {
+    updateBody.passwordHash = await bcrypt.hash(updateBody.password, 8);
+    delete updateBody.password;
+  }
 
-  // Configure nodemailer transport
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  // Prepare the reset link
-  const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: user.email,
-    subject: 'Password Reset Request',
-    text: `Click the link below to reset your password:\n\n${resetLink}`,
-  };
-
-  // Send the email
-  await transporter.sendMail(mailOptions);
-
-  return token; // Optional: return the token for testing purposes
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
 };
 
-// Reset password
-exports.resetPassword = async (token, newPassword) => {
-  try {
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-
-    // Find the user
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new Error('Invalid token or user not found');
-    }
-
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Update the user's password
-    user.passwordHash = hashedPassword;
-    await user.save();
-
-    return true; // Indicate success
-  } catch (error) {
-    throw new Error('Invalid or expired token');
+/**
+ * Delete user by id
+ * @param {ObjectId} userId
+ * @returns {Promise<User>}
+ */
+const deleteUserById = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+  await user.remove();
+  return user;
+};
+
+/**
+ * Add saved movie for user
+ * @param {ObjectId} userId
+ * @param {Object} movieData
+ * @returns {Promise<SavedMovies>}
+ */
+const addSavedMovie = async (userId, movieData) => {
+  const savedMovie = new SavedMovies({ userId, ...movieData });
+  await savedMovie.save();
+  return savedMovie;
+};
+
+/**
+ * Get saved movies for user
+ * @param {ObjectId} userId
+ * @returns {Promise<Array<SavedMovies>>}
+ */
+const getSavedMoviesByUser = async (userId) => {
+  return SavedMovies.find({ userId });
+};
+
+/**
+ * Create grouped collection for user
+ * @param {ObjectId} userId
+ * @param {Object} groupData
+ * @returns {Promise<GroupedCollections>}
+ */
+const createGroupedCollection = async (userId, groupData) => {
+  const groupedCollection = new GroupedCollections({ userId, ...groupData });
+  await groupedCollection.save();
+  return groupedCollection;
+};
+
+/**
+ * Add rating for a movie
+ * @param {ObjectId} userId
+ * @param {Object} ratingData
+ * @returns {Promise<Ratings>}
+ */
+const addRating = async (userId, ratingData) => {
+  const rating = new Ratings({ userId, ...ratingData });
+  await rating.save();
+  return rating;
+};
+
+/**
+ * Create a post
+ * @param {ObjectId} userId
+ * @param {Object} postData
+ * @returns {Promise<Posts>}
+ */
+const createPost = async (userId, postData) => {
+  const post = new Posts({ userId, ...postData });
+  await post.save();
+  return post;
+};
+
+module.exports = {
+  createUser,
+  queryUsers,
+  getUserById,
+  getUserByEmail,
+  updateUserById,
+  deleteUserById,
+  addSavedMovie,
+  getSavedMoviesByUser,
+  createGroupedCollection,
+  addRating,
+  createPost,
 };

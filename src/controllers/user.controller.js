@@ -1,73 +1,43 @@
-// src/controllers/user.controller.js
-const userService = require('../services/user.service');
-const { validationResult } = require('express-validator');
+const httpStatus = require('http-status');
+const pick = require('../utils/pick');
+const ApiError = require('../utils/ApiError');
+const catchAsync = require('../utils/catchAsync');
+const { userService } = require('../services');
 
-// Ensure that each function is defined and exported
-exports.registerUser = async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+const createUser = catchAsync(async (req, res) => {
+  const user = await userService.createUser(req.body);
+  res.status(httpStatus.CREATED).send(user);
+});
 
-        const user = await userService.registerUser(req.body);
-        res.status(201).json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUsers = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['firstName', 'lastName', 'username', 'email', 'gender']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const result = await userService.queryUsers(filter, options);
+  res.send(result);
+});
 
-exports.loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const token = await userService.loginUser(email, password);
-        res.status(200).json({ token });
-    } catch (error) {
-        res.status(401).json({ message: error.message });
-    }
-};
+const getUser = catchAsync(async (req, res) => {
+  const user = await userService.getUserById(req.params.userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  res.send(user);
+});
 
-exports.getUserProfile = async (req, res) => {
-    try {
-        const user = await userService.getUserById(req.user.id);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const updateUser = catchAsync(async (req, res) => {
+  const user = await userService.updateUserById(req.params.userId, req.body);
+  res.send(user);
+});
 
-exports.updateUserProfile = async (req, res) => {
-    try {
-        const user = await userService.updateUser(req.user.id, req.body);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const deleteUser = catchAsync(async (req, res) => {
+  await userService.deleteUserById(req.params.userId);
+  res.status(httpStatus.NO_CONTENT).send();
+});
 
-exports.requestPasswordReset = async (req, res) => {
-    try {
-        const { email } = req.body;
-        if (!email) return res.status(400).json({ message: 'Email is required' });
-
-        const token = await userService.requestPasswordReset(email);
-
-        // Respond with a success message
-        res.status(200).json({ message: 'Password reset link has been sent if the email is valid.', token });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.resetPassword = async (req, res) => {
-    try {
-        const { token } = req.params;
-        const { newPassword } = req.body;
-
-        if (!newPassword) return res.status(400).json({ message: 'New password is required' });
-
-        await userService.resetPassword(token, newPassword);
-
-        res.status(200).json({ message: 'Password reset successful.' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+module.exports = {
+  createUser,
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
 };

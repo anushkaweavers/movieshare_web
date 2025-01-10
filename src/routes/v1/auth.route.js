@@ -1,24 +1,34 @@
+// src/routes/v1/auth.route.js
 const express = require('express');
-const router = express.Router();
 const authController = require('../../controllers/auth.controller');
-const {
-  registerValidationRules,
-  loginValidationRules,
-  forgotPasswordValidationRules,
-  resetPasswordValidationRules,
-} = require('../../validations/auth.validation');
 const validate = require('../../middlewares/validate');
+const authValidation = require('../../validations/auth.validation');
+const auth = require('../../middlewares/auth');
 
-// Route for user registration
-router.post('/register', registerValidationRules, validate, authController.register);
+const router = express.Router();
 
-// Route for user login
-router.post('/login', loginValidationRules, validate, authController.login);
+// Register route
+router.post('/register', validate(authValidation.register), authController.register);
 
-// Route for forgot password
-router.post('/forgot-password', forgotPasswordValidationRules, validate, authController.forgotPassword);
+// Login route
+router.post('/login', validate(authValidation.login), authController.login);
 
-// Route for reset password
-router.post('/reset-password/:token', resetPasswordValidationRules, validate, authController.resetPassword);
+// Logout route
+router.post('/logout', validate(authValidation.logout), authController.logout);
+
+// Refresh tokens route
+router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
+
+// Forgot password route
+router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
+
+// Reset password route
+router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
+
+// Send verification email route
+router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
+
+// Verify email route
+router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 
 module.exports = router;
