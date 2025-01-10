@@ -18,9 +18,12 @@ const loginUserWithEmailAndPassword = async (email, password) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
-  console.log('User found:', user);  // Debugging: check user object
+  console.log('Checking password for user:', email);
+  console.log('Password hash:', user.passwordHash);
 
   const isPasswordValid = await user.isPasswordMatch(password);
+
+  console.log('Password match result:', isPasswordValid);
 
   if (!isPasswordValid) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');

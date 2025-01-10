@@ -8,17 +8,14 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
-const createUser = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
-
-  // Hash the password
-  userBody.passwordHash = await bcrypt.hash(userBody.password, 8);
-  console.log('Generated password hash:', userBody.passwordHash);  // Debugging: log the generated hash
-  delete userBody.password; // Remove the plain text password for security
-
-  return User.create(userBody);
+const createUser = async (userData) => {
+  console.log('Creating user with password:', userData.password); // Debugging input
+  const user = await User.create({
+    ...userData,
+    passwordHash: userData.password, // Ensure this triggers the pre-save hook
+  });
+  console.log('User created:', user);
+  return user;
 };
 
 

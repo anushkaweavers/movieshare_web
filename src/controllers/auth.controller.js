@@ -5,10 +5,14 @@ const { authService, userService, emailService, tokenService } = require('../ser
 const ApiError = require('../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
-  const user = await userService.createUser(req.body);
+  const user = await userService.createUser({
+    ...req.body,
+    passwordHash: req.body.password, // Pass plain password; will be hashed in `pre('save')`
+  });
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
-});0
+});
+
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;

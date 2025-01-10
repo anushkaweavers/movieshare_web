@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const ApiError = require('../utils/ApiError');
-
+const saltRounds = 8;
 /**
  * User Schema
  */
@@ -85,29 +85,21 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   return !!user;
 };
 
-/**
- * Hash the password before saving the user.
- */
 userSchema.pre('save', async function (next) {
   if (this.isModified('passwordHash')) {
-    this.passwordHash = await bcrypt.hash(this.passwordHash, 8);
+    console.log('Hashing password:', this.passwordHash); // Debugging
+    this.passwordHash = await bcrypt.hash(this.passwordHash, saltRounds);
+    console.log('Hashed password:', this.passwordHash);
   }
   next();
 });
 
-/**
- * Compare passwords.
- */
 userSchema.methods.isPasswordMatch = async function (password) {
-  if (!this.passwordHash) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Password hash not found');
-  }
-  console.log('Checking password for user:', this.email);  // Debugging: log email or username
-  console.log('Password hash:', this.passwordHash);         // Debugging: log passwordHash
-  const isMatch = await bcrypt.compare(password, this.passwordHash);
-  console.log('Password match result:', isMatch);            // Debugging: log comparison result
-  return isMatch;
+  console.log('Comparing plain password:', password);
+  console.log('With hashed password:', this.passwordHash);
+  const result = await bcrypt.compare(password, this.passwordHash);
+  console.log('Password comparison result:', result);
+  return result;
 };
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
