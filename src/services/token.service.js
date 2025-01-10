@@ -4,6 +4,8 @@ const httpStatus = require('http-status');
 const { Token, User } = require('../models');
 const config = require('../config/config');
 const ApiError = require('../utils/ApiError');
+const { tokenTypes } = require('../config/tokens');
+
 
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   const payload = { userId, iat: moment().unix(), exp: expires.unix(), type };
