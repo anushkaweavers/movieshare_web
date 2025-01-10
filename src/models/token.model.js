@@ -37,8 +37,18 @@ const tokenSchema = mongoose.Schema(
 tokenSchema.plugin(toJSON);
 
 /**
- * @typedef Token
+ * Invalidate the token by marking it as blacklisted
+ * @returns {Promise<void>}
  */
+tokenSchema.methods.invalidate = async function() {
+  if (this.blacklisted) {
+    // If the token is already blacklisted, no need to do anything
+    return;
+  }
+
+  this.blacklisted = true;
+  await this.save();
+};
 const Token = mongoose.model('Token', tokenSchema);
 
 module.exports = Token;
