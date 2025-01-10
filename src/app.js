@@ -1,10 +1,10 @@
 const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-//const mongoSanitize = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
-//const passport = require('passport');
+const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
 const morgan = require('./config/morgan');
@@ -41,9 +41,9 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-/* jwt authentication
+
 app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);*/
+passport.use('jwt', jwtStrategy);
 // Health Check Endpoint
 app.get('/health', (req, res) => {
   res.status(200).send({ status: 'UP' });

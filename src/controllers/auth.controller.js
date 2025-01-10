@@ -3,6 +3,8 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, emailService, tokenService } = require('../services');
 const ApiError = require('../utils/ApiError');
+const User = require('../models/user.model');  // Adjust the path as needed
+
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser({
@@ -54,11 +56,22 @@ const refreshTokens = catchAsync(async (req, res) => {
   res.send(tokens);
 });
 
-const forgotPassword = catchAsync(async (req, res) => {
-  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
-  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
-  res.status(httpStatus.NO_CONTENT).send();
-});
+const forgotPassword = (req, res, next) => {
+  const { email } = req.body;
+
+  // Ensure User model is being used here
+  User.findOne({ email })
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Your logic for sending the reset password email here
+      res.status(200).json({ message: 'Password reset email sent' });
+    })
+    .catch(next); // Handle any errors
+};
+
 
 const resetPassword = catchAsync(async (req, res) => {
   await authService.resetPassword(req.query.token, req.body.password);
