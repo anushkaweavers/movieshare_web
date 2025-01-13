@@ -3,6 +3,9 @@ const userService = require('./user.service');
 const tokenService = require('./token.service');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
+
 
 /**
  * Log in a user with email and password.
@@ -57,21 +60,48 @@ const refreshAuth = async (refreshToken) => {
   return tokenService.refreshAuth(refreshToken);
 };
 
-/**
- * Reset a user's password using a valid reset password token.
- * @param {string} resetPasswordToken - The reset token.
- * @param {string} newPassword - The new password.
- * @returns {Promise<void>}
- * @throws {ApiError} - If the reset token is invalid or expired.
- */
-const resetPassword = async (resetPasswordToken, newPassword) => {
-  if (!resetPasswordToken || !newPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid input for password reset');
+const resetPassword = async (token, newPassword) => {
+  try {
+    // Verify the token
+    const { userId } = await tokenService.verifyResetPasswordToken(token);
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // Update the password
+    user.password = newPassword;
+    await user.save();
+
+    // Invalidate the token
+    await Token.findOneAndUpdate({ token }, { invalidated: true });
+  } catch (error) {
+    console.error('Error during resetPassword:', error); // Log the error for debugging
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to reset password');
   }
-  await tokenService.resetPassword(resetPasswordToken, newPassword);
+};
+const verifyResetPasswordToken = async (token) => {
+  if (!token) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
+  }
+  try {
+    const payload = jwt.verify(token, config.jwt.secret);
+    if (payload.type !== tokenTypes.RESET_PASSWORD) { // Ensure token type matches
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
+    }
+    return payload; // Return payload for further processing
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    if (error.name === 'TokenExpiredError') {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Reset password token has expired');
+    }
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid reset password token');
+  }
 };
 
-/**
+/**                                                   
  * Verify a user's email using a valid verification token.
  * @param {string} verifyEmailToken - The email verification token.
  * @returns {Promise<void>}
@@ -87,7 +117,10 @@ const verifyEmail = async (verifyEmailToken) => {
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
+  
   refreshAuth,
   resetPassword,
   verifyEmail,
+  verifyResetPasswordToken
 };
+/* */

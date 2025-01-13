@@ -9,16 +9,16 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<User>}
  */
 const createUser = async (userData) => {
-  console.log('Creating user with password:', userData.password); // Debugging input
-  const user = await User.create({
+  const { password } = userData;
+  const hashedPassword = await bcrypt.hash(password, 10);  // Hash the password
+  const user = new User({
     ...userData,
-    passwordHash: userData.password, // Ensure this triggers the pre-save hook
+    passwordHash: hashedPassword,  // Save the hashed password
   });
-  console.log('User created:', user);
+
+  await user.save();
   return user;
 };
-
-
 /**
  * Query for users
  * @param {Object} filter - MongoDB filter

@@ -7,9 +7,9 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const { JWT_SECRET } = process.env;
 
-// Function to generate a JWT token
+
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
-  const payload = { userId, iat: moment().unix(), exp: expires.unix(), type };
+  const payload = { userId, type, iat: moment().unix(), exp: expires.unix() };
   return jwt.sign(payload, secret);
 };
 
@@ -47,8 +47,42 @@ const invalidateToken = async (token) => {
   }
 };
 
+const generateResetPasswordToken = async (user) => {
+  const expires = moment().add(1, 'minute'); // 1-minute expiration
+  const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
+
+  await Token.create({
+    token: resetPasswordToken,
+    user: user.id,
+    type: tokenTypes.RESET_PASSWORD,
+    expires: expires.toDate(),
+  });
+
+  return resetPasswordToken;
+};
+
+/**
+ * Verify and process a reset password token.
+ */
+const verifyResetPasswordToken = async (token) => {
+  if (!token) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
+  }
+  try {
+    const payload = jwt.verify(token, config.jwt.secret);
+    if (payload.type !== 'resetPassword') {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
+    }
+    return payload;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid reset password token');
+  }
+};
 
 module.exports = {
+  generateResetPasswordToken,
   generateAuthTokens,
   invalidateToken,
+  verifyResetPasswordToken
 };

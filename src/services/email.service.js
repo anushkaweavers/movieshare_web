@@ -3,61 +3,40 @@ const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');
 
-// Create the transporter object using the SMTP configuration from the config file
+// Create transporter
 const transport = nodemailer.createTransport(config.email.smtp);
 
-/* istanbul ignore next */
-// Verify the connection to the email server (only in non-test environments)
 if (config.env !== 'test') {
   transport
     .verify()
     .then(() => logger.info('Connected to email server'))
     .catch((error) => {
-      logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env');
+      logger.warn('Unable to connect to email server. Check SMTP configuration.');
       logger.error(error);
     });
 }
 
-/**
- * Send an email
- * @param {string} to - The recipient's email address
- * @param {string} subject - The subject of the email
- * @param {string} text - The plain text content of the email
- * @returns {Promise} - Resolves when the email is sent
- */
 const sendEmail = async (to, subject, text) => {
   const msg = { from: config.email.from, to, subject, text };
-
   try {
-    await transport.sendMail(msg);
-    logger.info(`Email sent to ${to} with subject: ${subject}`);
+    const info = await transport.sendMail(msg);
+    logger.info(`Email sent: ${info.messageId}`);
+    return info;
   } catch (error) {
     logger.error(`Error sending email to ${to}:`, error);
     throw new Error('Error sending email');
   }
 };
 
-/**
- * Send reset password email
- * @param {string} to - The recipient's email address
- * @param {string} token - The password reset token
- * @returns {Promise} - Resolves when the reset password email is sent
- */
 const sendResetPasswordEmail = async (to, token) => {
   const subject = 'Reset password';
-  const resetPasswordUrl = `http://localhost:3000/v1/auth/reset-password?token=${token}`;  // Adjust URL based on actual front-end routing
-  const text = `Dear user,
-  To reset your password, click on this link: ${resetPasswordUrl}
-  If you did not request any password resets, please ignore this email.`;
+  const resetPasswordUrl = `http://localhost:3000/v1/auth/reset-password?token=${token}`;
+  const text = `Dear user,\n\nTo reset your password, click on this link: ${resetPasswordUrl}\nIf you did not request any password resets, please ignore this email.`;
 
-  console.log('Sending reset password email to:', to);
-  
-  // Call sendEmail function to send the actual email
-  await sendEmail(to, subject, text);
-  console.log('Password reset email sent');
+  const info = await sendEmail(to, subject, text);
+  console.log('Email response:', info); // Log the email response
 };
-
-/**
+/*
  * Send email verification email
  * @param {string} to - The recipient's email address
  * @param {string} token - The email verification token

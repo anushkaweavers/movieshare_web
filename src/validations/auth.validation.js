@@ -36,11 +36,10 @@ const forgotPassword = {
   }),
 };
 
-const resetPassword = {
-  body: Joi.object({
-    password: Joi.string().min(6).required(),
-  }),
-};
+const resetPassword = Joi.object({
+  newPassword: Joi.string().required().label('New Password'), // Change `password` to `newPassword`
+});
+
 
 const verifyEmail = {
   query: Joi.object({
