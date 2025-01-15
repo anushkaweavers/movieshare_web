@@ -1,113 +1,110 @@
-import React, { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom"; // For navigation
 import {
   Box,
-  Button,
   Checkbox,
   Container,
   FormControlLabel,
   FormGroup,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
+  Grid // Import Grid from MUI
 } from "@mui/material";
-import { Link } from "react-router-dom"; 
-import Axios from 'axios';
 import "swiper/css";
 import "swiper/css/navigation";
-import "../../custom.css"; 
+import TextFieldInput from "./Common/UiComps/TextField";
+import DropDownField from "./Common/UiComps/DropDownField";
+import Datepicker from "./Common/UiComps/DatePicker";
+import dayjs from "dayjs";
+import ButtonField from "./Common/UiComps/ButtonField";
+import FullScreenLoader from "./Common/UiComps/FullScreenLoader";
+import { useRegister } from "./useRegister";
+import SwiperNavButton from "../../Layout/SwiperNavButton"; 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";
 import "../../developer.css";
 import "../../global.css";
-import "swiper/css/pagination";
-import SwiperNavButton from "../../Layout/SwiperNavButton"; 
 
 const Register = () => {
-  // State for form data
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    birthday: "",
-    gender: "",
-    password: "",
-    confirmPassword: "",
-    agreeTerms: false,
-  });
+  const { registerFormik, isPending } = useRegister();
+  const navigate = useNavigate(); // to handle redirection
+  const genderOptions = [
+    { value: "Male", title: "Male" },
+    { value: "Female", title: "Female" },
+    { value: "Others", title: "Others" },
+  ];
 
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  // Handle the submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
-      const response = await Axios.post('/v1/auth/register', formData);
-      alert("Registration successful!");
-      // Handle success, redirect to login or dashboard
+      const response = await registerFormik.handleSubmit();
+      if (response) {
+        // Redirect to the login page upon successful registration
+        navigate("/login");
+      }
     } catch (error) {
-      alert("Error during registration");
-      console.error(error);
+      console.error("Registration failed", error);
     }
   };
 
   return (
     <Container maxWidth={false} className="auth-wraper">
       <Grid container spacing={0} className="auth-wraper-inn">
-        {/* Slider Section */}
-        <Grid item md={7} sm={12} xs={12}>
+        <Grid item xs={12} sm={12} md={7}>
           <Box className="auth-slider-wrap">
             <Swiper slidesPerView={1} loop modules={[Navigation]} className="authSwiper">
-              {[...Array(3)].map((_, index) => (
-                <SwiperSlide key={index}>
-                  <Box className="auth-slider-img-holder">
-                    <img
-                      src="/images/signup-slider-img1.jpg"
-                      alt="Slider"
-                      className="auth-slider-img"
-                      style={{ width: "100%", height: "auto" }}
-                    />
-                    <Box className="auth-slider-info">
-                      <Box className="auth-slider-info-inner">
-                        <Box className="auth-slider-info-inner-top">
-                          <h1>
-                            Start Your <br />
-                            Journey With Us.
-                          </h1>
-                          <SwiperNavButton />
-                        </Box>
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur. Integer vel
-                          sed enim aliquet volutpat adipiscing ante amet.
-                        </p>
+              <SwiperSlide>
+                <Box className="auth-slider-img-holder">
+                  <img src="/images/signup-slider-img1.jpg" alt="" />
+                  <Box className="auth-slider-info">
+                    <Box className="auth-slider-info-inner">
+                      <Box className="auth-slider-info-inner-top">
+                        <h1>
+                          Start Your <br />
+                          Journey With Us.
+                        </h1>
+                        <SwiperNavButton />
                       </Box>
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur. Integer vel sed
+                        enim aliquet volutpat adipiscing ante amet. Aliquet
+                        volutpat ut magna lectus mi eu consectetur placerat
+                        facilisi. Enim et cursus at semper massa justo gravida.
+                      </p>
                     </Box>
                   </Box>
-                </SwiperSlide>
-              ))}
+                </Box>
+              </SwiperSlide>
+              <SwiperSlide>
+                <Box className="auth-slider-img-holder">
+                  <img src="/images/signup-slider-img1.jpg" alt="" />
+                  <Box className="auth-slider-info">
+                    <Box className="auth-slider-info-inner">
+                      <Box className="auth-slider-info-inner-top">
+                        <h1>
+                          Start Your <br />
+                          Journey With Us.
+                        </h1>
+                        <SwiperNavButton />
+                      </Box>
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur. Integer vel sed
+                        enim aliquet volutpat adipiscing ante amet. Aliquet
+                        volutpat ut magna lectus mi eu consectetur placerat
+                        facilisi. Enim et cursus at semper massa justo gravida.
+                      </p>
+                    </Box>
+                  </Box>
+                </Box>
+              </SwiperSlide>
             </Swiper>
           </Box>
         </Grid>
 
-        {/* Form Section */}
-        <Grid item md={5} sm={12} xs={12} className="auth-form-outer signup-form-wrap">
+        <Grid item xs={12} sm={12} md={5} className="auth-form-outer signup-form-wrap">
           <Box className="auth-form-wrap">
             <Box className="auth-form-top">
               <h2>
@@ -116,7 +113,7 @@ const Register = () => {
                   width={32}
                   height={32}
                   src="/images/signup-hand-icon.svg"
-                  alt="Sign Up Icon"
+                  alt=""
                 />
               </h2>
               <p>Let’s get started</p>
@@ -124,160 +121,175 @@ const Register = () => {
 
             <form onSubmit={handleSubmit}>
               <Box className="auth-input-wrap">
-                {/* Name Fields */}
                 <Box className="input-each-wrap">
-                  <FormGroup className="input-each">
-                    <InputLabel required className="input-label">
-                      First Name
-                    </InputLabel>
-                    <TextField
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      placeholder="Enter First Name"
-                      variant="outlined"
-                      className="input-field"
-                    />
-                  </FormGroup>
+                  <TextFieldInput
+                    name="firstName"
+                    id="firstName"
+                    lable="First Name"
+                    placeholder="Enter first name"
+                    onChange={registerFormik.handleChange}
+                    onBlur={registerFormik.handleBlur}
+                    error={
+                      registerFormik.touched.firstName &&
+                      !!registerFormik.errors.firstName
+                    }
+                    helperText={
+                      registerFormik.touched.firstName
+                        ? registerFormik.errors.firstName
+                        : ""
+                    }
+                  />
 
-                  <FormGroup className="input-each">
-                    <InputLabel required className="input-label">
-                      Last Name
-                    </InputLabel>
-                    <TextField
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      placeholder="Enter Last Name"
-                      variant="outlined"
-                      className="input-field"
-                    />
-                  </FormGroup>
+                  <TextFieldInput
+                    name="lastName"
+                    id="lastName"
+                    lable="Last Name"
+                    placeholder="Enter last name"
+                    onChange={registerFormik.handleChange}
+                    onBlur={registerFormik.handleBlur}
+                    error={
+                      registerFormik.touched.lastName &&
+                      !!registerFormik.errors.lastName
+                    }
+                    helperText={
+                      registerFormik.touched.lastName
+                        ? registerFormik.errors.lastName
+                        : ""
+                    }
+                  />
                 </Box>
 
-                {/* Username Field */}
-                <FormGroup className="input-each">
-                  <InputLabel required className="input-label">
-                    User Name
-                  </InputLabel>
-                  <TextField
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    placeholder="Enter User Name"
-                    variant="outlined"
-                    className="input-field"
-                  />
-                </FormGroup>
+                <TextFieldInput
+                  name="username"
+                  id="username"
+                  lable="User Name"
+                  placeholder="Enter user name"
+                  onChange={registerFormik.handleChange}
+                  onBlur={registerFormik.handleBlur}
+                  error={
+                    registerFormik.touched.username &&
+                    !!registerFormik.errors.username
+                  }
+                  helperText={
+                    registerFormik.touched.username
+                      ? registerFormik.errors.username
+                      : ""
+                  }
+                />
 
-                {/* Email Field */}
-                <FormGroup className="input-each">
-                  <InputLabel required className="input-label">
-                    Email
-                  </InputLabel>
-                  <TextField
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter Email"
-                    variant="outlined"
-                    className="input-field"
-                  />
-                </FormGroup>
+                <TextFieldInput
+                  name="email"
+                  id="email"
+                  lable="Email"
+                  placeholder="Enter email"
+                  onChange={registerFormik.handleChange}
+                  onBlur={registerFormik.handleBlur}
+                  error={
+                    registerFormik.touched.email &&
+                    !!registerFormik.errors.email
+                  }
+                  helperText={
+                    registerFormik.touched.email
+                      ? registerFormik.errors.email
+                      : ""
+                  }
+                />
 
-                {/* Birthday and Gender Fields */}
                 <Box className="input-each-wrap">
-                  <FormGroup className="input-each">
-                    <InputLabel required className="input-label">
-                      Birthday
-                    </InputLabel>
-                    <TextField
-                      name="birthday"
-                      value={formData.birthday}
-                      onChange={handleChange}
-                      placeholder="DD/MM/YYYY"
-                      variant="outlined"
-                      className="input-field"
-                    />
-                  </FormGroup>
-
-                  <FormGroup className="input-each">
-                    <InputLabel id="gender-select-label" className="input-label">
-                      Gender
-                    </InputLabel>
-                    <Select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                    >
-                      <MenuItem value="Male">Male</MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                      <MenuItem value="Other">Other</MenuItem>
-                    </Select>
-                  </FormGroup>
+                  <Datepicker
+                    id="birthday"
+                    name="birthday"
+                    onChange={(newValue) => {
+                      registerFormik.setFieldValue("birthday", newValue);
+                    }}
+                    value={dayjs(registerFormik.values.birthday)}
+                    label="Birthday"
+                  />
+                  <DropDownField
+                    id="gender"
+                    name="gender"
+                    options={genderOptions}
+                    title="Gender"
+                    onChange={registerFormik.handleChange}
+                    error={
+                      registerFormik.touched.gender &&
+                      !!registerFormik.errors.gender
+                    }
+                    value={registerFormik.values.gender}
+                    clsDrop="input-field"
+                    placeholder="Select gender"
+                  />
                 </Box>
 
-                {/* Password Fields */}
                 <Box className="input-each-wrap">
-                  <FormGroup className="input-each">
-                    <InputLabel required className="input-label">
-                      Password
-                    </InputLabel>
-                    <TextField
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Password"
-                      variant="outlined"
-                      type="password"
-                      className="input-field"
-                    />
-                  </FormGroup>
+                  <TextFieldInput
+                    name="password"
+                    type="password"
+                    id="password"
+                    lable="Password"
+                    placeholder="Enter Password"
+                    onChange={registerFormik.handleChange}
+                    onBlur={registerFormik.handleBlur}
+                    error={
+                      registerFormik.touched.password &&
+                      !!registerFormik.errors.password
+                    }
+                    helperText={
+                      registerFormik.touched.password
+                        ? registerFormik.errors.password
+                        : ""
+                    }
+                  />
 
-                  <FormGroup className="input-each">
-                    <InputLabel required className="input-label">
-                      Confirm Password
-                    </InputLabel>
-                    <TextField
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Confirm Password"
-                      variant="outlined"
-                      type="password"
-                      className="input-field"
-                    />
-                  </FormGroup>
+                  <TextFieldInput
+                    name="confirmPassword"
+                    type="password"
+                    id="confirmPassword"
+                    lable="Confirm password"
+                    placeholder="Enter Confirm password"
+                    onChange={registerFormik.handleChange}
+                    onBlur={registerFormik.handleBlur}
+                    error={
+                      registerFormik.touched.confirmPassword &&
+                      !!registerFormik.errors.confirmPassword
+                    }
+                    helperText={
+                      registerFormik.touched.confirmPassword
+                        ? registerFormik.errors.confirmPassword
+                        : ""
+                    }
+                  />
                 </Box>
               </Box>
 
-              {/* Agreement Checkbox */}
               <FormGroup className="auth-agree">
                 <FormControlLabel
-                  control={<Checkbox checked={formData.agreeTerms} onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })} />}
+                  control={<Checkbox />}
                   label={
                     <div>
                       <span>I accept </span>
-                      <Link to="/terms">Terms and Conditions</Link>
+                      <Link to="/design/auth/login">Terms and Conditions.</Link>
                     </div>
                   }
+                  required
                 />
               </FormGroup>
 
-              {/* Submit Button */}
-              <FormGroup>
-                <Button type="submit" className="p-btn">Sign Up</Button>
-              </FormGroup>
+              <ButtonField
+                type="submit"
+                fullWidth
+                label="Sign Up"
+                mainCls="p-btn"
+              />
             </form>
 
-            {/* Sign In Link */}
             <p className="text-center auth-btm-info">
-              <span>Already have an account?</span>{" "}
-              <Link to="/login">Sign In</Link>
+              <span>Already have an account?</span> <Link to="/login">Sign In</Link>
             </p>
           </Box>
         </Grid>
       </Grid>
+      <FullScreenLoader open={isPending} />
     </Container>
   );
 };
