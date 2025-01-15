@@ -13,12 +13,12 @@ import { Navigation } from "swiper/modules";
 import SwiperNavButton from "../../Layout/SwiperNavButton";
 import "swiper/css";
 import "swiper/css/navigation";
-import TextFieldInput from "./Common/UiComps/TextField";
-import DropDownField from "./Common/UiComps/DropDownField";
-import Datepicker from "./Common/UiComps/DatePicker";
+import TextFieldInput from "../Common/UiComps/TextField";
+import DropDownField from "../Common/UiComps/DropDownField";
+import Datepicker from "../Common/UiComps/DatePicker";
 import dayjs from "dayjs";
-import ButtonField from "./Common/UiComps/ButtonField";
-import FullScreenLoader from "./Common/UiComps/FullScreenLoader";
+import ButtonField from "../Common/UiComps/ButtonField";
+import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
 import LeftSection from "../Common/LeftSection"; // Ensure the correct path to LeftSection
 import "../../custom.css";
 import "../../responsive.css";
@@ -38,7 +38,7 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Format the birthday field to match the required pattern
+    // Format the birthday field to match the required pattern (DD/MM/YYYY)
     const formattedBirthday = dayjs(registerFormik.values.birthday).format("DD/MM/YYYY");
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
