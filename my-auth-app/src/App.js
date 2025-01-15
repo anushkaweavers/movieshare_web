@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import RegisterForm from "./components/Auth/RegisterForm";
+import RegisterForm from "./components/Auth/Register/index"; // Assuming your RegisterForm is exported from index.js
 
 const App = () => {
   return (
