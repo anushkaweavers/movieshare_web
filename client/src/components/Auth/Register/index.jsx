@@ -19,7 +19,7 @@ import Datepicker from "../Common/UiComps/DatePicker";
 import dayjs from "dayjs";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection"; // Ensure the correct path to LeftSection
+import LeftSection from "../Common/LeftSection";
 import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";
@@ -38,8 +38,8 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Format the birthday field to match the required pattern (DD/MM/YYYY)
-    const formattedBirthday = dayjs(registerFormik.values.birthday).format("DD/MM/YYYY");
+    // Convert the birthday to the format YYYY-MM-DD for backend compatibility
+    const formattedBirthday = dayjs(registerFormik.values.birthday).format("YYYY-MM-DD");
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
     await registerFormik.handleSubmit();
@@ -81,7 +81,6 @@ const Register = () => {
                 </Box>
               </SwiperSlide>
 
-              {/* Add more slides as needed */}
               <SwiperSlide>
                 <Box className="auth-slider-img-holder">
                   <img src="/images/signup-slider-img2.jpg" alt="" />

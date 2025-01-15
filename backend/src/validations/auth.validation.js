@@ -6,7 +6,10 @@ const register = {
     lastName: Joi.string().required().label("Last Name"),
     username: Joi.string().required().label("Username"),
     email: Joi.string().email().required().label("Email"),
-    birthday: Joi.string().pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/).required().label("Birthday"), // Pattern for DD/MM/YYYY
+    birthday: Joi.string()
+      .pattern(/^\d{4}-\d{2}-\d{2}$/) // Pattern for YYYY-MM-DD
+      .required()
+      .label("Birthday"),
     gender: Joi.string().valid("Male", "Female", "Other").required().label("Gender"),
     password: Joi.string().min(6).required().label("Password"),
     confirmPassword: Joi.string().valid(Joi.ref('password')).required().label("Confirm Password"), // Ensure password and confirmPassword match
