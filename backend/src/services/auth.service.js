@@ -35,6 +35,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   return user;
 };
 
+
 /**
  * Log out a user by invalidating their refresh token.
  * @param {string} refreshToken - The refresh token to invalidate.
@@ -60,28 +61,27 @@ const refreshAuth = async (refreshToken) => {
   return tokenService.refreshAuth(refreshToken);
 };
 
-const resetPassword = async (token, newPassword) => {
+const resetPassword = async (userId, newPassword) => {
   try {
-    // Verify the token
-    const { userId } = await tokenService.verifyResetPasswordToken(token);
-
-    // Find the user
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+      console.log('User not found!');
+      return;
     }
 
-    // Update the password
-    user.password = newPassword;
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    user.passwordHash = hashedPassword;
+
     await user.save();
 
-    // Invalidate the token
-    await Token.findOneAndUpdate({ token }, { invalidated: true });
+    console.log('New password saved:', hashedPassword);
   } catch (error) {
-    console.error('Error during resetPassword:', error); // Log the error for debugging
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to reset password');
+    console.error('Error during password reset:', error);
   }
 };
+
+
 const verifyResetPasswordToken = async (token) => {
   if (!token) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');

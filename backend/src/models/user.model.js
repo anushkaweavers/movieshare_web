@@ -36,6 +36,12 @@ const userSchema = mongoose.Schema(
         }
       },
     },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     passwordHash: {
       type: String,
       required: true,
@@ -86,13 +92,15 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 };
 
 userSchema.pre('save', async function (next) {
-  if (this.isModified('passwordHash')) {
-    console.log('Hashing password:', this.passwordHash); // Debugging
-    this.passwordHash = await bcrypt.hash(this.passwordHash, saltRounds);
+  if (this.isModified('password')) {
+    // Hash the plain password before saving
+    console.log('Hashing password:', this.password);
+    this.passwordHash = await bcrypt.hash(this.password, saltRounds);
     console.log('Hashed password:', this.passwordHash);
   }
   next();
 });
+
 
 userSchema.methods.isPasswordMatch = async function (password) {
   console.log('Comparing plain password:', password);
@@ -101,5 +109,6 @@ userSchema.methods.isPasswordMatch = async function (password) {
   console.log('Password comparison result:', result);
   return result;
 };
+
 
 module.exports = mongoose.model('User', userSchema);

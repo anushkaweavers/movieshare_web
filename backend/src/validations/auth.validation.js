@@ -13,7 +13,6 @@ const register = {
     termsAccepted: Joi.boolean().valid(true).required().label("Terms Accepted"), // Ensure terms are accepted
   }),
 };
-
 const login = {
   body: Joi.object({
     email: Joi.string().email().required(),
@@ -42,6 +41,7 @@ const forgotPassword = {
 const resetPassword = Joi.object({
   newPassword: Joi.string().required().label('New Password'), // Change `password` to `newPassword`
 });
+
 
 const verifyEmail = {
   query: Joi.object({
