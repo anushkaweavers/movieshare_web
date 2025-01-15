@@ -2,12 +2,15 @@ const Joi = require('joi');
 
 const register = {
   body: Joi.object({
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    username: Joi.string().required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
-    termsAccepted: Joi.boolean().required(),
+    firstName: Joi.string().required().label("First Name"),
+    lastName: Joi.string().required().label("Last Name"),
+    username: Joi.string().required().label("Username"),
+    email: Joi.string().email().required().label("Email"),
+    birthday: Joi.string().pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/).required().label("Birthday"), // Pattern for DD/MM/YYYY
+    gender: Joi.string().valid("Male", "Female", "Other").required().label("Gender"),
+    password: Joi.string().min(6).required().label("Password"),
+    confirmPassword: Joi.string().valid(Joi.ref('password')).required().label("Confirm Password"), // Ensure password and confirmPassword match
+    termsAccepted: Joi.boolean().valid(true).required().label("Terms Accepted"), // Ensure terms are accepted
   }),
 };
 
@@ -39,7 +42,6 @@ const forgotPassword = {
 const resetPassword = Joi.object({
   newPassword: Joi.string().required().label('New Password'), // Change `password` to `newPassword`
 });
-
 
 const verifyEmail = {
   query: Joi.object({
