@@ -19,9 +19,12 @@ import catchAsync from "../Utils/CommonFunctions/catchAsync.js";  // Use relativ
  */
 export const registerUserApi = catchAsync(async (values) => {
   try {
-    const data = await axiosCustom.post("auth/register", values);
+    console.log("Sending request to API with values:", values);  // Add logging before API call
+    const data = await axiosCustom.post("auth/register", values);  // API request
+    console.log("Received response:", data);  // Log the response data
     return data;
   } catch (error) {
+    console.error("Error during API request:", error);  // Log any error during the request
     throw new Error(error.response?.data?.message || error.message);
   }
 });

@@ -1,13 +1,16 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // For navigation
+import { Link } from "react-router-dom";
 import {
   Box,
   Checkbox,
   Container,
   FormControlLabel,
   FormGroup,
-  Grid // Import Grid from MUI
+  Grid,
 } from "@mui/material";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import SwiperNavButton from "../../Layout/SwiperNavButton";
 import "swiper/css";
 import "swiper/css/navigation";
 import TextFieldInput from "./Common/UiComps/TextField";
@@ -16,21 +19,16 @@ import Datepicker from "./Common/UiComps/DatePicker";
 import dayjs from "dayjs";
 import ButtonField from "./Common/UiComps/ButtonField";
 import FullScreenLoader from "./Common/UiComps/FullScreenLoader";
-import { useRegister } from "./useRegister";
-import SwiperNavButton from "../../Layout/SwiperNavButton"; 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
+import LeftSection from "../Common/LeftSection"; // Ensure the correct path to LeftSection
 import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";
 import "../../developer.css";
 import "../../global.css";
+import { useRegister } from "./useRegister";
 
 const Register = () => {
   const { registerFormik, isPending } = useRegister();
-  const navigate = useNavigate(); // to handle redirection
   const genderOptions = [
     { value: "Male", title: "Male" },
     { value: "Female", title: "Female" },
@@ -39,23 +37,26 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const response = await registerFormik.handleSubmit();
-      if (response) {
-        // Redirect to the login page upon successful registration
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error("Registration failed", error);
-    }
+
+    // Format the birthday field to match the required pattern
+    const formattedBirthday = dayjs(registerFormik.values.birthday).format("DD/MM/YYYY");
+    registerFormik.setFieldValue("birthday", formattedBirthday, false);
+
+    await registerFormik.handleSubmit();
   };
 
   return (
     <Container maxWidth={false} className="auth-wraper">
       <Grid container spacing={0} className="auth-wraper-inn">
+        {/* Left Section with Swiper */}
         <Grid item xs={12} sm={12} md={7}>
           <Box className="auth-slider-wrap">
-            <Swiper slidesPerView={1} loop modules={[Navigation]} className="authSwiper">
+            <Swiper
+              slidesPerView={1}
+              loop
+              modules={[Navigation]}
+              className="authSwiper"
+            >
               <SwiperSlide>
                 <Box className="auth-slider-img-holder">
                   <img src="/images/signup-slider-img1.jpg" alt="" />
@@ -73,28 +74,30 @@ const Register = () => {
                         enim aliquet volutpat adipiscing ante amet. Aliquet
                         volutpat ut magna lectus mi eu consectetur placerat
                         facilisi. Enim et cursus at semper massa justo gravida.
+                        Eu parturient et neque morbi felis vitae nunc fermentum.
                       </p>
                     </Box>
                   </Box>
                 </Box>
               </SwiperSlide>
+
+              {/* Add more slides as needed */}
               <SwiperSlide>
                 <Box className="auth-slider-img-holder">
-                  <img src="/images/signup-slider-img1.jpg" alt="" />
+                  <img src="/images/signup-slider-img2.jpg" alt="" />
                   <Box className="auth-slider-info">
                     <Box className="auth-slider-info-inner">
                       <Box className="auth-slider-info-inner-top">
                         <h1>
-                          Start Your <br />
-                          Journey With Us.
+                          Welcome to <br />
+                          Our Community.
                         </h1>
                         <SwiperNavButton />
                       </Box>
                       <p>
-                        Lorem ipsum dolor sit amet consectetur. Integer vel sed
-                        enim aliquet volutpat adipiscing ante amet. Aliquet
-                        volutpat ut magna lectus mi eu consectetur placerat
-                        facilisi. Enim et cursus at semper massa justo gravida.
+                        Join a community of passionate individuals. Explore
+                        opportunities, connect, and grow with us. Let’s
+                        embark on this journey together!
                       </p>
                     </Box>
                   </Box>
@@ -104,6 +107,7 @@ const Register = () => {
           </Box>
         </Grid>
 
+        {/* Right Section */}
         <Grid item xs={12} sm={12} md={5} className="auth-form-outer signup-form-wrap">
           <Box className="auth-form-wrap">
             <Box className="auth-form-top">
@@ -113,7 +117,7 @@ const Register = () => {
                   width={32}
                   height={32}
                   src="/images/signup-hand-icon.svg"
-                  alt=""
+                  alt="Signup Icon"
                 />
               </h2>
               <p>Let’s get started</p>
@@ -121,6 +125,7 @@ const Register = () => {
 
             <form onSubmit={handleSubmit}>
               <Box className="auth-input-wrap">
+                {/* First Name and Last Name */}
                 <Box className="input-each-wrap">
                   <TextFieldInput
                     name="firstName"
@@ -159,6 +164,7 @@ const Register = () => {
                   />
                 </Box>
 
+                {/* Username */}
                 <TextFieldInput
                   name="username"
                   id="username"
@@ -177,6 +183,7 @@ const Register = () => {
                   }
                 />
 
+                {/* Email */}
                 <TextFieldInput
                   name="email"
                   id="email"
@@ -195,6 +202,7 @@ const Register = () => {
                   }
                 />
 
+                {/* Birthday and Gender */}
                 <Box className="input-each-wrap">
                   <Datepicker
                     id="birthday"
@@ -221,6 +229,7 @@ const Register = () => {
                   />
                 </Box>
 
+                {/* Password and Confirm Password */}
                 <Box className="input-each-wrap">
                   <TextFieldInput
                     name="password"
@@ -262,19 +271,26 @@ const Register = () => {
                 </Box>
               </Box>
 
+              {/* Terms and Conditions */}
               <FormGroup className="auth-agree">
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox
+                      name="termsAccepted"
+                      checked={registerFormik.values.termsAccepted}
+                      onChange={registerFormik.handleChange}
+                    />
+                  }
                   label={
                     <div>
                       <span>I accept </span>
                       <Link to="/design/auth/login">Terms and Conditions.</Link>
                     </div>
                   }
-                  required
                 />
               </FormGroup>
 
+              {/* Submit Button */}
               <ButtonField
                 type="submit"
                 fullWidth
@@ -283,6 +299,7 @@ const Register = () => {
               />
             </form>
 
+            {/* Sign In Redirect */}
             <p className="text-center auth-btm-info">
               <span>Already have an account?</span> <Link to="/login">Sign In</Link>
             </p>

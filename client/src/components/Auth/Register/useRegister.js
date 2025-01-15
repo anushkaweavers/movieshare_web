@@ -20,16 +20,17 @@ export const useRegister = () => {
     },
     validationSchema: registrationFormValidation,
     onSubmit: async (values) => {
-      console.log("Submitting form with values:", values);
-      setIsPending(true);
+      console.log("Form submitted with values:", values);  // Log form values
+      setIsPending(true);  // Indicate loading state
 
       try {
-        await registerUserApi(values);
-        console.log("User successfully registered");
-        setIsPending(false);
+        const response = await registerUserApi(values);  // Call your API function
+        console.log("API response:", response);  // Log the response
+        setIsPending(false);  // Turn off loading
+        return response;
       } catch (error) {
-        console.error("Error registering user:", error);
-        setIsPending(false);
+        console.error("Error occurred during registration:", error);  // Log any errors
+        setIsPending(false);  // Turn off loading in case of error
       }
     },
   });
