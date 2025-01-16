@@ -8,15 +8,9 @@ import {
   FormGroup,
   Grid2,
 } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import SwiperNavButton from "../../Layout/SwiperNavButton";
 import "swiper/css";
 import "swiper/css/navigation";
 import TextFieldInput from "../Common/UiComps/TextField";
-import DropDownField from "../Common/UiComps/DropDownField";
-import Datepicker from "../Common/UiComps/DatePicker";
-import dayjs from "dayjs";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
 import LeftSection from "../Common/LeftSection"; // Ensure the correct path to LeftSection
