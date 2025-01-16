@@ -5,7 +5,9 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
-
+const bcrypt = require('bcryptjs');  
+const saltRounds = 10; 
+const User = require('../models/user.model');  
 
 /**
  * Log in a user with email and password.
@@ -15,25 +17,22 @@ const config = require('../config/config');
  * @throws {ApiError} - If email or password is incorrect.
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
-  const user = await userService.getUserByEmail(email);
-
+  const user = await User.findOne({ email });
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
-  console.log('Checking password for user:', email);
-  console.log('Password hash:', user.passwordHash);
-
-  const isPasswordValid = await user.isPasswordMatch(password);
-
-  console.log('Password match result:', isPasswordValid);
-
-  if (!isPasswordValid) {
+  // Compare the provided password with the stored passwordHash
+  const match = await bcrypt.compare(password, user.passwordHash);
+  if (!match) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
   return user;
 };
+
+
+
 
 
 /**
@@ -61,24 +60,17 @@ const refreshAuth = async (refreshToken) => {
   return tokenService.refreshAuth(refreshToken);
 };
 
-const resetPassword = async (userId, newPassword) => {
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      console.log('User not found!');
-      return;
-    }
-
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    user.passwordHash = hashedPassword;
-
-    await user.save();
-
-    console.log('New password saved:', hashedPassword);
-  } catch (error) {
-    console.error('Error during password reset:', error);
+const resetPassword = async (userId, newPasswordHash) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+
+  // Update the passwordHash field
+  user.passwordHash = newPasswordHash;
+
+  // Save changes to the database
+  await user.save();
 };
 
 

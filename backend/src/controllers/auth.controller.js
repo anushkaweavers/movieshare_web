@@ -4,6 +4,7 @@ const { authService, userService, emailService, tokenService } = require('../ser
 const ApiError = require('../utils/ApiError');
 const User = require('../models/user.model'); // Adjust the path as needed
 const bcrypt = require('bcryptjs');
+const saltRounds = 10; // This is a typical value, you can increase it for higher security
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
@@ -70,42 +71,31 @@ const forgotPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const token = req.query.token || req.body.token;
+  const { token } = req.query;
+  const { newPassword, confirmPassword } = req.body;
+
   if (!token) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
   }
-
-  const { newPassword } = req.body;
-  if (!newPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'New password must be provided');
+  if (!newPassword || !confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Both passwords are required');
+  }
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match');
   }
 
-  try {
-    // Verify the reset password token
-    const { userId } = await authService.verifyResetPasswordToken(token);
+  // Verify the token and extract userId
+  const { userId } = await authService.verifyResetPasswordToken(token);
 
-    // Find the user
-    const user = await userService.getUserById(userId);
-    if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-    }
+  // Hash the new password before saving
+  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    // Update the password hash
-    user.passwordHash = newPassword; // Will trigger the `pre('save')` hook to hash
-    await user.save();
+  // Update the user's passwordHash field
+  await authService.resetPassword(userId, hashedPassword);
 
-    // Invalidate the reset token
-    await tokenService.invalidateToken(token);
-
-    res.status(httpStatus.OK).json({ message: 'Password reset successful' });
-  } catch (error) {
-    console.error('Error during password reset:', error.message);
-    res.status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR).send({
-      code: error.statusCode || 500,
-      message: error.message || 'Failed to reset password',
-    });
-  }
+  res.status(httpStatus.OK).json({ message: 'Password reset successful' });
 });
+
 
 // Send verification email
 const sendVerificationEmail = catchAsync(async (req, res) => {

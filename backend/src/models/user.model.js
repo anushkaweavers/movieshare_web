@@ -90,16 +90,17 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
   return !!user;
 };
-
 userSchema.pre('save', async function (next) {
+  // Only hash the password if it's a new password or has been modified
   if (this.isModified('password')) {
-    // Hash the plain password before saving
-    console.log('Hashing password:', this.password);
     this.passwordHash = await bcrypt.hash(this.password, saltRounds);
-    console.log('Hashed password:', this.passwordHash);
   }
   next();
 });
+
+userSchema.methods.isPasswordMatch = async function (password) {
+  return bcrypt.compare(password, this.passwordHash);
+};
 
 
 userSchema.methods.isPasswordMatch = async function (password) {
