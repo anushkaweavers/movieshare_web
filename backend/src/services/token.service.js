@@ -7,13 +7,18 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const { JWT_SECRET } = process.env;
 
-
+// Generate a token with expiration and type
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
-  const payload = { userId, type, iat: moment().unix(), exp: expires.unix() };
+  const payload = {
+    userId,
+    type,
+    iat: moment().unix(),
+    exp: expires.unix(), // expiration time in seconds
+  };
   return jwt.sign(payload, secret);
 };
 
-
+// Generate access and refresh tokens
 const generateAuthTokens = async (user) => {
   const accessExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessExpires, tokenTypes.ACCESS);
@@ -22,20 +27,26 @@ const generateAuthTokens = async (user) => {
   const refreshToken = generateToken(user.id, refreshExpires, tokenTypes.REFRESH);
 
   // Save the refresh token to the database
-  await Token.create({ token: refreshToken, user: user.id, type: tokenTypes.REFRESH, expires: refreshExpires.toDate() });
+  await Token.create({
+    token: refreshToken,
+    user: user.id,
+    type: tokenTypes.REFRESH,
+    expires: refreshExpires.toDate(),
+  });
 
   return { accessToken, refreshToken };
 };
+
+// Invalidate a token in the database
 const invalidateToken = async (token) => {
   try {
     // Atomically check and update the token status
     const result = await Token.findOneAndUpdate(
       { token, invalidated: { $ne: true } }, // Ensure it's not already invalidated
-      { $set: { invalidated: true, expires: moment().toDate() } }, // Set the invalidated flag
+      { $set: { invalidated: true, expires: moment().toDate() } }, // Set invalidated flag and update expiration
       { new: true, upsert: false } // Ensure it returns the updated document
     );
 
-    // If no result is found, it means the token was already invalidated
     if (!result) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Token is already invalidated');
     }
@@ -47,10 +58,18 @@ const invalidateToken = async (token) => {
   }
 };
 
+// Generate reset password token and save it to the database
 const generateResetPasswordToken = async (user) => {
   const expires = moment().add(1, 'hour'); // Set token to expire in 1 hour
   const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
 
+  // Check if the reset password token already exists in the database
+  const existingToken = await Token.findOne({ user: user.id, type: tokenTypes.RESET_PASSWORD, invalidated: { $ne: true } });
+  if (existingToken) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'A reset password token already exists for this user');
+  }
+
+  // Save the reset password token to the database
   await Token.create({
     token: resetPasswordToken,
     user: user.id,
@@ -61,13 +80,29 @@ const generateResetPasswordToken = async (user) => {
   return resetPasswordToken;
 };
 
+// Verify the reset password token
 const verifyResetPasswordToken = async (token) => {
   try {
+    // Verify the token using the JWT secret
     const payload = jwt.verify(token, config.jwt.secret);
+
+    // Check if the token is of type RESET_PASSWORD
     if (payload.type !== tokenTypes.RESET_PASSWORD) {
       throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
     }
-    return payload;
+
+    // Optionally, check if the token exists and is not invalidated in the database
+    const existingToken = await Token.findOne({
+      token,
+      invalidated: { $ne: true },
+      type: tokenTypes.RESET_PASSWORD,
+    });
+    
+    if (!existingToken) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid or expired token');
+    }
+
+    return payload;  // Returning the decoded payload (userId, etc.)
   } catch (error) {
     console.error('Token verification failed:', error.message);
     if (error.name === 'TokenExpiredError') {
@@ -77,10 +112,9 @@ const verifyResetPasswordToken = async (token) => {
   }
 };
 
-
 module.exports = {
   generateResetPasswordToken,
   generateAuthTokens,
   invalidateToken,
-  verifyResetPasswordToken
+  verifyResetPasswordToken,
 };

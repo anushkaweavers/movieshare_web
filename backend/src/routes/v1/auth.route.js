@@ -19,7 +19,6 @@ router.post('/logout', validate(authValidation.logout), authController.logout);
 // Refresh tokens route
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
 
-// Forgot password route
 router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
 
 // Reset password route

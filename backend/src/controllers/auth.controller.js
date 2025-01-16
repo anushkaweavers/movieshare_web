@@ -49,23 +49,25 @@ const refreshTokens = catchAsync(async (req, res) => {
   res.send(tokens);
 });
 
-// Forgot password
 const forgotPassword = catchAsync(async (req, res) => {
   const { email } = req.body;
 
+  // Fetch the user by email
   const user = await userService.getUserByEmail(email);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
 
+  // Generate a reset password token
   const resetPasswordToken = await tokenService.generateResetPasswordToken(user);
-  const resetPasswordLink = `${config.appUrl}/reset-password?token=${resetPasswordToken}`;  // Construct the reset password URL
+  const resetPasswordLink = `${config.appUrl}/reset-password?token=${resetPasswordToken}`;
 
   try {
+    // Send the reset password email
     await emailService.sendResetPasswordEmail(email, resetPasswordLink);
+
     res.status(httpStatus.OK).json({
       message: 'Password reset email sent successfully',
-      debug: { email, resetPasswordLink }, // Debug info for testing
     });
   } catch (error) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to send password reset email');
@@ -73,14 +75,18 @@ const forgotPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const token = req.query.token || req.body.token;
+  const { token } = req.query;  // Token should be passed in the URL query
   if (!token) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
   }
 
-  const { newPassword } = req.body;
-  if (!newPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'New password must be provided');
+  const { newPassword, confirmPassword } = req.body;
+  if (!newPassword || !confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Both password and confirm password are required');
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match');
   }
 
   try {
@@ -94,15 +100,14 @@ const resetPassword = catchAsync(async (req, res) => {
     }
 
     // Update the password hash
-    user.passwordHash = newPassword; // Will trigger the `pre('save')` hook to hash
+    user.passwordHash = newPassword;  // This will trigger 'pre-save' hook to hash the password
     await user.save();
 
-    // Invalidate the reset token
+    // Invalidate the reset token (optional)
     await tokenService.invalidateToken(token);
 
     res.status(httpStatus.OK).json({ message: 'Password reset successful' });
   } catch (error) {
-    console.error('Error during password reset:', error.message);
     res.status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR).send({
       code: error.statusCode || 500,
       message: error.message || 'Failed to reset password',
