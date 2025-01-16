@@ -4,6 +4,7 @@ const { authService, userService, emailService, tokenService } = require('../ser
 const ApiError = require('../utils/ApiError');
 const User = require('../models/user.model'); // Adjust the path as needed
 const bcrypt = require('bcryptjs');
+const config = require('../config/config'); // Adjust the path as needed
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
@@ -58,11 +59,13 @@ const forgotPassword = catchAsync(async (req, res) => {
   }
 
   const resetPasswordToken = await tokenService.generateResetPasswordToken(user);
+  const resetPasswordLink = `${config.appUrl}/reset-password?token=${resetPasswordToken}`;  // Construct the reset password URL
+
   try {
-    await emailService.sendResetPasswordEmail(email, resetPasswordToken);
+    await emailService.sendResetPasswordEmail(email, resetPasswordLink);
     res.status(httpStatus.OK).json({
       message: 'Password reset email sent successfully',
-      debug: { email, resetPasswordToken }, // Debug info for testing
+      debug: { email, resetPasswordLink }, // Debug info for testing
     });
   } catch (error) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to send password reset email');

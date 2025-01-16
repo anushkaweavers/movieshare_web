@@ -16,8 +16,8 @@ if (config.env !== 'test') {
     });
 }
 
-const sendEmail = async (to, subject, text) => {
-  const msg = { from: config.email.from, to, subject, text };
+const sendEmail = async (to, subject, text, html = '') => {
+  const msg = { from: config.email.from, to, subject, text, html };
   try {
     const info = await transport.sendMail(msg);
     logger.info(`Email sent: ${info.messageId}`);
@@ -29,13 +29,24 @@ const sendEmail = async (to, subject, text) => {
 };
 
 const sendResetPasswordEmail = async (to, token) => {
-  const subject = 'Reset password';
+  const subject = 'Reset your password';
   const resetPasswordUrl = `http://localhost:3000/v1/auth/reset-password?token=${token}`;
+  
   const text = `Dear user,\n\nTo reset your password, click on this link: ${resetPasswordUrl}\nIf you did not request any password resets, please ignore this email.`;
+  
+  // HTML version of the email for clickable link
+  const html = `
+    <p>Dear user,</p>
+    <p>To reset your password, click on the link below:</p>
+    <a href="${resetPasswordUrl}" target="_blank">Reset Password</a>
+    <p>If you did not request a password reset, please ignore this email.</p>
+  `;
 
-  const info = await sendEmail(to, subject, text);
+  // Send the email with both text and HTML versions
+  const info = await sendEmail(to, subject, text, html);
   console.log('Email response:', info); // Log the email response
 };
+
 /*
  * Send email verification email
  * @param {string} to - The recipient's email address
@@ -45,12 +56,19 @@ const sendResetPasswordEmail = async (to, token) => {
 const sendVerificationEmail = async (to, token) => {
   const subject = 'Email Verification';
   const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;  // Adjust URL based on actual front-end routing
-  const text = `Dear user,
-  To verify your email, click on this link: ${verificationUrl}
-  If you did not create an account, please ignore this email.`;
+  
+  const text = `Dear user,\n\nTo verify your email, click on this link: ${verificationUrl}\nIf you did not create an account, please ignore this email.`;
+  
+  // HTML version of the verification email
+  const html = `
+    <p>Dear user,</p>
+    <p>To verify your email, click on the link below:</p>
+    <a href="${verificationUrl}" target="_blank">Verify Email</a>
+    <p>If you did not create an account, please ignore this email.</p>
+  `;
 
   // Call sendEmail function to send the actual email
-  await sendEmail(to, subject, text);
+  await sendEmail(to, subject, text, html);
 };
 
 module.exports = {
