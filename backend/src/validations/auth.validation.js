@@ -36,17 +36,15 @@ const refreshTokens = {
 };
 
 const forgotPassword = {
-  body: Joi.object().keys({
+  body: Joi.object({
     email: Joi.string().email().required(),
   }),
 };
 
-const resetPassword = {
-  body: Joi.object().keys({
-    newPassword: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().min(6).required(),
-  }),
-};
+const resetPassword = Joi.object({
+  newPassword: Joi.string().required().label('New Password'), // Change `password` to `newPassword`
+});
+
 
 const verifyEmail = {
   query: Joi.object({

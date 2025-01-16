@@ -2,7 +2,8 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, emailService, tokenService } = require('../services');
 const ApiError = require('../utils/ApiError');
-const config = require('../config/config'); // Adjust the path as needed
+const User = require('../models/user.model'); // Adjust the path as needed
+const bcrypt = require('bcryptjs');
 
 // Register a new user
 const register = catchAsync(async (req, res) => {
@@ -23,14 +24,23 @@ const login = catchAsync(async (req, res) => {
 });
 
 // Logout user
-const logout = catchAsync(async (req, res) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-  if (!token) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Token is required');
+const logout = async (req, res) => {
+  try {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    if (!token) {
+      return res.status(400).json({ message: 'Token is required' });
+    }
+
+    const result = await tokenService.invalidateToken(token);
+    if (!result) {
+      return res.status(400).json({ message: 'Token invalidation failed' });
+    }
+
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error logging out', error: err.message });
   }
-  await tokenService.invalidateToken(token);
-  res.status(httpStatus.OK).json({ message: 'Logged out successfully' });
-});
+};
 
 // Refresh tokens
 const refreshTokens = catchAsync(async (req, res) => {
@@ -41,35 +51,60 @@ const refreshTokens = catchAsync(async (req, res) => {
 // Forgot password
 const forgotPassword = catchAsync(async (req, res) => {
   const { email } = req.body;
+
   const user = await userService.getUserByEmail(email);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
 
   const resetPasswordToken = await tokenService.generateResetPasswordToken(user);
-  const resetPasswordLink = `${config.appUrl}/reset-password?token=${resetPasswordToken}`;
-  await emailService.sendResetPasswordEmail(email, resetPasswordLink);
-  res.status(httpStatus.OK).json({ message: 'Password reset email sent successfully' });
+  try {
+    await emailService.sendResetPasswordEmail(email, resetPasswordToken);
+    res.status(httpStatus.OK).json({
+      message: 'Password reset email sent successfully',
+      debug: { email, resetPasswordToken }, // Debug info for testing
+    });
+  } catch (error) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to send password reset email');
+  }
 });
 
-// Reset password
 const resetPassword = catchAsync(async (req, res) => {
-  const { token } = req.query;
-  const { newPassword, confirmPassword } = req.body;
-
+  const token = req.query.token || req.body.token;
   if (!token) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
   }
-  if (!newPassword || !confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Both passwords are required');
-  }
-  if (newPassword !== confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match');
+
+  const { newPassword } = req.body;
+  if (!newPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'New password must be provided');
   }
 
-  const { userId } = await authService.verifyResetPasswordToken(token);
-  await authService.resetPassword(userId, newPassword);
-  res.status(httpStatus.OK).json({ message: 'Password reset successful' });
+  try {
+    // Verify the reset password token
+    const { userId } = await authService.verifyResetPasswordToken(token);
+
+    // Find the user
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // Update the password hash
+    user.passwordHash = newPassword; // Will trigger the `pre('save')` hook to hash
+    await user.save();
+
+    // Invalidate the reset token
+    await tokenService.invalidateToken(token);
+
+    res.status(httpStatus.OK).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Error during password reset:', error.message);
+    res.status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR).send({
+      code: error.statusCode || 500,
+      message: error.message || 'Failed to reset password',
+    });
+  }
 });
 
 // Send verification email

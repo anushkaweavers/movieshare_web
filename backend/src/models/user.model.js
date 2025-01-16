@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
-
+const ApiError = require('../utils/ApiError');
 const saltRounds = 8;
-
 /**
  * User Schema
  */
@@ -37,7 +36,12 @@ const userSchema = mongoose.Schema(
         }
       },
     },
-    // Removed plain `password` and retained only `passwordHash`
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     passwordHash: {
       type: String,
       required: true,
@@ -80,27 +84,24 @@ const userSchema = mongoose.Schema(
 );
 
 /**
- * Static method to check if an email is already taken.
+ * Static method to check if email is already taken.
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
   return !!user;
 };
 
-/**
- * Pre-save hook to hash passwords.
- */
 userSchema.pre('save', async function (next) {
-  if (this.isModified('passwordHash')) {
-    console.log('Hashing password:', this.passwordHash);
-    this.passwordHash = await bcrypt.hash(this.passwordHash, saltRounds);
+  if (this.isModified('password')) {
+    // Hash the plain password before saving
+    console.log('Hashing password:', this.password);
+    this.passwordHash = await bcrypt.hash(this.password, saltRounds);
+    console.log('Hashed password:', this.passwordHash);
   }
   next();
 });
 
-/**
- * Method to compare a plain text password with the stored passwordHash.
- */
+
 userSchema.methods.isPasswordMatch = async function (password) {
   console.log('Comparing plain password:', password);
   console.log('With hashed password:', this.passwordHash);
@@ -108,5 +109,6 @@ userSchema.methods.isPasswordMatch = async function (password) {
   console.log('Password comparison result:', result);
   return result;
 };
+
 
 module.exports = mongoose.model('User', userSchema);
