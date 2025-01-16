@@ -89,10 +89,10 @@ import { useLogin } from "./useLogin";
                 </Box>
   
                 <FormGroup className="auth-agree">
-                  <FormControlLabel control={<Checkbox defaultChecked />} label="Remember me" />
-                  <Link href="/forgot_password">Forgot password?</Link>
-                </FormGroup>
-  
+  <FormControlLabel control={<Checkbox defaultChecked />} label="Remember me" />
+  <Link to="/forgot_password">Forgot password?</Link>
+</FormGroup>
+
                 <FormGroup>
                   <ButtonField type="submit" mainCls="p-btn" label="Log In" />
                 </FormGroup>
