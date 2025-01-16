@@ -7,7 +7,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
 import { logInApi, resendEmailVerifyApi, socialLoginApi } from "../../../actions/auth.actions";
 import { updateUserData } from "../../../redux/Auth/user.slice"; // Add this import
-import { loginValidation } from "../../../Validations/Auth/login.validation";
+import loginValidation from "../../../Validations/Auth/login.validation";
 
 export const useLogin = () => {
   const cookies = new Cookies();

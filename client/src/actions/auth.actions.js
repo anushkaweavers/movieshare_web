@@ -86,14 +86,20 @@ export const resendEmailVerifyApi = catchAsync(async (email) => {
  *          email: string
  *      }
  */
-export const forgotPasswordApi = catchAsync(async (email) => {
+export const forgotPasswordApi = async (data) => {
   try {
-    const data = await axiosCustom.post("auth/forgot-password", { email });
-    return data;
+    console.log("API call with data: ", data);
+
+    // Use axiosCustom for the request
+    const response = await axiosCustom.post("auth/forgot-password", data);
+
+    console.log("API response: ", response.data); // Log the response
+    return response.data; // Return only the data part of the response
   } catch (error) {
-    throw new Error(error.response?.data?.message || error.message);
+    console.error("Error in forgotPasswordApi:", error);
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
-});
+};
 
 /**
  * @endpoint 'auth/email-verification'
