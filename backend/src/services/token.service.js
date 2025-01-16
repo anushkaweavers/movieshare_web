@@ -80,31 +80,21 @@ const generateResetPasswordToken = async (user) => {
   return resetPasswordToken;
 };
 
-// Verify the reset password token
 const verifyResetPasswordToken = async (token) => {
+  if (!token) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
+  }
   try {
-    // Verify the token using the JWT secret
     const payload = jwt.verify(token, config.jwt.secret);
 
-    // Check if the token is of type RESET_PASSWORD
+    console.log('Verified reset token payload:', payload);
+
     if (payload.type !== tokenTypes.RESET_PASSWORD) {
       throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
     }
-
-    // Optionally, check if the token exists and is not invalidated in the database
-    const existingToken = await Token.findOne({
-      token,
-      invalidated: { $ne: true },
-      type: tokenTypes.RESET_PASSWORD,
-    });
-    
-    if (!existingToken) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid or expired token');
-    }
-
-    return payload;  // Returning the decoded payload (userId, etc.)
+    return payload;
   } catch (error) {
-    console.error('Token verification failed:', error.message);
+    console.error('Error verifying reset token:', error);
     if (error.name === 'TokenExpiredError') {
       throw new ApiError(httpStatus.UNAUTHORIZED, 'Reset password token has expired');
     }

@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const bcrypt = require('bcryptjs');
 const { User, SavedMovies, GroupedCollections, Ratings, Posts } = require('../models');
 const ApiError = require('../utils/ApiError');
+const saltRounds = 8; // Define the number of salt rounds for bcrypt
 
 /**
  * Create a user
