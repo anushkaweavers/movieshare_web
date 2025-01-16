@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Box,
   Checkbox,
@@ -28,7 +28,9 @@ import "../../global.css";
 import { useRegister } from "./useRegister";
 
 const Register = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const { registerFormik, isPending } = useRegister();
+
   const genderOptions = [
     { value: "Male", title: "Male" },
     { value: "Female", title: "Female" },
@@ -42,7 +44,13 @@ const Register = () => {
     const formattedBirthday = dayjs(registerFormik.values.birthday).format("YYYY-MM-DD");
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
-    await registerFormik.handleSubmit();
+    try {
+      await registerFormik.handleSubmit(); // Submitting the form
+      // On successful registration, redirect to the login page
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   return (
@@ -283,7 +291,7 @@ const Register = () => {
                   label={
                     <div>
                       <span>I accept </span>
-                      <Link to="/design/auth/login">Terms and Conditions.</Link>
+                      <Link to="/login">Terms and Conditions.</Link>
                     </div>
                   }
                 />
