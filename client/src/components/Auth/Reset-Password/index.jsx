@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,17 +14,52 @@ import "swiper/css/navigation";
 import TextFieldInput from "../Common/UiComps/TextField";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection"; // LeftSection integrated
-import useResetPassword from "./useResetpass";
-import "../../custom.css";
-import "../../responsive.css";
-import "../../dark.css";
-import "../../developer.css";
-import "../../global.css";
+import LeftSection from "../Common/LeftSection";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useFormik } from "formik";
+import toast from "react-hot-toast";
+import { resetPasswordApi } from "../../../actions/auth.actions";
+import { resetPassFormValidation } from "../../../Validations/Auth/reset.validations";
 
 const ResetPassword = () => {
-  const { resetPassFormik, isPending } = useResetPassword();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+
+  const token = new URLSearchParams(location.search).get("id"); // Extract token from URL
+
+  const handleResetPass = async (values) => {
+    const body = {
+      token, // Include token from the URL
+      new_password: values.password,
+    };
+
+    setIsPending(true);
+    try {
+      const response = await resetPasswordApi(body); // Call the API to reset the password
+      if (response.status) {
+        setDialogOpen(true); // Open success dialog
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const resetPassFormik = useFormik({
+    initialValues: {
+      password: "",
+      confirm_password: "",
+    },
+    validationSchema: resetPassFormValidation,
+    onSubmit: (values) => {
+      handleResetPass(values);
+    },
+  });
 
   return (
     <Container maxWidth={false} className="auth-wrapper">
@@ -119,7 +154,7 @@ const ResetPassword = () => {
           <h3>Password Reset Successfully</h3>
           <p>Your password has been successfully reset.</p>
           <p>You can now log in.</p>
-          <Button onClick={() => setDialogOpen(false)} className="p-btn">
+          <Button onClick={() => navigate("/login")} className="p-btn">
             Log In
           </Button>
         </DialogContent>

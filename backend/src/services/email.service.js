@@ -29,7 +29,7 @@ const sendEmail = async (to, subject, text, html = '') => {
   const msg = { from: config.email.from, to, subject, text, html };
   try {
     const info = await transport.sendMail(msg);
-    logger.info(`Email sent: ${info.messageId}`);
+    logger.info(`Email sent to ${to}: ${info.messageId}`);
     return info;
   } catch (error) {
     logger.error(`Error sending email to ${to}:`, error);
@@ -45,11 +45,11 @@ const sendEmail = async (to, subject, text, html = '') => {
  */
 const sendResetPasswordEmail = async (to, token) => {
   const subject = 'Reset your password';
-  const resetPasswordUrl = `${config.appUrl}/v1/auth/reset-password?token=${token}`;  // Use dynamic base URL from config
+  // Update the reset password URL to use your frontend address
+  const resetPasswordUrl = `http://localhost:3001/reset_password?token=${token}`;
   
   const text = `Dear user,\n\nTo reset your password, click on this link: ${resetPasswordUrl}\nIf you did not request any password resets, please ignore this email.`;
   
-  // HTML version of the email for clickable link
   const html = `
     <p>Dear user,</p>
     <p>To reset your password, click on the link below:</p>
@@ -57,16 +57,16 @@ const sendResetPasswordEmail = async (to, token) => {
     <p>If you did not request a password reset, please ignore this email.</p>
   `;
 
-  // Send the email with both text and HTML versions
   try {
     const info = await sendEmail(to, subject, text, html);
     logger.info('Password reset email sent:', info);
-    return info;  // Return the result for further processing if needed
+    return info;
   } catch (error) {
     logger.error('Error sending password reset email:', error);
     throw new Error('Failed to send reset password email');
   }
 };
+
 
 /**
  * Send email verification email.
@@ -75,12 +75,13 @@ const sendResetPasswordEmail = async (to, token) => {
  * @returns {Promise} Resolves when the verification email is sent.
  */
 const sendVerificationEmail = async (to, token) => {
-  const subject = 'Email Verification';
-  const verificationUrl = `${config.appUrl}/verify-email?token=${token}`;  // Use dynamic URL
+  const subject = 'Verify Your Email';
+
+  // Ensure `config.appUrl` is set to your frontend base URL
+  const verificationUrl = `${config.appUrl}/verify-email?token=${token}`;
 
   const text = `Dear user,\n\nTo verify your email, click on this link: ${verificationUrl}\nIf you did not create an account, please ignore this email.`;
-  
-  // HTML version of the verification email
+
   const html = `
     <p>Dear user,</p>
     <p>To verify your email, click on the link below:</p>
@@ -88,10 +89,10 @@ const sendVerificationEmail = async (to, token) => {
     <p>If you did not create an account, please ignore this email.</p>
   `;
 
-  // Call sendEmail function to send the actual email
   try {
-    await sendEmail(to, subject, text, html);
+    const info = await sendEmail(to, subject, text, html);
     logger.info(`Verification email sent to ${to}`);
+    return info;
   } catch (error) {
     logger.error('Error sending verification email:', error);
     throw new Error('Failed to send verification email');
