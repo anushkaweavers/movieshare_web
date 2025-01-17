@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -8,8 +8,6 @@ import {
   FormGroup,
   Grid,
 } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
 import SwiperNavButton from "../../Layout/SwiperNavButton";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -28,8 +26,8 @@ import "../../global.css";
 import { useRegister } from "./useRegister";
 
 const Register = () => {
-  const navigate = useNavigate(); // Initialize navigate
-  const { registerFormik, isPending } = useRegister();
+  const navigate = useNavigate();
+  const { registerFormik, isPending, apiError } = useRegister();
 
   const genderOptions = [
     { value: "Male", title: "Male" },
@@ -40,14 +38,13 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Convert the birthday to the format YYYY-MM-DD for backend compatibility
-    const formattedBirthday = dayjs(registerFormik.values.birthday).format("YYYY-MM-DD");
+    const formattedBirthday = dayjs(registerFormik.values.birthday).format(
+      "YYYY-MM-DD"
+    );
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
     try {
-      await registerFormik.handleSubmit(); // Submitting the form
-      // On successful registration, redirect to the login page
-      navigate("/login");
+      await registerFormik.handleSubmit();
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -56,62 +53,9 @@ const Register = () => {
   return (
     <Container maxWidth={false} className="auth-wraper">
       <Grid container spacing={0} className="auth-wraper-inn">
-        {/* Left Section with Swiper */}
+        {/* Left Section */}
         <Grid item xs={12} sm={12} md={7}>
-          <Box className="auth-slider-wrap">
-            <Swiper
-              slidesPerView={1}
-              loop
-              modules={[Navigation]}
-              className="authSwiper"
-            >
-              <SwiperSlide>
-                <Box className="auth-slider-img-holder">
-                  <img src="/images/signup-slider-img1.jpg" alt="" />
-                  <Box className="auth-slider-info">
-                    <Box className="auth-slider-info-inner">
-                      <Box className="auth-slider-info-inner-top">
-                        <h1>
-                          Start Your <br />
-                          Journey With Us.
-                        </h1>
-                        <SwiperNavButton />
-                      </Box>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur. Integer vel sed
-                        enim aliquet volutpat adipiscing ante amet. Aliquet
-                        volutpat ut magna lectus mi eu consectetur placerat
-                        facilisi. Enim et cursus at semper massa justo gravida.
-                        Eu parturient et neque morbi felis vitae nunc fermentum.
-                      </p>
-                    </Box>
-                  </Box>
-                </Box>
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <Box className="auth-slider-img-holder">
-                  <img src="/images/signup-slider-img2.jpg" alt="" />
-                  <Box className="auth-slider-info">
-                    <Box className="auth-slider-info-inner">
-                      <Box className="auth-slider-info-inner-top">
-                        <h1>
-                          Welcome to <br />
-                          Our Community.
-                        </h1>
-                        <SwiperNavButton />
-                      </Box>
-                      <p>
-                        Join a community of passionate individuals. Explore
-                        opportunities, connect, and grow with us. Let’s
-                        embark on this journey together!
-                      </p>
-                    </Box>
-                  </Box>
-                </Box>
-              </SwiperSlide>
-            </Swiper>
-          </Box>
+          <LeftSection />
         </Grid>
 
         {/* Right Section */}
@@ -137,7 +81,7 @@ const Register = () => {
                   <TextFieldInput
                     name="firstName"
                     id="firstName"
-                    lable="First Name"
+                    label="First Name"
                     placeholder="Enter first name"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
@@ -151,11 +95,10 @@ const Register = () => {
                         : ""
                     }
                   />
-
                   <TextFieldInput
                     name="lastName"
                     id="lastName"
-                    lable="Last Name"
+                    label="Last Name"
                     placeholder="Enter last name"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
@@ -175,7 +118,7 @@ const Register = () => {
                 <TextFieldInput
                   name="username"
                   id="username"
-                  lable="User Name"
+                  label="User Name"
                   placeholder="Enter user name"
                   onChange={registerFormik.handleChange}
                   onBlur={registerFormik.handleBlur}
@@ -194,7 +137,7 @@ const Register = () => {
                 <TextFieldInput
                   name="email"
                   id="email"
-                  lable="Email"
+                  label="Email"
                   placeholder="Enter email"
                   onChange={registerFormik.handleChange}
                   onBlur={registerFormik.handleBlur}
@@ -242,7 +185,7 @@ const Register = () => {
                     name="password"
                     type="password"
                     id="password"
-                    lable="Password"
+                    label="Password"
                     placeholder="Enter Password"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
@@ -261,7 +204,7 @@ const Register = () => {
                     name="confirmPassword"
                     type="password"
                     id="confirmPassword"
-                    lable="Confirm password"
+                    label="Confirm password"
                     placeholder="Enter Confirm password"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
@@ -291,11 +234,13 @@ const Register = () => {
                   label={
                     <div>
                       <span>I accept </span>
-                      <Link to="/login">Terms and Conditions.</Link>
+                      <Link to="/terms">Terms and Conditions</Link>.
                     </div>
                   }
                 />
               </FormGroup>
+
+              {apiError && <p className="error-text">{apiError}</p>}
 
               {/* Submit Button */}
               <ButtonField
@@ -303,10 +248,10 @@ const Register = () => {
                 fullWidth
                 label="Sign Up"
                 mainCls="p-btn"
+                disabled={isPending}
               />
             </form>
 
-            {/* Sign In Redirect */}
             <p className="text-center auth-btm-info">
               <span>Already have an account?</span> <Link to="/login">Sign In</Link>
             </p>
