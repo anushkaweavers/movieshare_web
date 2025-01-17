@@ -99,8 +99,9 @@ import { useLogin } from "./useLogin";
               </form>
   
               <p className="text-center auth-btm-info">
-                Don't have an account? <Link href="/signup">Sign Up for Free</Link>
-              </p>
+  Don't have an account? <Link to="/">Sign Up for Free</Link>
+</p>
+
             </Box>
           </Grid2>
         </Grid2>

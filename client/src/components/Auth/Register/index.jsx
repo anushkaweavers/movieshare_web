@@ -37,19 +37,28 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
+    // Format the birthday before submitting
     const formattedBirthday = dayjs(registerFormik.values.birthday).format(
       "YYYY-MM-DD"
     );
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
-
+  
     try {
-      await registerFormik.handleSubmit();
+      // Call the formik submit handler and await the result
+      const response = await registerFormik.handleSubmit();
+  
+      // Assuming the API returns a success flag or similar
+      if (response && response.success) {
+        navigate("/login"); // Navigate to login page
+      } else {
+        console.error("Registration failed:", response?.message || "Unknown error");
+      }
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("Error during registration:", error);
     }
   };
-
+  
   return (
     <Container maxWidth={false} className="auth-wraper">
       <Grid container spacing={0} className="auth-wraper-inn">

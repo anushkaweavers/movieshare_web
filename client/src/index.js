@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';  // Import the Provider
 import { GoogleOAuthProvider } from '@react-oauth/google';  // Google OAuth provider
 import App from './App';
 import store from './redux/store';  // Import your Redux store
+import "react-toastify/dist/ReactToastify.css";
 
 // Replace with your actual Google OAuth client ID
 const clientId = "YOUR_GOOGLE_CLIENT_ID";

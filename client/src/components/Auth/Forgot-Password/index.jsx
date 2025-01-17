@@ -14,6 +14,7 @@ import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
 import LeftSection from "../Common/LeftSection";
 import { useForgotPassword } from "./useForgotpass";
+import toas from "react-hot-toast";
 
 import "../../custom.css";
 import "../../responsive.css";
@@ -94,9 +95,9 @@ const ForgotPassword = () => {
 
                 <FormGroup>
                   <ButtonField
-                    type="submit"
-                    mainCls="p-btn"
-                    label="Send Reset Link"
+                    type='submit'
+                    mainCls='p-btn'
+                    label='Send Reset Link'
                   />
                 </FormGroup>
               </Box>
@@ -104,10 +105,7 @@ const ForgotPassword = () => {
           </Box>
         </Grid>
       </Grid>
-
-      {/* Loader */}
       <FullScreenLoader open={isPending} />
-
       {/* Confirmation Dialog */}
       <Dialog
         open={open}
