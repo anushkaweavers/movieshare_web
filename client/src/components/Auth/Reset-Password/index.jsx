@@ -7,12 +7,10 @@ import {
   DialogContent,
   Grid,
 } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
 import TextFieldInput from "../Common/UiComps/TextField";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
+import LeftSection from "../Common/LeftSection"; // Importing LeftSection
 import { useResetPassword } from "./useResetpass";
 
 const ResetPassword = () => {
@@ -20,27 +18,42 @@ const ResetPassword = () => {
     useResetPassword();
 
   return (
-    <Container maxWidth={false} className="auth-wrapper">
+    <Container
+      maxWidth={false}
+      className="auth-wrapper"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "stretch",
+      }}
+    >
       <Grid container spacing={0} className="auth-wrapper-inner">
-        <Grid item md={7} sm={12} xs={12}>
-          <Box className="auth-slider-wrap">
-            <Swiper slidesPerView={1} loop navigation>
-              {[1, 2, 3].map((_, index) => (
-                <SwiperSlide key={index}>
-                  <Box className="auth-slider-img-holder">
-                    <img
-                      src="/images/signup-slider-img1.jpg"
-                      alt="Slider"
-                      className="slider-image"
-                    />
-                  </Box>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </Box>
+        {/* Left Section */}
+        <Grid
+          item
+          md={7}
+          sm={12}
+          xs={12}
+          style={{
+            height: "100vh", // Ensures it takes the full height of the viewport
+          }}
+        >
+          <LeftSection /> {/* Using LeftSection here */}
         </Grid>
 
-        <Grid item md={5} sm={12} xs={12} className="auth-form-outer">
+        {/* Right Section */}
+        <Grid
+          item
+          md={5}
+          sm={12}
+          xs={12}
+          className="auth-form-outer"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Box className="auth-form-wrap">
             <Box className="auth-form-top">
               <a href="/login">Back to Login</a>
@@ -98,6 +111,7 @@ const ResetPassword = () => {
         </Grid>
       </Grid>
 
+      {/* Success Dialog */}
       <Dialog open={openConfirmModal} onClose={gotoLogin}>
         <DialogContent>
           <Box>
