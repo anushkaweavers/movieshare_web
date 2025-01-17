@@ -1,21 +1,12 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Container,
-  FormGroup,
-  Grid,
-  Dialog,
-  DialogContent,
-  Button,
-} from "@mui/material";
+import { Box, Container, FormGroup, Grid, Dialog, DialogContent, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import TextFieldInput from "../Common/UiComps/TextField";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
 import LeftSection from "../Common/LeftSection";
 import { useForgotPassword } from "./useForgotpass";
-import toas from "react-hot-toast";
-
+import toast from "react-hot-toast";
 import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";
@@ -25,6 +16,16 @@ import "../../global.css";
 const ForgotPassword = () => {
   const { forgotPassFormik, isPending } = useForgotPassword();
   const [open, setOpen] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await forgotPassFormik.handleSubmit();
+      setOpen(true); // Show dialog when password reset is successful
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <Container
@@ -72,7 +73,7 @@ const ForgotPassword = () => {
               </p>
             </Box>
 
-            <form onSubmit={forgotPassFormik.handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <Box className="auth-input-wrap">
                 <TextFieldInput
                   name="email"
@@ -82,22 +83,15 @@ const ForgotPassword = () => {
                   required
                   onChange={forgotPassFormik.handleChange}
                   onBlur={forgotPassFormik.handleBlur}
-                  error={
-                    forgotPassFormik.touched.email &&
-                    !!forgotPassFormik.errors.email
-                  }
-                  helperText={
-                    forgotPassFormik.touched.email
-                      ? forgotPassFormik.errors.email
-                      : ""
-                  }
+                  error={forgotPassFormik.touched.email && !!forgotPassFormik.errors.email}
+                  helperText={forgotPassFormik.touched.email ? forgotPassFormik.errors.email : ""}
                 />
 
                 <FormGroup>
                   <ButtonField
-                    type='submit'
-                    mainCls='p-btn'
-                    label='Send Reset Link'
+                    type="submit"
+                    mainCls="p-btn"
+                    label="Send Reset Link"
                   />
                 </FormGroup>
               </Box>
@@ -105,7 +99,9 @@ const ForgotPassword = () => {
           </Box>
         </Grid>
       </Grid>
+
       <FullScreenLoader open={isPending} />
+
       {/* Confirmation Dialog */}
       <Dialog
         open={open}
@@ -119,14 +115,21 @@ const ForgotPassword = () => {
             <img
               width={34}
               height={34}
-              src="/images/successufuly-icon.svg"
+              src="/images/successufully-icon.svg"
               alt="Success Icon"
             />
           </Box>
           <h3>Password Reset Successfully</h3>
           <p>Your password has been successfully reset.</p>
           <p>You can now log in by clicking below.</p>
-          <Button className="p-btn">Log in</Button>
+          <Button
+            className="p-btn"
+            onClick={() => {
+              setOpen(false); // Close dialog and optionally redirect
+            }}
+          >
+            Log in
+          </Button>
         </DialogContent>
       </Dialog>
     </Container>
