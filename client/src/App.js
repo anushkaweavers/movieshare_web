@@ -4,7 +4,8 @@ import Register from "./components/Auth/Register/index";
 import Login from "./components/Auth/Login/index";
 import ForgotPassword from "./components/Auth/Forgot-Password/index";
 import ResetPassword from "./components/Auth/Reset-Password/index"; 
-import BannerSection from "./components/Movies/Details/BannerSection"; // Import BannerSection
+import BannerSection from "./components/Movies/Details/BannerSection"; 
+import Cast from "./components/Movies/Details/Cast";// Import BannerSection
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/forgot_password" element={<ForgotPassword />} /> {/* Forgot Password page */}
       <Route path="/reset_password" element={<ResetPassword />} /> {/* Reset Password page */}
       <Route path="/movie-banner" element={<BannerSection movieDetails={{ title: "Example Movie", release_date: "2025-01-01", runtime: 120, overview: "This is an example movie.", poster_path: "/poster.jpg", backdrop_path: "/backdrop.jpg" }} />} /> {/* Example route for BannerSection */}
+      <Route path="/movie/:id/cast" element={<Cast />} /> {/* Cast details for specific movie */}
     </Routes>
   );
 };
