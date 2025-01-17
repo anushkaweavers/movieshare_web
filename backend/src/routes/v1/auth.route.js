@@ -21,9 +21,11 @@ router.post('/refresh-tokens', validate(authValidation.refreshTokens), authContr
 
 router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
 
-// Reset password route
-router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
-
+router.post(
+    "/reset-password",
+    validate(authValidation.resetPassword),
+    authController.resetPassword
+  );
 // Send verification email route
 router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 

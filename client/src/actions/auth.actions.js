@@ -128,9 +128,10 @@ export const emailVerifyApi = catchAsync(async (id) => {
  */
 export const resetPasswordApi = catchAsync(async (value) => {
   try {
-    const data = await axiosCustom.post("auth/reset-password", value);
+    const data = await axiosCustom.post("/auth/reset-password", value); // Ensure correct endpoint format
     return data;
   } catch (error) {
+    // Handle errors by throwing the relevant message from the error response
     throw new Error(error.response?.data?.message || error.message);
   }
 });

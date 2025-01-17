@@ -5,31 +5,39 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { resetPasswordApi } from "../../../actions/auth.actions";
 import { resetPassFormValidation } from "../../../Validations/Auth/reset.validations";
 
-const useResetPassword = () => {
+export const useResetPassword = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Correct hook for navigation
+  const navigate = useNavigate();
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
   const handleResetPass = async (values) => {
-    const params = new URLSearchParams(location.search);
-    const body = {
-      token: params.get("id"),
-      new_password: values.password,
+    const token = new URLSearchParams(location.search).get("token"); // Extract 'token' from URL
+    if (!token) {
+      toast.error("Token is missing or invalid");
+      return;
+    }
+
+    const payload = {
+      newPassword: values.password,
+      confirmPassword: values.confirm_password,
     };
 
-    setIsPending(true);
     try {
-      const response = await resetPasswordApi(body);
+      setIsPending(true); // Show loader
+      const response = await resetPasswordApi({ token, ...payload }); // Send token and payload
+      setIsPending(false); // Hide loader
+
       if (response.status) {
-        setOpenConfirmModal(true);
+        toast.success("Password reset successful");
+        setOpenConfirmModal(true); // Show confirmation modal
       } else {
-        toast.error(response.message);
+        toast.error(response.message || "Failed to reset password");
       }
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsPending(false);
+      setIsPending(false); // Hide loader
+      toast.error("An error occurred during the reset process");
+      console.error(error);
     }
   };
 
@@ -45,7 +53,7 @@ const useResetPassword = () => {
   });
 
   const gotoLogin = () => {
-    navigate("/login"); // Correctly navigate to login
+    navigate("/login");
   };
 
   return {
@@ -55,5 +63,3 @@ const useResetPassword = () => {
     isPending,
   };
 };
-
-export default useResetPassword;

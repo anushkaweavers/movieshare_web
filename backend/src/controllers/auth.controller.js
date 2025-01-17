@@ -71,31 +71,27 @@ const forgotPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const { token } = req.query;
-  const { newPassword, confirmPassword } = req.body;
+  const { token, newPassword, confirmPassword } = req.body;  // Token is now in the body
 
   if (!token) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
+    throw new ApiError(httpStatus.BAD_REQUEST, "Token is required");
   }
+
   if (!newPassword || !confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Both passwords are required');
+    throw new ApiError(httpStatus.BAD_REQUEST, "Both passwords are required");
   }
+
   if (newPassword !== confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match');
+    throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
   }
 
-  // Verify the token and extract userId
+  // Your logic to handle password reset
   const { userId } = await authService.verifyResetPasswordToken(token);
-
-  // Hash the new password before saving
   const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
-  // Update the user's passwordHash field
   await authService.resetPassword(userId, hashedPassword);
 
-  res.status(httpStatus.OK).json({ message: 'Password reset successful' });
+  res.status(httpStatus.OK).json({ message: "Password reset successful" });
 });
-
 
 // Send verification email
 const sendVerificationEmail = catchAsync(async (req, res) => {

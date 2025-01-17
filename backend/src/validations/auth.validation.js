@@ -40,11 +40,16 @@ const forgotPassword = {
     email: Joi.string().email().required(),
   }),
 };
-
-const resetPassword = Joi.object({
-  newPassword: Joi.string().required().label('New Password'), // Change `password` to `newPassword`
-});
-
+const resetPassword = {
+  body: Joi.object({
+    token: Joi.string().required().label("Token"),
+    newPassword: Joi.string().min(6).required().label("New Password"),
+    confirmPassword: Joi.string()
+      .valid(Joi.ref("newPassword"))
+      .required()
+      .label("Confirm Password"),
+  }),
+};
 
 const verifyEmail = {
   query: Joi.object({

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -8,65 +8,23 @@ import {
   Grid,
 } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import TextFieldInput from "../Common/UiComps/TextField";
 import ButtonField from "../Common/UiComps/ButtonField";
 import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useFormik } from "formik";
-import toast from "react-hot-toast";
-import { resetPasswordApi } from "../../../actions/auth.actions";
-import { resetPassFormValidation } from "../../../Validations/Auth/reset.validations";
+import { useResetPassword } from "./useResetpass";
 
 const ResetPassword = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-
-  const token = new URLSearchParams(location.search).get("id"); // Extract token from URL
-
-  const handleResetPass = async (values) => {
-    const body = {
-      token, // Include token from the URL
-      new_password: values.password,
-    };
-
-    setIsPending(true);
-    try {
-      const response = await resetPasswordApi(body); // Call the API to reset the password
-      if (response.status) {
-        setDialogOpen(true); // Open success dialog
-      } else {
-        toast.error(response.message);
-      }
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsPending(false);
-    }
-  };
-
-  const resetPassFormik = useFormik({
-    initialValues: {
-      password: "",
-      confirm_password: "",
-    },
-    validationSchema: resetPassFormValidation,
-    onSubmit: (values) => {
-      handleResetPass(values);
-    },
-  });
+  const { resetPassFormik, openConfirmModal, gotoLogin, isPending } =
+    useResetPassword();
 
   return (
     <Container maxWidth={false} className="auth-wrapper">
       <Grid container spacing={0} className="auth-wrapper-inner">
         <Grid item md={7} sm={12} xs={12}>
           <Box className="auth-slider-wrap">
-            <Swiper slidesPerView={1} loop navigation className="authSwiper">
+            <Swiper slidesPerView={1} loop navigation>
               {[1, 2, 3].map((_, index) => (
                 <SwiperSlide key={index}>
                   <Box className="auth-slider-img-holder">
@@ -75,7 +33,6 @@ const ResetPassword = () => {
                       alt="Slider"
                       className="slider-image"
                     />
-                    <LeftSection />
                   </Box>
                 </SwiperSlide>
               ))}
@@ -115,7 +72,7 @@ const ResetPassword = () => {
                   name="confirm_password"
                   type="password"
                   label="Confirm Password"
-                  placeholder="Enter confirm password"
+                  placeholder="Confirm new password"
                   onChange={resetPassFormik.handleChange}
                   onBlur={resetPassFormik.handleBlur}
                   error={
@@ -141,7 +98,7 @@ const ResetPassword = () => {
         </Grid>
       </Grid>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={openConfirmModal} onClose={gotoLogin}>
         <DialogContent>
           <Box>
             <img
@@ -154,7 +111,7 @@ const ResetPassword = () => {
           <h3>Password Reset Successfully</h3>
           <p>Your password has been successfully reset.</p>
           <p>You can now log in.</p>
-          <Button onClick={() => navigate("/login")} className="p-btn">
+          <Button onClick={gotoLogin} className="p-btn">
             Log In
           </Button>
         </DialogContent>

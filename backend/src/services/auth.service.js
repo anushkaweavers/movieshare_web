@@ -60,38 +60,35 @@ const refreshAuth = async (refreshToken) => {
   return tokenService.refreshAuth(refreshToken);
 };
 
-const resetPassword = async (userId, newPasswordHash) => {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+const verifyResetPasswordToken = async (token) => {
+  if (!token) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Token must be provided");
   }
 
-  // Update the passwordHash field
-  user.passwordHash = newPasswordHash;
+  try {
+    const payload = jwt.verify(token, config.jwt.secret);
+    if (payload.type !== tokenTypes.RESET_PASSWORD) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid token type");
+    }
+    return payload; // Return payload for userId extraction
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Reset password token has expired");
+    }
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid reset password token");
+  }
+};
 
-  // Save changes to the database
+const resetPassword = async (userId, hashedPassword) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  user.passwordHash = hashedPassword; // Update passwordHash
   await user.save();
 };
 
-
-const verifyResetPasswordToken = async (token) => {
-  if (!token) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
-  }
-  try {
-    const payload = jwt.verify(token, config.jwt.secret);
-    if (payload.type !== tokenTypes.RESET_PASSWORD) { // Ensure token type matches
-      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
-    }
-    return payload; // Return payload for further processing
-  } catch (error) {
-    console.error('Token verification failed:', error);
-    if (error.name === 'TokenExpiredError') {
-      throw new ApiError(httpStatus.UNAUTHORIZED, 'Reset password token has expired');
-    }
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid reset password token');
-  }
-};
 
 /**                                                   
  * Verify a user's email using a valid verification token.
