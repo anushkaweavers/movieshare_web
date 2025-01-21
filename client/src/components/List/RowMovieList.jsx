@@ -1,10 +1,10 @@
-import React from "react";
+import { TMDBConfig } from "../../Utils/config";
 import { Box, Container } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Link from "react-router-dom/Link";
-import { TMDBConfig } from "@/Utils/config";
+import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import { useNavigate } from "react-router-dom"; // Using React Router for navigation
 
 const RowMovieList = ({ title, tagList, movieList, allowNum }) => {
   const navigate = useNavigate();
@@ -19,13 +19,15 @@ const RowMovieList = ({ title, tagList, movieList, allowNum }) => {
         <Box className="movielist-title">
           <h3>{title}</h3>
           <ul>
-            {tagList?.map((item, index) => (
-              <li key={index}>
-                <Link to="/login" className="active">
-                  {item.title}
-                </Link>
-              </li>
-            ))}
+            {tagList?.map((item, index) => {
+              return (
+                <li key={index}>
+                  <a href="/login" className="active">
+                    {item.title}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </Box>
         {movieList?.length ? (
@@ -51,36 +53,40 @@ const RowMovieList = ({ title, tagList, movieList, allowNum }) => {
               }}
               className="movie-list-swiper swiperNav"
             >
-              {movieList?.map((item, index) => (
-                <SwiperSlide
-                  key={item.id}
-                  onClick={() => gotoDetails(item.id)}
-                >
-                  <Box
-                    className={`movie-each each-movie-rating ${allowNum ? "" : "no-movie-rating"}`}
+              {movieList?.map((item, index) => {
+                return (
+                  <SwiperSlide
+                    key={item.id}
+                    onClick={() => {
+                      gotoDetails(item.id);
+                    }}
                   >
-                    {allowNum && (
-                      <Box className="movie-rating">{index + 1}</Box>
-                    )}
+                    <Box
+                      className={`movie-each each-movie-rating ${
+                        allowNum ? "" : "no-movie-rating"
+                      }`}
+                    >
+                      {allowNum && (
+                        <Box className="movie-rating">{index + 1}</Box>
+                      )}
 
-                    <Box className="movie-rating-rt">
-                      <Box className="movie-each-img">
-                        <img
-                          src={`${TMDBConfig.images.secure_base_url}/${TMDBConfig.images.poster_sizes[3]}${item?.poster_path}`}
-                          alt={item.title}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
+                      <Box className="movie-rating-rt">
+                        <Box className="movie-each-img">
+                          <img
+                            src={`${TMDBConfig.images.secure_base_url}/${TMDBConfig.images.poster_sizes[3]}${item?.poster_path}`}
+                            alt={item?.title || "Movie Poster"}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            placeholder="blur"
+                            data-src="/images/movie-default.png" // fallback image
+                          />
+                        </Box>
+                        <p>{item.title}</p>
+                        <p>{new Date(item?.release_date).getFullYear()}</p>
                       </Box>
-                      <p>{item.title}</p>
-                      <p>{new Date(item?.release_date).getFullYear()}</p>
                     </Box>
-                  </Box>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </Box>
         ) : null}

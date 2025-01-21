@@ -5,10 +5,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import TextFieldInput from "../Common/UiComps/TextField";
-import ButtonField from "../Common/UiComps/ButtonField";
-import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection";
+import TextFieldInput from "../../Common/UiComps/TextField";
+import ButtonField from "../../Common/UiComps/ButtonField";
+import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
+import LeftSection from "../../Common/LeftSection";
 import { useForgotPassword } from "./useForgotpass";
 
 import "../../custom.css";

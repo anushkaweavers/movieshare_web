@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import ButtonField from "./../Common/UiComps/ButtonField";
+import { TMDBConfig } from "../../Utils/config";
 import {
   Box,
   Button,
@@ -8,13 +8,13 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import React, { useState } from "react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 const MovieCarousel = ({ movieList }) => {
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const openDropdown = Boolean(anchorEl);
 
@@ -23,7 +23,8 @@ const MovieCarousel = ({ movieList }) => {
   };
 
   const gotoDetails = (id) => {
-    navigate(`/movies/${id}`);
+    // Using standard window navigation for routing
+    window.location.href = `/movies/${id}`;
   };
 
   return (
@@ -32,6 +33,10 @@ const MovieCarousel = ({ movieList }) => {
         slidesPerView={1}
         pagination={{
           clickable: true,
+        }}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
         }}
         modules={[Pagination, Autoplay]}
         className="movieBannerSwiper"
@@ -43,12 +48,15 @@ const MovieCarousel = ({ movieList }) => {
                 <Box className="movie-banner-img-holder">
                   <img
                     src={`${TMDBConfig.images.secure_base_url}/${TMDBConfig.images.backdrop_sizes[2]}${item?.backdrop_path}`}
-                    alt=""
+                    alt={item?.title || "Movie Banner"}
                     style={{
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
+                      display: "block",
                     }}
+                    placeholder="blur"
+                    data-src="/images/movie-default.png" // fallback image
                   />
                 </Box>
                 <Box className="movie-banner-info">
@@ -57,7 +65,7 @@ const MovieCarousel = ({ movieList }) => {
                       <Box className="movie-tag-list">
                         {item.genre_ids?.map((genre) => {
                           return (
-                            <Box key={genre} className="movie-tag">
+                            <Box className="movie-tag" key={genre}>
                               <span>
                                 {
                                   TMDBConfig.genres.find((sGenre) => {
@@ -72,19 +80,23 @@ const MovieCarousel = ({ movieList }) => {
                       <h2>{item?.title}</h2>
                       <p>{item?.overview}</p>
                       <Box className="d-flex movie-bnr-btn">
-                        <Button
-                          className="p-btn"
-                          onClick={() => gotoDetails(item.id)}
-                        >
-                          Movie Details
-                        </Button>
-
+                        <ButtonField
+                          label="Movie Details"
+                          img="/images/right-arrow.svg"
+                          imgHeight={17}
+                          imgWidth={15}
+                          alt="Details"
+                          mainCls="p-btn"
+                          onClick={() => {
+                            gotoDetails(item.id);
+                          }}
+                        />
                         <Box className="add-to-playlist-btn">
                           <ButtonGroup className="custom-btn-group">
                             <Button startIcon={<BookmarkBorderOutlinedIcon />}>
                               Add to Playlist
                             </Button>
-                            <Button>
+                            <Button onClick={(e) => setAnchorEl(e.currentTarget)}>
                               <KeyboardArrowDownOutlinedIcon />
                             </Button>
                           </ButtonGroup>

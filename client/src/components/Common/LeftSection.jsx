@@ -4,11 +4,11 @@ import { Autoplay, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import "../../custom.css";
-import "../../responsive.css";
-import "../../dark.css";
-import "../../developer.css";
-import "../../global.css";
+import "../custom.css";
+import "../responsive.css";
+import "../dark.css";
+import "../developer.css";
+import "../global.css";
 
 const LeftSection = () => {
   const swiperRef = useRef(null);
