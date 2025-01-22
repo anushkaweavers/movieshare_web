@@ -1,0 +1,184 @@
+.movie-list-page {
+    background-color: #141414;
+    color: white;
+  }
+  
+  .banner-section .banner-slide {
+    height: 600px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 50px;
+  }
+  
+  .banner-content {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 20px;
+  }
+  
+  .banner-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  .banner-description {
+    margin-bottom: 20px;
+  }
+  
+  .banner-buttons button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  .movie-details-button {
+    background-color: red;
+    color: white;
+  }
+  
+  .add-to-playlist-button {
+    background-color: gray;
+    color: white;
+  }
+  
+  .carousels .carousel-section {
+    margin-top: 30px;
+  }
+  
+  .carousel-title {
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+  }
+  
+  .movie-card {
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .movie-card:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+  }
+  
+  .movie-poster {
+    border-radius: 10px;
+    width: 100%;
+  }
+  
+  .banner-swiper .swiper-slide {
+    position: relative;
+  }
+  
+  .banner-swiper .swiper-slide h2 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  
+  .carousel-section img {
+    transition: transform 0.3s ease;
+  }
+  
+  .carousel-section img:hover {
+    transform: scale(1.05);
+  }
+  /* src/styles.css */
+.movie-list-page {
+    background-color: #0c0c0c;
+    color: white;
+  }
+  
+  .movie-banner {
+    position: relative;
+    height: 60vh;
+    margin-bottom: 20px;
+  }
+  
+  .movie-banner-img-holder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .movie-banner-info {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    color: white;
+  }
+  
+  .movie-carousel {
+    margin-bottom: 40px;
+  }
+  
+  .movie-card {
+    position: relative;
+    text-align: center;
+  }
+  
+  .movie-info {
+    padding: 10px;
+  }
+  
+  .movie-bnr-btn {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .p-btn {
+    background-color: #e50914;
+    color: white;
+    padding: 10px;
+  }
+  
+  .add-to-playlist-btn {
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 10px;
+  }
+  .banner {
+    height: 60vh;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+  }
+  
+  .row {
+    margin: 2rem 0;
+  }
+  
+  .row h2 {
+    margin-left: 1rem;
+    color: white;
+  }
+  
+  .row img {
+    width: 200px;
+    margin-right: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .row img:hover {
+    transform: scale(1.1);
+  }
+  
+  .filter {
+    margin: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .filter select {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  

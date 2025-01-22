@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
-const app = require('./app');
+const app = require('./app'); // This app instance is imported
 const config = require('./config/config');
 const logger = require('./config/logger');
+require("dotenv").config();
+const cors = require("cors");
+const tmdbRoutes = require("./routes/movieRoutes");
 
 let server;
+
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
@@ -11,6 +15,11 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   });
 });
 
+// Middleware setup
+app.use(cors());
+app.use("/api/tmdb", tmdbRoutes);
+
+// Error handling
 const exitHandler = () => {
   if (server) {
     server.close(() => {
@@ -27,6 +36,7 @@ const unexpectedErrorHandler = (error) => {
   exitHandler();
 };
 
+// Graceful shutdown handlers
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 

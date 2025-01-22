@@ -6,7 +6,6 @@ import ForgotPassword from "./components/Auth/Forgot-Password/index";
 import ResetPassword from "./components/Auth/Reset-Password/index";
 import BannerSection from "./components/Movies/Details/BannerSection";
 import Cast from "./components/Movies/Details/Cast";
-import Movie from "./components/Movies/Details/Page"; // Corrected component name capitalization
 import Page from "./components/Movies/Details/Page"; // Imported the component you provided earlier
 import MovieList from "./components/List/index"; // Import the List component
 
@@ -35,7 +34,7 @@ const App = () => {
       <Route path="/movie/:id/cast" element={<Cast />} /> {/* Cast details for specific movie */}
       <Route path="/page" element={<Page />} /> {/* New Page component */}
       
-      <Route path="/list" element={<List />} /> {/* Route to render the List component */}
+      <Route path="/list" element={<MovieList />} /> {/* Route to render the List component */}
     </Routes>
   );
 };

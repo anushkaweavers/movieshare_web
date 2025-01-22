@@ -14,12 +14,16 @@ const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
+// Import TMDB route
+const movieRoutes = require('./routes/movieRoutes'); // Ensure this path is correct
+
 const app = express();
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+
 app.get('/ws', (req, res) => {
   res.send('WebSocket or relevant data');
 });
@@ -36,7 +40,6 @@ app.use(express.urlencoded({ extended: true }));
 // sanitize request data
 app.use(xss());
 
-
 // gzip compression
 app.use(compression());
 
@@ -44,13 +47,14 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
+
 // Health Check Endpoint
 app.get('/health', (req, res) => {
   res.status(200).send({ status: 'UP' });
 });
+
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
@@ -58,6 +62,9 @@ if (config.env === 'production') {
 
 // v1 api routes
 app.use('/v1', routes);
+
+// Register the movies route for TMDB API
+app.use('/movies', movieRoutes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
