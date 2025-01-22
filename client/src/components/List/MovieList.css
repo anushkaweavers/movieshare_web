@@ -49,7 +49,7 @@ body {
 /* Banner Styling */
 .banner {
     position: relative;
-    height: 500px;
+    height: 50vh; /* Adjust for responsive scaling */
     color: var(--white-bg);
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
     background-size: cover;
@@ -59,21 +59,21 @@ body {
 
 .banner__contents {
     position: absolute;
-    bottom: 40px;
+    bottom: 20px;
     left: 30px;
-    max-width: 600px;
+    max-width: 80%;
     padding: 0 10px;
 }
 
 .banner__title {
-    font-size: 4.5rem;
+    font-size: 3.5rem; /* Adjust for scaling */
     font-weight: bold;
     color: var(--white-bg);
     margin: 0;
 }
 
 .banner__description {
-    width: 50%;
+    width: 70%; /* Scalable width for smaller screens */
     margin-top: 10px;
     line-height: 1.3;
     max-height: 100px;
@@ -84,10 +84,10 @@ body {
 }
 
 .banner__buttons {
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
+    gap: 15px;
     flex-wrap: wrap;
-    gap: 10px;
 }
 
 .banner__button {
@@ -99,6 +99,7 @@ body {
     font-size: 16px;
     border-radius: 10px;
     transition: background-color 0.3s ease;
+    min-width: 150px; /* Ensure buttons have sufficient width */
 }
 
 .banner__button:hover {
@@ -121,7 +122,7 @@ body {
 }
 
 .movie-row__title {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     color: var(--text-color);
 }
@@ -129,8 +130,9 @@ body {
 .movie-row__posters {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: scroll;
-    padding: 20px 0;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
 }
 
 .movie-row__poster {
@@ -140,7 +142,7 @@ body {
 }
 
 .movie-row__poster:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .movie-row__posterLarge {
@@ -166,6 +168,7 @@ body {
 /* Filter Styles */
 .filter {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 12px;
     padding: 15px;
@@ -223,53 +226,35 @@ body {
     color: #ff8000;
 }
 
-
-
-/* Media Queries for Responsiveness */
-
-/* Small Screens (Tablets and Phones) */
-@media screen and (max-width: 768px) {
-    .banner {
-        height: 400px;
-    }
-
+/* Responsive Adjustments */
+@media screen and (max-width: 1024px) {
     .banner__title {
         font-size: 3rem;
-        line-height: 1.3;
     }
 
     .banner__description {
         width: 80%;
-        font-size: 0.9rem;
     }
 
-    .banner__buttons {
-        margin-top: 20px;
-        flex-direction: column;
-        gap: 10px;
+    .movie-row__title {
+        font-size: 2rem;
     }
 
-    .banner__button {
-        padding: 10px 20px;
-        font-size: 14px;
-        width: auto;
-    }
-
-    .movie-row__posterLarge {
-        width: 150px;
+    .movie-row__posters {
+        gap: 8px;
     }
 
     .filter {
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: 10px;
     }
 
     .filter__dropdown,
     .filter__input,
     .filter__reset,
     .filter__rating {
-        width: 80%;
+        width: 100%;
     }
 
     .filter__reset {
@@ -278,17 +263,61 @@ body {
     }
 }
 
-  /* Responsive Adjustments */
-  @media screen and (max-width: 768px) {
-    .filter__datePicker {
-      font-size: 14px;
-      padding: 8px;
+@media screen and (max-width: 768px) {
+    .banner {
+        height: 40vh; /* Reduce height for smaller screens */
     }
-  }
-  /* DatePicker Wrapper Styling */
+
+    .banner__title {
+        font-size: 2.5rem; /* Reduce title font size */
+        line-height: 1.3;
+    }
+
+    .banner__description {
+        width: 85%;
+        font-size: 0.9rem;
+    }
+
+    .banner__buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .banner__button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%; /* Full width for buttons */
+    }
+
+    .movie-row__posterLarge {
+        width: 150px; /* Reduce poster size for mobile */
+    }
+
+    .movie-row__poster {
+        transform: scale(1.1);
+    }
+
+    .filter {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter__dropdown,
+    .filter__input,
+    .filter__reset,
+    .filter__rating {
+        width: 85%;
+    }
+
+    .filter__reset {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+/* DatePicker Wrapper Styling */
 .react-datepicker-wrapper {
     width: 100%;
-    display: inline-block;
 }
 
 .react-datepicker__input-container input {
@@ -348,27 +377,230 @@ body {
     background-color: var(--active-blue);
     color: var(--white-bg);
 }
+/* Existing Global Styles and Variables */
 
+/* Add Media Query for 375x667px (Small Devices, e.g. iPhone 6/7/8) */
+@media screen and (max-width: 375px) {
 
-/* Adjust Movie List Headings and Images */
-@media screen and (max-width: 768px) {
+    /* Banner */
+    .banner {
+        height: 35vh; /* Reduce height even further */
+    }
+
+    .banner__title {
+        font-size: 2rem; /* Smaller font size for the title */
+    }
+
+    .banner__description {
+        font-size: 0.8rem; /* Smaller description text */
+        width: 90%; /* Adjust width */
+        margin-top: 5px;
+    }
+
+    .banner__buttons {
+        margin-top: 20px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .banner__button {
+        padding: 12px 24px;
+        font-size: 14px;
+        width: 100%; /* Full width for buttons */
+    }
+
+    /* Movie Row */
     .movie-row__title {
-        font-size: 1rem; /* Smaller heading size for movie list */
+        font-size: 1.5rem; /* Smaller font size */
+    }
+
+    .movie-row__posters {
+        gap: 6px;
     }
 
     .movie-row__posterLarge {
-        width: 190px; /* Slightly larger movie posters for prominence */
+        width: 130px; /* Smaller movie posters */
     }
 
     .movie-row__poster {
-        transform: scale(1.15); /* Slight scaling for emphasis */
+        transform: scale(1.05); /* Slightly scaled posters */
+    }
+
+    /* Filter */
+    .filter {
+        padding: 12px;
+        gap: 8px;
+        flex-direction: column;
+    }
+
+    .filter__dropdown,
+    .filter__input,
+    .filter__reset,
+    .filter__rating {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .filter__reset {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .filter__rating {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    /* DatePicker */
+    .react-datepicker__input-container input {
+        font-size: 14px; /* Smaller font size for the input */
+        padding: 10px 12px; /* Slightly smaller padding */
+    }
+
+    .react-datepicker__day {
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1.5rem;
     }
 }
 
-/* Reduce Date Picker Filter Box Width */
-@media screen and (max-width: 768px) {
-    .filter__datePicker,
+/* Add Media Query for 853x1280px (Larger Phones / Small Tablets) */
+@media screen and (max-width: 853px) and (max-height: 1280px) {
+
+    /* Banner */
+    .banner {
+        height: 45vh; /* Adjust height to a reasonable value for larger screens */
+    }
+
+    .banner__title {
+        font-size: 3.5rem; /* Slightly larger title font size for readability */
+    }
+
+    .banner__description {
+        font-size: 1rem; /* Increase description font size slightly */
+        width: 75%; /* Wider width for description */
+        margin-top: 10px;
+    }
+
+    .banner__buttons {
+        margin-top: 20px;
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .banner__button {
+        padding: 15px 30px;
+        font-size: 16px;
+        width: auto; /* Allow buttons to maintain their default width */
+    }
+
+    /* Movie Row */
+    .movie-row__title {
+        font-size: 2.2rem; /* Larger heading for movie row */
+    }
+
+    .movie-row__posters {
+        gap: 12px; /* Increase gap slightly for more spacing */
+    }
+
+    .movie-row__posterLarge {
+        width: 180px; /* Slightly larger posters */
+    }
+
+    .movie-row__poster {
+        transform: scale(1.05); /* Slight scaling for emphasis */
+    }
+
+    /* Filter */
+    .filter {
+        padding: 15px;
+        gap: 10px;
+        flex-wrap: wrap; /* Allow wrapping to create a more organized layout */
+        flex-direction: row;
+    }
+
+    .filter__dropdown,
+    .filter__input,
+    .filter__reset,
+    .filter__rating {
+        width: 45%; /* Adjust width to utilize the available space */
+        font-size: 15px; /* Adjust font size for readability */
+    }
+
+    .filter__reset {
+        padding: 12px 18px;
+        font-size: 16px;
+    }
+
+    .filter__rating {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    /* DatePicker */
     .react-datepicker__input-container input {
-        width: 80%; /* Reduce date picker field width */
+        font-size: 15px; /* Slightly larger input text */
+        padding: 12px 14px; /* Adjust padding for better clickability */
+    }
+
+    .react-datepicker__day {
+        width: 1.8rem;
+        height: 1.8rem;
+        line-height: 1.8rem;
     }
 }
+
+/* Media Queries for Larger Devices (for reference) */
+
+/* Small Screens (Tablets and Phones) */
+@media screen and (max-width: 768px) {
+    .banner {
+        height: 40vh;
+    }
+
+    .banner__title {
+        font-size: 2.5rem;
+    }
+
+    .banner__description {
+        width: 85%;
+        font-size: 0.9rem;
+    }
+
+    .banner__buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .banner__button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .movie-row__posterLarge {
+        width: 150px;
+    }
+
+    .movie-row__poster {
+        transform: scale(1.1);
+    }
+
+    .filter {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter__dropdown,
+    .filter__input,
+    .filter__reset,
+    .filter__rating {
+        width: 85%;
+    }
+
+    .filter__reset {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
