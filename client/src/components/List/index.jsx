@@ -12,6 +12,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
 import "../developer.css";
+
+
+import { Pagination } from "swiper/modules";
 // TMDB API Configuration
 const API_KEY = "41b7e34d009af460e22e4a8e91279433";
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -36,44 +39,58 @@ const fetchData = async (endpoint, params = {}) => {
   }
 };
 
-// Banner Component
 const Banner = () => {
-  const [movie, setMovie] = useState(null);
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    const fetchBannerMovie = async () => {
+    const fetchBannerMovies = async () => {
       const data = await fetchData("/movie/popular");
       if (data && data.results.length > 0) {
-        setMovie(data.results[Math.floor(Math.random() * data.results.length)]);
+        // Randomly select 3-4 unique movies
+        const shuffled = data.results.sort(() => 0.5 - Math.random());
+        setMovies(shuffled.slice(0, 4)); // Select the first 4 after shuffle
       }
     };
-    fetchBannerMovie();
+    fetchBannerMovies();
   }, []);
 
-  if (!movie) return null;
+  if (movies.length === 0) return null;
 
   return (
-    <header
-      className="banner"
-      style={{
-        backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
-      }}
-    >
-      <div className="banner__contents">
-        <h1 className="banner__title">{movie.title || movie.name || movie.original_name}</h1>
-        <div className="banner__buttons">
-          <button className="banner__button">Movie Details →</button>
-          <button className="banner__button">Add To Playlist</button>
-        </div>
-        <p className="banner__description">{movie.overview}</p>
-      </div>
-      <div className="banner--fadeBottom" />
-    </header>
+    <div className="banner-slider">
+      <Swiper
+        modules={[Pagination]}
+        pagination={{ clickable: true }}
+        spaceBetween={0}
+        slidesPerView={1}
+        loop
+      >
+        {movies.map((movie) => (
+          <SwiperSlide key={movie.id}>
+            <header
+              className="banner"
+              style={{
+                backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center center",
+              }}
+            >
+              <div className="banner__contents">
+                <h1 className="banner__title">{movie.title || movie.name || movie.original_name}</h1>
+                <div className="banner__buttons">
+                  <button className="banner__button">Movie Details →</button>
+                  <button className="banner__button">Add To Playlist</button>
+                </div>
+                <p className="banner__description">{movie.overview}</p>
+              </div>
+              <div className="banner--fadeBottom" />
+            </header>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   );
 };
-
 // Row Component with Swiper
 const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
   const [movies, setMovies] = useState([]);
