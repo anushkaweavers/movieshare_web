@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./MovieDetails.css";
@@ -18,6 +18,17 @@ const MovieDetails = () => {
   const { id } = useParams(); // Get the movie ID from the URL
   const [movie, setMovie] = useState(null);
 
+  // Refs for each section
+  const detailsRef = useRef(null);
+  const reviewsRef = useRef(null);
+  const trailersRef = useRef(null);
+  const castRef = useRef(null);
+  const crewRef = useRef(null);
+  const releasesRef = useRef(null);
+  const playlistsRef = useRef(null);
+
+  const [activeTab, setActiveTab] = useState("Details");
+
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
@@ -29,6 +40,39 @@ const MovieDetails = () => {
     };
     fetchMovieDetails();
   }, [id]);
+
+  // Scroll listener to update active tab
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        { name: "Details", ref: detailsRef },
+        { name: "Reviews", ref: reviewsRef },
+        { name: "Trailers", ref: trailersRef },
+        { name: "Cast", ref: castRef },
+        { name: "Crew", ref: crewRef },
+        { name: "Releases", ref: releasesRef },
+        { name: "Playlists", ref: playlistsRef },
+      ];
+
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+      for (const section of sections) {
+        if (
+          section.ref.current &&
+          scrollPosition >= section.ref.current.offsetTop &&
+          scrollPosition < section.ref.current.offsetTop + section.ref.current.offsetHeight
+        ) {
+          setActiveTab(section.name);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   if (!movie) return <div>Loading...</div>;
 
@@ -72,14 +116,59 @@ const MovieDetails = () => {
       {/* Tabs Navigation */}
       <div className="movie-details__tabs">
         <ul>
-          <li className="active">Details</li>
-          <li>Reviews</li>
-          <li>Trailers</li>
-          <li>Cast</li>
-          <li>Crew</li>
-          <li>Releases</li>
-          <li>Playlists</li>
+          {["Details", "Reviews", "Trailers", "Cast", "Crew", "Releases", "Playlists"].map(
+            (tab) => (
+              <li
+                key={tab}
+                className={activeTab === tab ? "active" : ""}
+                onClick={() => {
+                  const refMap = {
+                    Details: detailsRef,
+                    Reviews: reviewsRef,
+                    Trailers: trailersRef,
+                    Cast: castRef,
+                    Crew: crewRef,
+                    Releases: releasesRef,
+                    Playlists: playlistsRef,
+                  };
+                  refMap[tab].current.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                {tab}
+              </li>
+            )
+          )}
         </ul>
+      </div>
+
+      {/* Sections */}
+      <div ref={detailsRef} className="movie-details__section">
+        <h2>Details</h2>
+        {/* Additional movie details here */}
+      </div>
+      <div ref={reviewsRef} className="movie-details__section">
+        <h2>Reviews</h2>
+        {/* Fetch and display reviews */}
+      </div>
+      <div ref={trailersRef} className="movie-details__section">
+        <h2>Trailers</h2>
+        {/* Fetch and display trailers */}
+      </div>
+      <div ref={castRef} className="movie-details__section">
+        <h2>Cast</h2>
+        {/* Fetch and display cast */}
+      </div>
+      <div ref={crewRef} className="movie-details__section">
+        <h2>Crew</h2>
+        {/* Fetch and display crew */}
+      </div>
+      <div ref={releasesRef} className="movie-details__section">
+        <h2>Releases</h2>
+        {/* Fetch and display release info */}
+      </div>
+      <div ref={playlistsRef} className="movie-details__section">
+        <h2>Playlists</h2>
+        {/* Fetch and display playlists */}
       </div>
     </div>
   );

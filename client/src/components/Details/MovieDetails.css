@@ -101,4 +101,125 @@
     color: #1dbf73;
     border-bottom: 2px solid #1dbf73;
   }
+
+  /* Tabs Styling */
+.movie-details__tabs {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff; /* Ensure the tabs stay visible over content */
+    z-index: 1000;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .movie-details__tabs ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .movie-details__tabs li {
+    margin: 0 20px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #555; /* Default color for tabs */
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .movie-details__tabs li.active {
+    color:#685cf0; /* Active text color */
+    font-weight: bold;
+  }
+  
+  .movie-details__tabs li.active::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color:#685cf0; /* Active underline color */
+    width: 100%;
+  }
+  
+  /* Sections Styling */
+  .movie-details__section {
+    padding: 40px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .movie-details__section h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .movie-details__content {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .movie-details__poster {
+      width: 100px;
+    }
+  
+    .movie-details__tabs li {
+      margin: 0 10px;
+      font-size: 14px;
+    }
+  
+    .movie-details__section {
+      padding: 20px;
+    }
+  }
+  /* Tabs Styling */
+.movie-details__tabs {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff; /* Ensure the tabs stay visible over content */
+    z-index: 1000;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .movie-details__tabs ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .movie-details__tabs li {
+    margin: 0 20px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #555; /* Default color for tabs */
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .movie-details__tabs li.active {
+    color: #685cf0; /* Active text color */
+    font-weight: bold;
+  }
+  
+  .movie-details__tabs li.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; /* Adjust the underline position slightly closer to text */
+    left: 0;
+    right: 0;
+    height: 3px; /* Thickness of the underline */
+    background-color: #685cf0; /* Active underline color */
+    width: 100%;
+  }
   
