@@ -17,6 +17,9 @@ const apiClient = axios.create({
 const MovieDetails = () => {
   const { id } = useParams(); // Get the movie ID from the URL
   const [movie, setMovie] = useState(null);
+  const [keywords, setKeywords] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [director, setDirector] = useState(null);
 
   // Refs for each section
   const detailsRef = useRef(null);
@@ -27,50 +30,73 @@ const MovieDetails = () => {
   const releasesRef = useRef(null);
   const playlistsRef = useRef(null);
 
-  const [activeTab, setActiveTab] = useState("Details");
+  const [activeTab, setActiveTab] = useState("DETAILS");
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}`);
         setMovie(response.data);
+
+        const creditsResponse = await apiClient.get(`/movie/${id}/credits`);
+        const director = creditsResponse.data.crew.find(
+          (crew) => crew.job === "Director"
+        );
+        setDirector(director?.name || "Unknown");
+
+        const keywordsResponse = await apiClient.get(`/movie/${id}/keywords`);
+        setKeywords(keywordsResponse.data.keywords || []);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }
     };
-    fetchMovieDetails();
-  }, [id]);
 
-  // Scroll listener to update active tab
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = [
-        { name: "Details", ref: detailsRef },
-        { name: "Reviews", ref: reviewsRef },
-        { name: "Trailers", ref: trailersRef },
-        { name: "Cast", ref: castRef },
-        { name: "Crew", ref: crewRef },
-        { name: "Releases", ref: releasesRef },
-        { name: "Playlists", ref: playlistsRef },
-      ];
-
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
-
-      for (const section of sections) {
-        if (
-          section.ref.current &&
-          scrollPosition >= section.ref.current.offsetTop &&
-          scrollPosition < section.ref.current.offsetTop + section.ref.current.offsetHeight
-        ) {
-          setActiveTab(section.name);
-          break;
-        }
+    const fetchReviews = async () => {
+      try {
+        const response = await apiClient.get(`/movie/${id}/reviews`);
+        setReviews(response.data.results || []);
+      } catch (error) {
+        console.error("Error fetching movie reviews:", error);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    fetchMovieDetails();
+    fetchReviews();
+  }, [id]);
+
+  // Intersection Observer to track section visibility and update active tab
+  useEffect(() => {
+    const sections = [
+      { name: "DETAILS", ref: detailsRef },
+      { name: "REVIEWS", ref: reviewsRef },
+      { name: "TRAILERS", ref: trailersRef },
+      { name: "CAST", ref: castRef },
+      { name: "CREW", ref: crewRef },
+      { name: "RELEASES", ref: releasesRef },
+      { name: "PLAYLISTS", ref: playlistsRef },
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveTab(entry.target.getAttribute("data-section"));
+          }
+        });
+      },
+      {
+        rootMargin: "-50% 0px", // Trigger when a section is half in the viewport
+      }
+    );
+
+    sections.forEach(({ ref }) => {
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
+    });
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     };
   }, []);
 
@@ -116,20 +142,20 @@ const MovieDetails = () => {
       {/* Tabs Navigation */}
       <div className="movie-details__tabs">
         <ul>
-          {["Details", "Reviews", "Trailers", "Cast", "Crew", "Releases", "Playlists"].map(
+          {["DETAILS", "REVIEWS", "TRAILERS", "CAST", "CREW", "RELEASES", "PLAYLISTS"].map(
             (tab) => (
               <li
                 key={tab}
                 className={activeTab === tab ? "active" : ""}
                 onClick={() => {
                   const refMap = {
-                    Details: detailsRef,
-                    Reviews: reviewsRef,
-                    Trailers: trailersRef,
-                    Cast: castRef,
-                    Crew: crewRef,
-                    Releases: releasesRef,
-                    Playlists: playlistsRef,
+                    DETAILS: detailsRef,
+                    REVIEWS: reviewsRef,
+                    TRAILERS: trailersRef,
+                    CAST: castRef,
+                    CREW: crewRef,
+                    RELEASES: releasesRef,
+                    PLAYLISTS: playlistsRef,
                   };
                   refMap[tab].current.scrollIntoView({ behavior: "smooth" });
                 }}
@@ -141,34 +167,132 @@ const MovieDetails = () => {
         </ul>
       </div>
 
-      {/* Sections */}
-      <div ref={detailsRef} className="movie-details__section">
-        <h2>Details</h2>
-        {/* Additional movie details here */}
-      </div>
-      <div ref={reviewsRef} className="movie-details__section">
-        <h2>Reviews</h2>
-        {/* Fetch and display reviews */}
-      </div>
-      <div ref={trailersRef} className="movie-details__section">
+      <div ref={detailsRef} className="movie-details__section" data-section="DETAILS">
+  <h2>Details</h2>
+
+  {/* Left Side */}
+  <div className="details-left">
+    <div>
+      <strong>Director:</strong> {director}
+    </div>
+    <div>
+      <strong>Languages:</strong>{" "}
+      {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
+    </div>
+    <div>
+      <strong>Studio:</strong>{" "}
+      {movie.production_companies.map((company) => company.name).join(", ")}
+    </div>
+  </div>
+
+  {/* Right Side */}
+  <div className="details-right">
+    <div className="genres">
+      <strong>Genres:</strong>{" "}
+      {movie.genres.map((genre) => (
+        <span key={genre.id} className="genre-tag">
+          {genre.name}
+        </span>
+      ))}
+    </div>
+    <div className="tags">
+      <strong>Tags:</strong> {keywords.map((keyword) => keyword.name).join(", ")}
+    </div>
+  </div>
+</div>
+
+<div ref={reviewsRef} className="movie-details__section" data-section="REVIEWS">
+  <h2>Movie Sharer’s Reviews</h2>
+
+  {/* Total Score and Write a Review Button */}
+  <div className="score-and-action">
+    {/* Scores */}
+    <div className="scores-row">
+      <p className="total-score">Total Score: ⭐ 6 / 10</p>
+      <span className="score-item">Plot 4/10</span>
+      <span className="score-item">Story 6/10</span>
+      <span className="score-item">Characters 6/10</span>
+      <span className="score-item">Cinematography 4/10</span>
+      <span className="score-item">Pacing 4/10</span>
+    </div>
+    {/* Write a Review Button */}
+    <button className="write-review-button">
+      <i className="fas fa-comment-dots"></i> Write a Review
+    </button>
+  </div>
+
+  {/* Reviews */}
+  <div className="reviews-list">
+    {reviews.length > 0 ? (
+      reviews.map((review) => (
+        <div key={review.id} className="review-card">
+          <div className="review-card-left">
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              className="review-poster"
+              onError={(e) => (e.target.src = "/images/default-poster.jpg")}
+            />
+          </div>
+          <div className="review-card-right">
+            <div className="review-header">
+              <img
+                src={
+                  review.author_details.avatar_path
+                    ? `https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`
+                    : "/images/default-avatar.png"
+                }
+                alt={review.author || "Anonymous"}
+                className="review-avatar"
+                onError={(e) => (e.target.src = "/images/default-avatar.png")}
+              />
+              <div>
+                <p className="review-author">{review.author || "Anonymous"}</p>
+                <p className="review-date">
+                  {new Date(review.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <p className="review-score">
+                {review.author_details.rating || "N/A"} / 10 ⭐
+              </p>
+            </div>
+            <div className="review-body">
+              <p className="review-content">
+                “{review.content ? review.content.slice(0, 150) : "No review content available."}...”
+              </p>
+              <button
+                className="read-more"
+                onClick={() =>
+                  window.open(`https://www.themoviedb.org/review/${review.id}`, "_blank")
+                }
+              >
+                Read more
+              </button>
+            </div>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p>No reviews available for this movie.</p>
+    )}
+  </div>
+</div>
+
+
+      <div ref={trailersRef} className="movie-details__section" data-section="TRAILERS">
         <h2>Trailers</h2>
-        {/* Fetch and display trailers */}
       </div>
-      <div ref={castRef} className="movie-details__section">
+      <div ref={castRef} className="movie-details__section" data-section="CAST">
         <h2>Cast</h2>
-        {/* Fetch and display cast */}
       </div>
-      <div ref={crewRef} className="movie-details__section">
+      <div ref={crewRef} className="movie-details__section" data-section="CREW">
         <h2>Crew</h2>
-        {/* Fetch and display crew */}
       </div>
-      <div ref={releasesRef} className="movie-details__section">
+      <div ref={releasesRef} className="movie-details__section" data-section="RELEASES">
         <h2>Releases</h2>
-        {/* Fetch and display release info */}
       </div>
-      <div ref={playlistsRef} className="movie-details__section">
+      <div ref={playlistsRef} className="movie-details__section" data-section="PLAYLISTS">
         <h2>Playlists</h2>
-        {/* Fetch and display playlists */}
       </div>
     </div>
   );

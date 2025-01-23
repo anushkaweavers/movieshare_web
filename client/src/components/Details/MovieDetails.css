@@ -1,65 +1,81 @@
+
+.body{
+  margin-left: 1200px;
+  margin-right:1200px
+}
 .movie-details {
     font-family: Arial, sans-serif;
     color: #333;
-  }
-  
-  .movie-details__banner {
-    height: 50vh;
+}
+
+/* Banner Section */
+.movie-details__banner {
+    height: 46vh;
     background-color: #000;
-  }
-  
-  .movie-details__content {
+    margin: 0 250px; /* Same left and right gap */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for emphasis */
+}
+
+/* Content Section */
+.movie-details__content {
     display: flex;
+    padding:20px 60px;
     align-items: flex-start;
-    padding: 20px;
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .movie-details__poster {
+    max-width: calc(100% - 400px); /* Ensures same width as the banner */
+    margin: 15px 200px; /* Same margins as the banner */
+}
+
+/* Poster Styling */
+.movie-details__poster {
     width: 150px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .movie-details__info {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Info Section */
+.movie-details__info {
     flex: 1;
-  }
-  
-  .movie-details__title {
+    padding: 40px  100px; /* Internal padding for spacing */
+}
+
+/* Title Styling */
+.movie-details__title {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-  }
-  
-  .movie-details__year {
+}
+
+/* Year Styling */
+.movie-details__year {
     font-size: 1rem;
-    color: #555;
+    color:black;
     margin-bottom: 1rem;
-  }
-  
-  .movie-details__overview {
+}
+
+/* Overview Styling */
+.movie-details__overview {
     margin-bottom: 1.5rem;
     line-height: 1.6;
-  }
-  
-  .movie-details__actions {
+}
+
+/* Actions Styling */
+.movie-details__actions {
     display: flex;
     gap: 1rem;
-  }
-  
-  .movie-details__rent-button {
+}
+
+/* Rent Button */
+.movie-details__rent-button {
     padding: 0.8rem 1.5rem;
     border: none;
     cursor: pointer;
     border-radius: 4px;
     background-color: #f0f0f0;
-    color: #333;
+    color: #000000;
     font-size: 1rem;
-  }
-  
-  .movie-details__playlist-button {
+}
+
+/* Playlist Button */
+.movie-details__playlist-button {
     padding: 0.8rem 1.5rem;
     background-color: white;
     color: black;
@@ -67,46 +83,17 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
-  }
-  
-  .movie-details__playlist-button .arrow-down {
-    margin-left: 5px;
-  }
-  
-  .movie-details__tabs {
-    background: #f8f8f8;
-    padding: 20px 0;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    margin-top: 20px;
-  }
-  
-  .movie-details__tabs ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .movie-details__tabs li {
-    margin: 0 10px;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .movie-details__tabs li.active {
-    color: #1dbf73;
-    border-bottom: 2px solid #1dbf73;
-  }
+}
 
-  /* Tabs Styling */
+.movie-details__playlist-button .arrow-down {
+    margin-left: 5px;
+}
+
+ /* Sticky Tabs */
 .movie-details__tabs {
     position: sticky;
     top: 0;
-    background-color: #ffffff; /* Ensure the tabs stay visible over content */
+    background-color: #ffffff;
     z-index: 1000;
     padding: 10px 0;
     border-bottom: 1px solid #e0e0e0;
@@ -124,24 +111,24 @@
     margin: 0 20px;
     cursor: pointer;
     font-size: 16px;
-    color: #555; /* Default color for tabs */
+    color: #555;
     position: relative;
     padding-bottom: 10px;
   }
   
   .movie-details__tabs li.active {
-    color:#685cf0; /* Active text color */
+    color: #685cf0;
     font-weight: bold;
   }
   
   .movie-details__tabs li.active::after {
     content: "";
     position: absolute;
-    bottom: -5px;
+    bottom: -2px;
     left: 0;
     right: 0;
-    height: 2px;
-    background-color:#685cf0; /* Active underline color */
+    height: 3px;
+    background-color: #685cf0;
     width: 100%;
   }
   
@@ -156,7 +143,7 @@
   
   .movie-details__section h2 {
     margin-bottom: 20px;
-    font-size: 24px;
+    font-size: 40px;
     color: #333;
   }
   
@@ -165,6 +152,7 @@
     .movie-details__content {
       flex-direction: column;
       align-items: center;
+      padding: 20px;
     }
   
     .movie-details__poster {
@@ -173,53 +161,246 @@
   
     .movie-details__tabs li {
       margin: 0 10px;
-      font-size: 14px;
+      font-size: 20px;
     }
   
     .movie-details__section {
       padding: 20px;
     }
   }
-  /* Tabs Styling */
-.movie-details__tabs {
-    position: sticky;
-    top: 0;
-    background-color: #ffffff; /* Ensure the tabs stay visible over content */
-    z-index: 1000;
-    padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
   
-  .movie-details__tabs ul {
-    list-style: none;
+/* Styling the Details Section */
+.movie-details__section[data-section="DETAILS"] {
+    padding: 20px;
     display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: space-between;
   }
   
-  .movie-details__tabs li {
-    margin: 0 20px;
-    cursor: pointer;
-    font-size: 16px;
-    color: #555; /* Default color for tabs */
-    position: relative;
+  .movie-details__section[data-section="DETAILS"] h2 {
+    font-size: 1.5rem;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #7c4dff;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .details-left {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .details-left div {
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+  
+  .details-left strong {
+    font-weight: 600;
+    color: #4a4a4a;
+  }
+  
+  .details-right {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .details-right .genres {
+    margin-bottom: 15px;
+  }
+  
+  .details-right .genres .genre-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #555;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .details-right .tags {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  .movie-details__section {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+  }
+  
+  .movie-details__section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e5e5;
     padding-bottom: 10px;
   }
+/* Score Row */
+.scores-row {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the scores horizontally */
+    gap: 30px; /* Increased spacing between scores */
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    border: none; /* Ensure no borders around the scores row */
+  }
   
-  .movie-details__tabs li.active {
-    color: #685cf0; /* Active text color */
+  .total-score {
+    font-size: 24px; /* Increased font size */
+    font-weight: bold;
+    color: #333;
+    margin-right: 30px; /* Adjusted spacing */
+    margin-left: 100px;
+  }
+  
+  .score-item {
+    font-size: 22px; /* Larger font for better readability */
+    font-weight: 500;
+    color: #555;
+    line-height: 1.2; /* Fixed height to remove any extra spacing */
+    border: none; /* Ensure no faint lines between scores */
+    background: none; /* Remove any background shadow */
+    padding: 0; /* Remove padding */
+  }
+  
+  /* Write a Review Button */
+  .write-review-button {
+    background-color: #3c386b;
+    color: #ffffff;
+    font-size: 18px; /* Slightly larger font */
+    font-weight: bold;
+    padding: 12px 25px; /* Increased padding */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px; /* Added spacing above */
+    transition: background-color 0.3s ease;
+    justify-content: center; /* Center button text */
+    margin-left: auto; /* Centering trick */
+    margin-right: auto;
+    display: block; /* Ensures it's centered */
+  }
+  
+  .write-review-button i {
+    font-size: 20px; /* Adjust the icon size */
+  }
+  
+  .write-review-button:hover {
+    background-color: #4438b8;
+  }
+  
+  /* Review Cards */
+  .reviews-list {
+    margin-top: 30px;
+  }
+  
+  .review-card {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+  }
+  
+  .review-card-left {
+    flex: 0 0 100px;
+    margin-right: 15px;
+  }
+  
+  .review-poster {
+    width: 100px;
+    height: 150px;
+    border-radius: 5px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+  }
+  
+  .review-card-right {
+    flex: 1;
+  }
+  
+  .review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .review-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    background-color: #ddd;
+  }
+  
+  .review-author {
+    font-size: 18px;
     font-weight: bold;
   }
   
-  .movie-details__tabs li.active::after {
-    content: "";
-    position: absolute;
-    bottom: -2px; /* Adjust the underline position slightly closer to text */
-    left: 0;
-    right: 0;
-    height: 3px; /* Thickness of the underline */
-    background-color: #685cf0; /* Active underline color */
-    width: 100%;
+  .review-date {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .review-score {
+    margin-left: auto;
+    font-size: 18px;
+    color: #ff9800;
+    font-weight: bold;
+  }
+  
+  .review-body {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .read-more {
+    font-size: 16px;
+    color: #3c5edc;
+    cursor: pointer;
+    text-decoration: underline;
+    border: none;
+    background: none;
+  }
+  
+  .read-more:hover {
+    color: #4438b8;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .scores-row {
+      flex-direction: column;
+      gap: 15px;
+      justify-content: center; /* Center scores on smaller screens */
+    }
+  
+    .write-review-button {
+      width: 90%; /* Ensure the button stays centered */
+    }
+  
+    .review-card {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .review-card-left {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
   }
   

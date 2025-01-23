@@ -240,12 +240,10 @@ body {
     justify-content: space-between;
     gap: 12px;
     padding: 15px;
-    background-color: #faf5f5;
     border-radius: 8px;
     margin: 18px auto;
     max-width: 1200px;
     width: 100%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     align-items: center;
     flex-wrap: nowrap;
     padding-left: 20px;
@@ -258,7 +256,6 @@ body {
 .filter__reset,
 .filter__rating {
     padding: 10px 12px;
-    border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
     min-width: 180px;
