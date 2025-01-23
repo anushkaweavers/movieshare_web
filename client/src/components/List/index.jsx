@@ -12,15 +12,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
 import "../developer.css";
-
-
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { Pagination } from "swiper/modules";
-// TMDB API Configuration
+
 const API_KEY = "41b7e34d009af460e22e4a8e91279433";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
-// Axios instance for API calls
 const apiClient = axios.create({
   baseURL: BASE_URL,
   params: {
@@ -28,7 +26,6 @@ const apiClient = axios.create({
   },
 });
 
-// Fetch API data
 const fetchData = async (endpoint, params = {}) => {
   try {
     const response = await apiClient.get(endpoint, { params });
@@ -46,9 +43,8 @@ const Banner = () => {
     const fetchBannerMovies = async () => {
       const data = await fetchData("/movie/popular");
       if (data && data.results.length > 0) {
-        // Randomly select 3-4 unique movies
         const shuffled = data.results.sort(() => 0.5 - Math.random());
-        setMovies(shuffled.slice(0, 4)); // Select the first 4 after shuffle
+        setMovies(shuffled.slice(0, 4));
       }
     };
     fetchBannerMovies();
@@ -78,7 +74,9 @@ const Banner = () => {
               <div className="banner__contents">
                 <h1 className="banner__title">{movie.title || movie.name || movie.original_name}</h1>
                 <div className="banner__buttons">
-                  <button className="banner__button">Movie Details →</button>
+                  <Link to={`/movie/${movie.id}`}>
+                    <button className="banner__button">Movie Details →</button>
+                  </Link>
                   <button className="banner__button">Add To Playlist</button>
                 </div>
                 <p className="banner__description">{movie.overview}</p>
@@ -91,7 +89,7 @@ const Banner = () => {
     </div>
   );
 };
-// Row Component with Swiper
+
 const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
   const [movies, setMovies] = useState([]);
 
@@ -117,11 +115,13 @@ const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
       >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
-            <img
-              className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`}
-              src={`${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}`}
-              alt={movie.title || movie.name}
-            />
+            <Link to={`/movie/${movie.id}`}>
+              <img
+                className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`}
+                src={`${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}`}
+                alt={movie.title || movie.name}
+              />
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>
@@ -129,7 +129,6 @@ const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
   );
 };
 
-// Filter Component
 const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -152,26 +151,26 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
       </select>
 
       <DatePicker
-  selected={selectedDate}
-  onChange={(date) => {
-    setSelectedDate(date);
-    handleFilterChange("releaseYear", date?.getFullYear() || "");
-  }}
-  showYearPicker
-  dateFormat="yyyy"
-  placeholderText="Select Release Year"
-  className="filter__datePicker"
-/>
+        selected={selectedDate}
+        onChange={(date) => {
+          setSelectedDate(date);
+          handleFilterChange("releaseYear", date?.getFullYear() || "");
+        }}
+        showYearPicker
+        dateFormat="yyyy"
+        placeholderText="Select Release Year"
+        className="filter__datePicker"
+      />
 
-<div className="filter__rating">
-  {[...Array(10)].map((_, index) => (
-    <FaStar
-      key={index}
-      className={`filter__star ${index + 1 <= (parseInt(filters.rating) || 0) ? "active" : ""}`}
-      onClick={() => handleFilterChange("rating", index + 1)}
-    />
-  ))}
-</div>
+      <div className="filter__rating">
+        {[...Array(10)].map((_, index) => (
+          <FaStar
+            key={index}
+            className={`filter__star ${index + 1 <= (parseInt(filters.rating) || 0) ? "active" : ""}`}
+            onClick={() => handleFilterChange("rating", index + 1)}
+          />
+        ))}
+      </div>
 
       <select
         onChange={(e) => handleFilterChange("sortBy", e.target.value)}
@@ -190,7 +189,6 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   );
 };
 
-// Main MovieList Component
 const MovieList = () => {
   const [filters, setFilters] = useState({ genre: "", releaseYear: "", rating: "", sortBy: "" });
   const [isFiltered, setIsFiltered] = useState(false);

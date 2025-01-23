@@ -1,0 +1,104 @@
+.movie-details {
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .movie-details__banner {
+    height: 50vh;
+    background-color: #000;
+  }
+  
+  .movie-details__content {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .movie-details__poster {
+    width: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .movie-details__info {
+    flex: 1;
+  }
+  
+  .movie-details__title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .movie-details__year {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  
+  .movie-details__overview {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .movie-details__actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .movie-details__rent-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 1rem;
+  }
+  
+  .movie-details__playlist-button {
+    padding: 0.8rem 1.5rem;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .movie-details__playlist-button .arrow-down {
+    margin-left: 5px;
+  }
+  
+  .movie-details__tabs {
+    background: #f8f8f8;
+    padding: 20px 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-top: 20px;
+  }
+  
+  .movie-details__tabs ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .movie-details__tabs li {
+    margin: 0 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .movie-details__tabs li.active {
+    color: #1dbf73;
+    border-bottom: 2px solid #1dbf73;
+  }
+  
