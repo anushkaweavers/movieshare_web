@@ -18,7 +18,7 @@ const apiClient = axios.create({
 });
 
 
-const MovieDetails = () => {
+function MovieDetails() {
   const { id } = useParams(); // Get the movie ID from the URL
   const [movie, setMovie] = useState(null);
   const [keywords, setKeywords] = useState([]);
@@ -27,7 +27,7 @@ const MovieDetails = () => {
   const [releases, setReleases] = useState([]); // Define releases state
   const [director, setDirector] = useState(null);
   const [showAllCrew, setShowAllCrew] = useState(false);
-  const [ setPlaylists] = useState([]);
+  const [setPlaylists] = useState([]);
   const [similarMovies, setSimilarMovies] = useState([]);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
@@ -56,19 +56,19 @@ const MovieDetails = () => {
           apiClient.get(`/movie/${id}`),
           apiClient.get(`/movie/${id}/credits`),
         ]);
-  
+
         // Set movie details and include credits
         setMovie({
           ...movieResponse.data,
           credits: creditsResponse.data, // Include cast and crew in movie state
         });
-  
+
         // Extract and set the director name
         const director = creditsResponse.data.crew.find(
           (crew) => crew.job === "Director"
         );
         setDirector(director?.name || "Unknown");
-  
+
         // Fetch and set keywords
         const keywordsResponse = await apiClient.get(`/movie/${id}/keywords`);
         setKeywords(keywordsResponse.data.keywords || []);
@@ -76,7 +76,7 @@ const MovieDetails = () => {
         console.error("Error fetching movie details:", error);
       }
     };
-  
+
     const fetchReviews = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}/reviews`);
@@ -85,7 +85,7 @@ const MovieDetails = () => {
         console.error("Error fetching movie reviews:", error);
       }
     };
-  
+
     const fetchTrailers = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}/videos`);
@@ -97,7 +97,7 @@ const MovieDetails = () => {
         console.error("Error fetching movie trailers:", error);
       }
     };
-  
+
     const fetchReleases = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}/release_dates`);
@@ -129,7 +129,7 @@ const MovieDetails = () => {
     fetchTrailers();
     fetchReleases();
     fetchPlaylists();
-    fetchSimilarMovies(); 
+    fetchSimilarMovies();
   }, [id]);
 
   useEffect(() => {
@@ -142,7 +142,7 @@ const MovieDetails = () => {
       { name: "RELEASES", ref: releasesRef },
       { name: "SIMILAR MOVIES", ref: playlistsRef },
     ];
-  
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -155,18 +155,18 @@ const MovieDetails = () => {
         rootMargin: "-50% 0px", // Trigger when a section is half in the viewport
       }
     );
-  
+
     sections.forEach(({ ref }) => {
       if (ref.current) {
         observer.observe(ref.current);
       }
     });
-  
+
     return () => {
       observer.disconnect();
     };
   }, []);
-  
+
 
   if (!movie) return <div>Loading...</div>;
 
@@ -188,8 +188,7 @@ const MovieDetails = () => {
         <img
           className="movie-details__poster"
           src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-          alt={movie.title}
-        />
+          alt={movie.title} />
 
         {/* Movie Info */}
         <div className="movie-details__info">
@@ -208,29 +207,29 @@ const MovieDetails = () => {
       </div>
 
       <div className="movie-details__tabs">
-  <ul>
-    {["DETAILS", "REVIEWS", "TRAILERS", "CAST", "CREW", "RELEASES", "SIMILAR MOVIES"].map((tab) => (
-      <li
-        key={tab}
-        className={activeTab === tab ? "active" : ""}
-        onClick={() => {
-          const refMap = {
-            DETAILS: detailsRef,
-            REVIEWS: reviewsRef,
-            TRAILERS: trailersRef,
-            CAST: castRef,
-            CREW: crewRef,
-            RELEASES: releasesRef,
-            "SIMILAR MOVIES": playlistsRef, // Fix: Quotes around "SIMILAR MOVIES"
-          };
-          refMap[tab]?.current?.scrollIntoView({ behavior: "smooth" }); // Ensure refs are optional chained
-        }}
-      >
-        {tab}
-      </li>
-    ))}
-  </ul>
-</div>
+        <ul>
+          {["DETAILS", "REVIEWS", "TRAILERS", "CAST", "CREW", "RELEASES", "SIMILAR MOVIES"].map((tab) => (
+            <li
+              key={tab}
+              className={activeTab === tab ? "active" : ""}
+              onClick={() => {
+                const refMap = {
+                  DETAILS: detailsRef,
+                  REVIEWS: reviewsRef,
+                  TRAILERS: trailersRef,
+                  CAST: castRef,
+                  CREW: crewRef,
+                  RELEASES: releasesRef,
+                  "SIMILAR MOVIES": playlistsRef, // Fix: Quotes around "SIMILAR MOVIES"
+                };
+                refMap[tab]?.current?.scrollIntoView({ behavior: "smooth" }); // Ensure refs are optional chained
+              } }
+            >
+              {tab}
+            </li>
+          ))}
+        </ul>
+      </div>
 
 
       {/* Details Section */}
@@ -289,21 +288,17 @@ const MovieDetails = () => {
                     src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                     alt={movie.title}
                     className="review-poster"
-                    onError={(e) => (e.target.src = "/images/default-poster.jpg")}
-                  />
+                    onError={(e) => (e.target.src = "/images/default-poster.jpg")} />
                 </div>
                 <div className="review-card-right">
                   <div className="review-header">
                     <img
-                      src={
-                        review.author_details.avatar_path
-                          ? `https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`
-                          : "/images/default-avatar.png"
-                      }
+                      src={review.author_details.avatar_path
+                        ? `https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`
+                        : "/images/default-avatar.png"}
                       alt={review.author || "Anonymous"}
                       className="review-avatar"
-                      onError={(e) => (e.target.src = "/images/default-avatar.png")}
-                    />
+                      onError={(e) => (e.target.src = "/images/default-avatar.png")} />
                     <div>
                       <p className="review-author">{review.author || "Anonymous"}</p>
                       <p className="review-date">
@@ -320,9 +315,7 @@ const MovieDetails = () => {
                     </p>
                     <button
                       className="read-more"
-                      onClick={() =>
-                        window.open(`https://www.themoviedb.org/review/${review.id}`, "_blank")
-                      }
+                      onClick={() => window.open(`https://www.themoviedb.org/review/${review.id}`, "_blank")}
                     >
                       Read more
                     </button>
@@ -336,92 +329,89 @@ const MovieDetails = () => {
         </div>
       </div>
 
- {/* Trailers Section */}
-<div ref={trailersRef} className="movie-details__section trailers-section" data-section="TRAILERS">
-  <h2 className="trailers-title">Trailers</h2>
-  <div className="trailers-line"></div>
+      {/* Trailers Section */}
+      <div ref={trailersRef} className="movie-details__section trailers-section" data-section="TRAILERS">
+        <h2 className="trailers-title">Trailers</h2>
+        <div className="trailers-line"></div>
 
-  {trailers.length > 0 ? (
-    <>
-      {/* Highlighted Trailer */}
-      <div className="trailers-highlight">
-        <iframe
-          src={`https://www.youtube.com/embed/${trailers[0].key}`}
-          title={trailers[0].name}
-          className="highlighted-trailer"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
-        <button
-          className="youtube-button"
-          onClick={() =>
-            window.open(`https://www.youtube.com/watch?v=${trailers[0].key}`, "_blank")
-          }
-        ></button>
+        {trailers.length > 0 ? (
+          <>
+            {/* Highlighted Trailer */}
+            <div className="trailers-highlight">
+              <iframe
+                src={`https://www.youtube.com/embed/${trailers[0].key}`}
+                title={trailers[0].name}
+                className="highlighted-trailer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+              <button
+                className="youtube-button"
+                onClick={() => window.open(`https://www.youtube.com/watch?v=${trailers[0].key}`, "_blank")}
+              ></button>
+            </div>
+
+            {/* Swiper for other trailers */}
+            <Swiper
+              spaceBetween={10}
+              slidesPerView={3}
+              navigation
+              pagination={{ clickable: true }}
+              className="trailers-swiper"
+            >
+              {trailers.slice(1).map((trailer) => (
+                <SwiperSlide key={trailer.id} className="trailer-slide">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${trailer.key}`}
+                    title={trailer.name}
+                    className="swiper-trailer"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                  <p className="trailer-name">{trailer.name}</p>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </>
+        ) : (
+          <p className="no-trailers">No trailers available for this movie.</p>
+        )}
+      </div>
+      {/* Cast Section */}
+      <div ref={castRef} className="movie-details__section cast-section" data-section="CAST">
+        <h2 className="section-title">Cast</h2>
+        <div className="section-line"></div>
+        {movie.credits?.cast && movie.credits.cast.length > 0 ? (
+          <Swiper
+            spaceBetween={10}
+            slidesPerView={6}
+            navigation
+            className="cast-swiper"
+          >
+            {movie.credits.cast.map((actor) => (
+              <SwiperSlide key={actor.id} className="cast-slide">
+                <div className="cast-item">
+                  <img
+                    src={actor.profile_path
+                      ? `${IMAGE_BASE_URL}${actor.profile_path}`
+                      : "/images/default-avatar.png" // Fallback image for missing profile
+                    }
+                    alt={actor.name}
+                    className="cast-image"
+                    onError={(e) => (e.target.src = "/images/default-avatar.png")} // Fallback on error
+                  />
+                  <p className="cast-name">{actor.name}</p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <p className="no-data">No cast information available.</p>
+        )}
       </div>
 
-      {/* Swiper for other trailers */}
-      <Swiper
-        spaceBetween={10}
-        slidesPerView={3}
-        navigation
-        pagination={{ clickable: true }}
-        className="trailers-swiper"
-      >
-        {trailers.slice(1).map((trailer) => (
-          <SwiperSlide key={trailer.id} className="trailer-slide">
-            <iframe
-              src={`https://www.youtube.com/embed/${trailer.key}`}
-              title={trailer.name}
-              className="swiper-trailer"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-            <p className="trailer-name">{trailer.name}</p>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </>
-  ) : (
-    <p className="no-trailers">No trailers available for this movie.</p>
-  )}
-</div>
-{/* Cast Section */}
-<div ref={castRef} className="movie-details__section cast-section" data-section="CAST">
-  <h2 className="section-title">Cast</h2>
-  <div className="section-line"></div>
-  {movie.credits?.cast && movie.credits.cast.length > 0 ? (
-    <Swiper
-      spaceBetween={10}
-      slidesPerView={6}
-      navigation
-      className="cast-swiper"
-    >
-      {movie.credits.cast.map((actor) => (
-        <SwiperSlide key={actor.id} className="cast-slide">
-          <div className="cast-item">
-            <img
-              src={
-                actor.profile_path
-                  ? `${IMAGE_BASE_URL}${actor.profile_path}`
-                  : "/images/default-avatar.png" // Fallback image for missing profile
-              }
-              alt={actor.name}
-              className="cast-image"
-              onError={(e) => (e.target.src = "/images/default-avatar.png")} // Fallback on error
-            />
-            <p className="cast-name">{actor.name}</p>
-          </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  ) : (
-    <p className="no-data">No cast information available.</p>
-  )}
-</div>
-
-{/* Crew Section */}
-<div className="movie-details__section crew-section" data-section="CREW">
+      {/* Crew Section */}
+      <div className="movie-details__section crew-section" data-section="CREW">
         <h2 className="section-title">Crew</h2>
         <div className="section-line"></div>
         {movie.credits?.crew && movie.credits.crew.length > 0 ? (
@@ -457,8 +447,8 @@ const MovieDetails = () => {
           <p className="no-data">No crew information available.</p>
         )}
       </div>
-{/* Releases Section */}
-<div ref={releasesRef} className="movie-details__section releases-section" data-section="RELEASES">
+      {/* Releases Section */}
+      <div ref={releasesRef} className="movie-details__section releases-section" data-section="RELEASES">
         <h2 className="section-title">Releases</h2>
         {releases.length > 0 ? (
           <Swiper
@@ -474,8 +464,7 @@ const MovieDetails = () => {
                   <img
                     src={`/images/release-icon.png`} // Replace with your image path
                     alt="Release Icon"
-                    className="release-icon"
-                  />
+                    className="release-icon" />
                   <div className="release-info">
                     <strong>{release.iso_3166_1}:</strong>
                     {release.release_dates.map((date) => (
@@ -497,51 +486,50 @@ const MovieDetails = () => {
         ) : (
           <p className="no-info">No release information available.</p>
         )}
-      
+
       </div>
 
       <div ref={playlistsRef} className="movie-details__section similar-movies-section" data-section="SIMILAR_MOVIES">
-      <h2 className="section-title">Similar Movies</h2>
-      {similarMovies.length > 0 ? (
-        <Swiper
-          spaceBetween={20} // Space between slides
-          slidesPerView={3} // Number of slides visible at once
-          breakpoints={{
-            1024: {
-              slidesPerView: 3,
-            },
-            768: {
-              slidesPerView: 2,
-            },
-            480: {
-              slidesPerView: 1,
-            },
-          }}
-        >
-          {similarMovies.map((movie) => (
-            <SwiperSlide key={movie.id} className="similar-movie-item">
-              <div className="movie-card">
-                <div onClick={() => handleClick(movie.id)} className="movie-link">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} // TMDB poster image URL
-                    alt={`${movie.title} Poster`}
-                    className="movie-poster"
-                  />
-                  <div className="movie-info">
-                    <h3 className="movie-title">{movie.title}</h3>
-                    <p className="movie-release-date">{movie.release_date}</p>
+        <h2 className="section-title">Similar Movies</h2>
+        {similarMovies.length > 0 ? (
+          <Swiper
+            spaceBetween={20} // Space between slides
+            slidesPerView={3} // Number of slides visible at once
+            breakpoints={{
+              1024: {
+                slidesPerView: 3,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              480: {
+                slidesPerView: 1,
+              },
+            }}
+          >
+            {similarMovies.map((movie) => (
+              <SwiperSlide key={movie.id} className="similar-movie-item">
+                <div className="movie-card">
+                  <div onClick={() => handleClick(movie.id)} className="movie-link">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} // TMDB poster image URL
+                      alt={`${movie.title} Poster`}
+                      className="movie-poster" />
+                    <div className="movie-info">
+                      <h3 className="movie-title">{movie.title}</h3>
+                      <p className="movie-release-date">{movie.release_date}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      ) : (
-        <p className="no-info">No similar movies available.</p>
-      )}
-    </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <p className="no-info">No similar movies available.</p>
+        )}
+      </div>
     </div>
   );
-};
+}
 
 export default MovieDetails;
