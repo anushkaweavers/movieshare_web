@@ -1,7 +1,12 @@
 
+html {
+  scroll-behavior: smooth;
+}
+
 .body{
   margin-left: 1200px;
-  margin-right:1200px
+  margin-right:1200px;
+  background-color:white;
 }
 .movie-details {
     font-family: Arial, sans-serif;
@@ -28,7 +33,6 @@
 /* Poster Styling */
 .movie-details__poster {
     width: 150px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 /* Info Section */
@@ -69,7 +73,7 @@
     border: none;
     cursor: pointer;
     border-radius: 4px;
-    background-color: #f0f0f0;
+    background-color: #d6d5d5;
     color: #000000;
     font-size: 1rem;
 }
@@ -93,10 +97,10 @@
 .movie-details__tabs {
     position: sticky;
     top: 0;
-    background-color: #ffffff;
     z-index: 1000;
     padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
+    background-color: white;
+    margin-top: 10px;
   }
   
   .movie-details__tabs ul {
@@ -111,7 +115,6 @@
     margin: 0 20px;
     cursor: pointer;
     font-size: 16px;
-    color: #555;
     position: relative;
     padding-bottom: 10px;
   }
@@ -131,7 +134,13 @@
     background-color: #685cf0;
     width: 100%;
   }
-  
+  /* Active Tab Highlight */
+.movie-details__tabs li.active {
+  color: #1d0394; /* Highlighted color */
+  font-weight: bold;
+  border-bottom: 2px solid #007bff; /* Underline for active tab */
+}
+
   /* Sections Styling */
   .movie-details__section {
     padding: 40px;
@@ -305,9 +314,8 @@
   
   .review-card {
     display: flex;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f8f3f3;
+    border-radius: 4px;
     padding: 20px;
     margin-bottom: 25px;
     border: 1px solid #ddd;
@@ -404,3 +412,312 @@
     }
   }
   
+  .trailers-section {
+    padding: 0; /* Remove all padding */
+    background: none; /* No background color */
+  }
+  
+  .trailers-title {
+    font-size: 20px; /* Match the size in the screenshot */
+    font-weight: bold;
+    color: #000;
+    text-align: left; /* Align the title to the left */
+    margin: 0 0 8px 0;
+    padding-left: 20px; /* Slight padding for alignment */
+  }
+  
+  .trailers-line {
+    height: 2px; /* Match the thin purple line */
+    width: calc(100% - 40px); /* Keep line width consistent with content */
+    background-color: #6a1b9a; /* Purple line color */
+    margin: 0 auto 20px; /* Center the line with space below */
+  }
+  
+  .trailers-highlight {
+    margin: 0 auto; /* Center the highlighted trailer */
+    width: calc(100% - 40px); /* Add space on the sides */
+  }
+  
+  .highlighted-trailer {
+    width: 100%;
+    height: 450px; /* Match the proportions */
+    border: none; /* Remove any unnecessary borders */
+  }
+  
+  
+  .trailers-swiper {
+    width: calc(100% - 40px); /* Add space on the sides */
+    margin: 20px auto; /* Center the Swiper */
+  }
+  
+  .trailer-slide {
+    text-align: center;
+  }
+  
+  .swiper-trailer {
+    width: 100%;
+    height: 220px; /* Smaller height for Swiper trailers */
+    border-radius: 8px;
+    border: none; /* No border */
+  }
+  
+  .trailer-name {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+  }
+  
+  .no-trailers {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+  }
+  /* Common Section Styles */
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  text-align: left;
+  margin: 0 0 8px 0;
+  padding-left: 20px;
+}
+
+.section-line {
+  height: 2px;
+  width: calc(100% - 40px);
+  background-color: #6a1b9a;
+  margin: 0 auto 20px;
+}
+.movie-details__section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4e4cfc;
+  text-transform: uppercase;
+}
+
+.section-line {
+  height: 2px;
+  background-color: #4e4cfc;
+  margin-bottom: 20px;
+}
+.movie-details__section {
+  margin-bottom: 20px; /* Reduced spacing between sections */
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #4e4cfc;
+  text-transform: uppercase;
+}
+
+.section-line {
+  height: 2px;
+  background-color: #4e4cfc;
+  margin-bottom: 10px;
+}
+
+.cast-swiper {
+  display: flex;
+  align-items: center;
+}
+
+.cast-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 0px; /* Minimized horizontal spacing between slides */
+}
+
+.cast-item {
+  width: 90px; /* Reduced width for smaller layout */
+}
+
+.cast-image {
+  width: 100%;
+  height: 120px; /* Adjusted height */
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.cast-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 4px; /* Reduced margin above name */
+  color: #333;
+}
+
+.no-data {
+  font-size: 14px;
+  color: #888;
+}
+
+.crew-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px; /* Reduced gap between crew roles */
+  margin-top: 10px;
+  max-height: 150px; /* Limit initial height for crew roles */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.crew-role {
+  flex: 1 1 calc(33.333% - 10px); /* Three items per row */
+  display: flex;
+  flex-direction: column;
+}
+
+.crew-role strong {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #010049;
+}
+
+.crew-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px; /* Minimized gap between crew names */
+}
+
+.crew-name {
+  font-size: 12px;
+  padding: 4px 10px;
+  background-color: #f3f3f375;
+  border-radius: 16px;
+  color: #141414;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.see-all-button {
+  margin: 15px auto 0; /* Centered with automatic margins */
+  display: block; /* Centers the button */
+  width: 200px; /* Broader button */
+  font-size: 14px; /* Slightly larger font */
+  padding: 10px 15px; /* Increased padding for a larger button */
+  background-color: #200d55;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.see-all-button:hover {
+  background-color: #351766;
+}
+
+@media (max-width: 768px) {
+  .cast-slide {
+    width: 70px;
+  }
+
+  .cast-image {
+    height: 100px;
+  }
+
+  .crew-role {
+    flex: 1 1 calc(50% - 5px); /* Two items per row on smaller screens */
+  }
+}
+/* Swiper Styles */
+.release-swiper {
+  padding: 16px 0;
+}
+
+.release-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.release-icon {
+  width: 50px;
+  margin-bottom: 12px;
+}
+
+.release-info {
+  font-size: 14px;
+  color: #333;
+}
+
+.release-date {
+  font-weight: bold;
+}
+
+.release-certification {
+  font-style: italic;
+  color: #777;
+}
+
+/* Show More Button */
+.show-more-button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.show-more-button:hover {
+  background-color: #0056b3;
+}
+
+/* Adjust Swiper Navigation Buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #007bff;
+}
+
+.swiper-pagination-bullet {
+  background-color: #007bff;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #0056b3;
+}
+.similar-movie-item {
+  display: flex;
+  justify-content: center;
+}
+
+.movie-card {
+  width: 100%;
+  max-width: 200px; /* Adjust according to your design */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.movie-poster {
+  width: 100%;
+  height: auto;
+}
+
+.movie-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.movie-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
