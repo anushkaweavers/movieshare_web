@@ -29,15 +29,20 @@ export const useRegister = () => {
           position: "top-center",
         }); // Show success notification
         setIsPending(false); // Turn off loading
-        return response;
+        return response; // Ensure response is returned
       } catch (error) {
         console.error("Error occurred during registration:", error); // Log error
-        toast.error("Registration failed. Please try again.", {
-          position: "top-center",
-        }); // Show error notification
+        toast.error(
+          error.response?.data?.message || "Registration failed. Please try again.",
+          {
+            position: "top-center",
+          }
+        ); // Show detailed error notification if possible
         setIsPending(false); // Turn off loading
+        return Promise.reject(error); // Ensure error is propagated
       }
-    },
+    }
+,    
   });
 
   return { registerFormik, isPending };
