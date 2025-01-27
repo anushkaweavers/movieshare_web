@@ -8,6 +8,11 @@ html {
   margin-right:1200px;
   background-color:white;
 }
+.total{
+  background-color: white;
+  margin-left: 250px;
+  margin-right: 250px;
+}
 .movie-details {
     font-family: Arial, sans-serif;
     color: #333;
@@ -17,80 +22,80 @@ html {
 .movie-details__banner {
     height: 46vh;
     background-color: #000;
-    margin: 0 250px; /* Same left and right gap */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for emphasis */
 }
 
 /* Content Section */
 .movie-details__content {
-    display: flex;
-    padding:20px 60px;
-    align-items: flex-start;
-    max-width: calc(100% - 400px); /* Ensures same width as the banner */
-    margin: 15px 200px; /* Same margins as the banner */
-}
-
-/* Poster Styling */
-.movie-details__poster {
-    width: 150px;
+  display: flex;
+  padding: 20px;
+  align-items: flex-start;
+  max-width: 100%; /* Remove restriction and allow full width */
+  gap: 40px; /* Add space between poster and info */
 }
 
 /* Info Section */
 .movie-details__info {
-    flex: 1;
-    padding: 40px  100px; /* Internal padding for spacing */
+  flex: 1; /* Ensure it takes up remaining space */
+  padding: 30px 20px;
+  margin-left: 20px; /* Reduce margin for better utilization */
+}
+
+/* Poster Styling */
+.movie-details__poster {
+  width: 180px; /* Slightly larger for better balance */
 }
 
 /* Title Styling */
 .movie-details__title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 /* Year Styling */
 .movie-details__year {
-    font-size: 1rem;
-    color:black;
-    margin-bottom: 1rem;
+  font-size: 1rem;
+  color: black;
+  margin-bottom: 1rem;
 }
 
 /* Overview Styling */
 .movie-details__overview {
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
 /* Actions Styling */
 .movie-details__actions {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 /* Rent Button */
 .movie-details__rent-button {
-    padding: 0.8rem 1.5rem;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    background-color: #d6d5d5;
-    color: #000000;
-    font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #d6d5d5;
+  color: #000000;
+  font-size: 1rem;
 }
 
 /* Playlist Button */
 .movie-details__playlist-button {
-    padding: 0.8rem 1.5rem;
-    background-color: white;
-    color: black;
-    border: 1px solid black;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .movie-details__playlist-button .arrow-down {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
  /* Sticky Tabs */
@@ -147,7 +152,7 @@ html {
     margin: 20px 0;
     background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
   }
   
   .movie-details__section h2 {
@@ -178,77 +183,75 @@ html {
     }
   }
   
-/* Styling the Details Section */
-.movie-details__section[data-section="DETAILS"] {
+/* Updated Styling */
+
+  .movie-details__section[data-section="DETAILS"] {
     padding: 20px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+
   }
-  
-  .movie-details__section[data-section="DETAILS"] h2 {
-    font-size: 1.5rem;
-    color: #4a4a4a;
+
+  .movie-details__section h2 {
+    font-size: 24px;
     margin-bottom: 20px;
-    border-bottom: 2px solid #7c4dff;
-    display: inline-block;
-    width: 100%;
-  }
-  
-  .details-left {
-    flex: 1;
-    min-width: 300px;
-  }
-  
-  .details-left div {
-    margin-bottom: 15px;
-    font-size: 1rem;
-  }
-  
-  .details-left strong {
-    font-weight: 600;
     color: #4a4a4a;
+    border-bottom: 2px solid #7c4dff;
+    padding-bottom: 10px;
   }
-  
+
+  .details-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .details-left,
   .details-right {
     flex: 1;
     min-width: 300px;
   }
-  
-  .details-right .genres {
+
+  .details-left div,
+  .details-right div {
     margin-bottom: 15px;
+    font-size: 1rem;
   }
-  
-  .details-right .genres .genre-tag {
+
+  .details-left strong,
+  .details-right strong {
+    font-weight: 600;
+    color: #4a4a4a;
+  }
+
+  .details-tag {
     display: inline-block;
-    padding: 5px 12px;
-    background-color: #f0f0f0;
-    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 5px 5px 0 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
     font-size: 0.9rem;
-    color: #555;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    color: #0a0a0a;
+    background-color: rgb(172, 172, 172);
   }
-  
-  .details-right .tags {
-    font-size: 0.9rem;
-    color: #555;
-    line-height: 1.6;
+
+  .details-tag:hover {
+    background-color: #c2c2c2;
   }
-  .movie-details__section {
+
+  .review-section{
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
     color: #333;
-  }
-  
-  .movie-details__section h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e5e5e5;
-    padding-bottom: 10px;
-  }
+   }
 /* Score Row */
 .scores-row {
     display: flex;
@@ -277,7 +280,7 @@ html {
     background: none; /* Remove any background shadow */
     padding: 0; /* Remove padding */
   }
-  
+
   /* Write a Review Button */
   .write-review-button {
     background-color: #3c386b;
@@ -314,11 +317,10 @@ html {
   
   .review-card {
     display: flex;
-    background-color: #f8f3f3;
     border-radius: 4px;
     padding: 20px;
     margin-bottom: 25px;
-    border: 1px solid #ddd;
+   
   }
   
   .review-card-left {
@@ -350,7 +352,7 @@ html {
     border-radius: 50%;
     margin-right: 15px;
     object-fit: cover;
-    background-color: #ddd;
+    
   }
   
   .review-author {
@@ -411,7 +413,6 @@ html {
       margin-bottom: 10px;
     }
   }
-  
   .trailers-section {
     padding: 0; /* Remove all padding */
     background: none; /* No background color */
@@ -422,16 +423,10 @@ html {
     font-weight: bold;
     color: #000;
     text-align: left; /* Align the title to the left */
-    margin: 0 0 8px 0;
+    margin: 0 0 2px 0;
     padding-left: 20px; /* Slight padding for alignment */
   }
   
-  .trailers-line {
-    height: 2px; /* Match the thin purple line */
-    width: calc(100% - 40px); /* Keep line width consistent with content */
-    background-color: #6a1b9a; /* Purple line color */
-    margin: 0 auto 20px; /* Center the line with space below */
-  }
   
   .trailers-highlight {
     margin: 0 auto; /* Center the highlighted trailer */
@@ -472,22 +467,15 @@ html {
     color: #999;
     text-align: center;
   }
-  /* Common Section Styles */
+ 
 .section-title {
   font-size: 20px;
   font-weight: bold;
   color: #000;
   text-align: left;
-  margin: 0 0 8px 0;
-  padding-left: 20px;
 }
 
-.section-line {
-  height: 2px;
-  width: calc(100% - 40px);
-  background-color: #6a1b9a;
-  margin: 0 auto 20px;
-}
+
 .movie-details__section {
   margin-bottom: 30px;
 }
@@ -500,32 +488,10 @@ html {
   text-transform: uppercase;
 }
 
-.section-line {
-  height: 2px;
-  background-color: #4e4cfc;
-  margin-bottom: 20px;
-}
-.movie-details__section {
-  margin-bottom: 20px; /* Reduced spacing between sections */
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #4e4cfc;
-  text-transform: uppercase;
-}
-
-.section-line {
-  height: 2px;
-  background-color: #4e4cfc;
-  margin-bottom: 10px;
-}
-
 .cast-swiper {
   display: flex;
   align-items: center;
+
 }
 
 .cast-slide {
@@ -567,6 +533,7 @@ html {
   max-height: 150px; /* Limit initial height for crew roles */
   overflow: hidden;
   transition: max-height 0.3s ease;
+ 
 }
 
 .crew-role {
@@ -639,7 +606,6 @@ html {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 16px;
-  background-color: #f9f9f9;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -677,22 +643,17 @@ html {
 }
 
 .show-more-button:hover {
-  background-color: #0056b3;
+  background-color: #2b01c5;
 }
 
 /* Adjust Swiper Navigation Buttons */
 .swiper-button-next,
 .swiper-button-prev {
-  color: #007bff;
+  color: #8c00ff;
 }
 
-.swiper-pagination-bullet {
-  background-color: #007bff;
-}
 
-.swiper-pagination-bullet-active {
-  background-color: #0056b3;
-}
+
 .similar-movie-item {
   display: flex;
   justify-content: center;
@@ -703,7 +664,7 @@ html {
   max-width: 200px; /* Adjust according to your design */
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
 }
 
 .movie-poster {

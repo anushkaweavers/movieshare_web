@@ -5,7 +5,8 @@ import Login from "./components/Auth/Login/index";
 import ForgotPassword from "./components/Auth/Forgot-Password/index";
 import ResetPassword from "./components/Auth/Reset-Password/index";
 import MovieList from "./components/List/index";
-import MovieDetails from "./components/Details/MovieDetails"; // Import MovieDetails
+import MovieDetails from "./components/Details/MovieDetails"; 
+import Person from "./components/Person/person";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Route path="/reset_password" element={<ResetPassword />} />
       <Route path="/list" element={<MovieList />} />
       <Route path="/movie/:id" element={<MovieDetails />} /> {/* Movie Details route */}
+      <Route path="/person/:personId" element={<Person />} />
     </Routes>
   );
 };

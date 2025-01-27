@@ -4,8 +4,10 @@ import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react"; // Corrected import
 import "swiper/css";
 import "./MovieDetails.css";
+import SwiperCore from "swiper";
+import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
-
+SwiperCore.use([Navigation]);
 const API_KEY = "41b7e34d009af460e22e4a8e91279433";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
@@ -171,6 +173,7 @@ function MovieDetails() {
   if (!movie) return <div>Loading...</div>;
 
   return (
+    <div className="total" >
     <div className="movie-details">
       {/* Banner */}
       <div
@@ -231,39 +234,53 @@ function MovieDetails() {
         </ul>
       </div>
 
-
-      {/* Details Section */}
-      <div ref={detailsRef} className="movie-details__section" data-section="DETAILS">
-        <h2>Details</h2>
-        <div className="details-left">
-          <div>
-            <strong>Director:</strong> {director}
-          </div>
-          <div>
-            <strong>Languages:</strong>{" "}
-            {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
-          </div>
-          <div>
-            <strong>Studio:</strong>{" "}
-            {movie.production_companies.map((company) => company.name).join(", ")}
-          </div>
-        </div>
-
-        <div className="details-right">
-          <div className="genres">
-            <strong>Genres:</strong>{" "}
-            {movie.genres.map((genre) => (
-              <span key={genre.id} className="genre-tag">
-                {genre.name}
+{/* Updated Details Section */}
+<div ref={detailsRef} className="movie-details__section" data-section="DETAILS">
+  <h2>Details</h2>
+  <div className="details-container">
+    <div className="details-left">
+      <div>
+        <strong>Director:</strong>
+        {Array.isArray(director)
+          ? director.map((name, index) => (
+              <span key={index} className="details-tag">
+                {name}
               </span>
-            ))}
-          </div>
-          <div className="tags">
-            <strong>Tags:</strong> {keywords.map((keyword) => keyword.name).join(", ")}
-          </div>
-        </div>
+            ))
+          : (
+              <span className="details-tag">{director}</span>
+            )}
       </div>
+      <div>
+        <strong>Language:</strong> {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
+      </div>
+      <div>
+        <strong>Studio:</strong> {movie.production_companies.map((company) => company.name).join(", ")}
+      </div>
+    </div>
 
+    <div className="details-right">
+      <div>
+        <strong>Genres:</strong>
+        {movie.genres.map((genre) => (
+          <span key={genre.id} className="details-tag">
+            {genre.name}
+          </span>
+        ))}
+      </div>
+      <div>
+        <strong>Tags:</strong>
+        {keywords.map((keyword) => (
+          <span key={keyword.id} className="details-tag">
+            {keyword.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="review-section">
       {/* Reviews Section */}
       <div ref={reviewsRef} className="movie-details__section" data-section="REVIEWS">
         <h2>Movie Sharer’s Reviews</h2>
@@ -328,8 +345,10 @@ function MovieDetails() {
           )}
         </div>
       </div>
+      </div>
 
       {/* Trailers Section */}
+      <div className="trailer-section">
       <div ref={trailersRef} className="movie-details__section trailers-section" data-section="TRAILERS">
         <h2 className="trailers-title">Trailers</h2>
         <div className="trailers-line"></div>
@@ -377,8 +396,15 @@ function MovieDetails() {
           <p className="no-trailers">No trailers available for this movie.</p>
         )}
       </div>
-      {/* Cast Section */}
-      <div ref={castRef} className="movie-details__section cast-section" data-section="CAST">
+      </div>
+
+    {/* Cast Section */}
+    <div className="Cast-Section">
+    <div
+        ref={castRef}
+        className="movie-details__section cast-section"
+        data-section="CAST"
+      >
         <h2 className="section-title">Cast</h2>
         <div className="section-line"></div>
         {movie.credits?.cast && movie.credits.cast.length > 0 ? (
@@ -389,16 +415,20 @@ function MovieDetails() {
             className="cast-swiper"
           >
             {movie.credits.cast.map((actor) => (
-              <SwiperSlide key={actor.id} className="cast-slide">
+              <SwiperSlide
+                key={actor.id}
+                className="cast-slide"
+                onClick={() => navigate(`/person/${actor.id}`)}
+              >
                 <div className="cast-item">
                   <img
-                    src={actor.profile_path
-                      ? `${IMAGE_BASE_URL}${actor.profile_path}`
-                      : "/images/default-avatar.png" // Fallback image for missing profile
+                    src={
+                      actor.profile_path
+                        ? `${IMAGE_BASE_URL}${actor.profile_path}`
+                        : "/images/default-avatar.png"
                     }
                     alt={actor.name}
                     className="cast-image"
-                    onError={(e) => (e.target.src = "/images/default-avatar.png")} // Fallback on error
                   />
                   <p className="cast-name">{actor.name}</p>
                 </div>
@@ -409,7 +439,7 @@ function MovieDetails() {
           <p className="no-data">No cast information available.</p>
         )}
       </div>
-
+</div>
       {/* Crew Section */}
       <div className="movie-details__section crew-section" data-section="CREW">
         <h2 className="section-title">Crew</h2>
@@ -423,23 +453,30 @@ function MovieDetails() {
               {Object.entries(
                 movie.credits.crew.reduce((acc, crewMember) => {
                   if (!acc[crewMember.job]) acc[crewMember.job] = [];
-                  acc[crewMember.job].push(crewMember.name);
+                  acc[crewMember.job].push(crewMember);
                   return acc;
                 }, {})
-              ).map(([role, names]) => (
+              ).map(([role, crewMembers]) => (
                 <div key={role} className="crew-role">
                   <strong>{role}</strong>
                   <div className="crew-names">
-                    {names.map((name, index) => (
-                      <span key={index} className="crew-name">
-                        {name}
+                    {crewMembers.map((crewMember, index) => (
+                      <span
+                        key={index}
+                        className="crew-name"
+                        onClick={() => navigate(`/person/${crewMember.id}`)}
+                      >
+                        {crewMember.name}
                       </span>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-            <button className="see-all-button" onClick={toggleCrewVisibility}>
+            <button
+              className="see-all-button"
+              onClick={toggleCrewVisibility}
+            >
               {showAllCrew ? "Show Less" : "See All"}
             </button>
           </div>
@@ -528,6 +565,7 @@ function MovieDetails() {
           <p className="no-info">No similar movies available.</p>
         )}
       </div>
+    </div>
     </div>
   );
 }
