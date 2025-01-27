@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
-import TextFieldInput from "../Common/UiComps/TextField";
-import ButtonField from "../Common/UiComps/ButtonField";
-import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection"; // Ensure the correct path to LeftSection
+import TextFieldInput from "../../Common/UiComps/TextField";
+import ButtonField from "../../Common/UiComps/ButtonField";
+import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
+import LeftSection from "../../Common/LeftSection"; // Ensure the correct path to LeftSection
 import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";

@@ -5,6 +5,14 @@ import { Autoplay, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
+<<<<<<< HEAD:client/src/components/Auth/Common/LeftSection.jsx
+=======
+import "../custom.css";
+import "../responsive.css";
+import "../dark.css";
+import "../developer.css";
+import "../global.css";
+>>>>>>> movie-module:client/src/components/Common/LeftSection.jsx
 
 const LeftSection = () => {
   return (

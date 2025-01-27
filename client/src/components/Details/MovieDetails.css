@@ -1,0 +1,684 @@
+
+html {
+  scroll-behavior: smooth;
+}
+
+.body{
+  margin-left: 1200px;
+  margin-right:1200px;
+  background-color:white;
+}
+.total{
+  background-color: white;
+  margin-left: 250px;
+  margin-right: 250px;
+}
+.movie-details {
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* Banner Section */
+.movie-details__banner {
+    height: 46vh;
+    background-color: #000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for emphasis */
+}
+
+/* Content Section */
+.movie-details__content {
+  display: flex;
+  padding: 20px;
+  align-items: flex-start;
+  max-width: 100%; /* Remove restriction and allow full width */
+  gap: 40px; /* Add space between poster and info */
+}
+
+/* Info Section */
+.movie-details__info {
+  flex: 1; /* Ensure it takes up remaining space */
+  padding: 30px 20px;
+  margin-left: 20px; /* Reduce margin for better utilization */
+}
+
+/* Poster Styling */
+.movie-details__poster {
+  width: 180px; /* Slightly larger for better balance */
+}
+
+/* Title Styling */
+.movie-details__title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Year Styling */
+.movie-details__year {
+  font-size: 1rem;
+  color: black;
+  margin-bottom: 1rem;
+}
+
+/* Overview Styling */
+.movie-details__overview {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Actions Styling */
+.movie-details__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Rent Button */
+.movie-details__rent-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #d6d5d5;
+  color: #000000;
+  font-size: 1rem;
+}
+
+/* Playlist Button */
+.movie-details__playlist-button {
+  padding: 0.8rem 1.5rem;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.movie-details__playlist-button .arrow-down {
+  margin-left: 5px;
+}
+
+ /* Sticky Tabs */
+.movie-details__tabs {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 10px 0;
+    background-color: white;
+    margin-top: 10px;
+  }
+  
+  .movie-details__tabs ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .movie-details__tabs li {
+    margin: 0 20px;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .movie-details__tabs li.active {
+    color: #685cf0;
+    font-weight: bold;
+  }
+  
+  .movie-details__tabs li.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #685cf0;
+    width: 100%;
+  }
+  /* Active Tab Highlight */
+.movie-details__tabs li.active {
+  color: #1d0394; /* Highlighted color */
+  font-weight: bold;
+  border-bottom: 2px solid #007bff; /* Underline for active tab */
+}
+
+  /* Sections Styling */
+  .movie-details__section {
+    padding: 40px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+
+  }
+  
+  .movie-details__section h2 {
+    margin-bottom: 20px;
+    font-size: 40px;
+    color: #333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .movie-details__content {
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+  
+    .movie-details__poster {
+      width: 100px;
+    }
+  
+    .movie-details__tabs li {
+      margin: 0 10px;
+      font-size: 20px;
+    }
+  
+    .movie-details__section {
+      padding: 20px;
+    }
+  }
+  
+/* Updated Styling */
+
+  .movie-details__section[data-section="DETAILS"] {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+
+  }
+
+  .movie-details__section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+    border-bottom: 2px solid #7c4dff;
+    padding-bottom: 10px;
+  }
+
+  .details-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .details-left,
+  .details-right {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .details-left div,
+  .details-right div {
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+
+  .details-left strong,
+  .details-right strong {
+    font-weight: 600;
+    color: #4a4a4a;
+  }
+
+  .details-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px 5px 0 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: #0a0a0a;
+    background-color: rgb(172, 172, 172);
+  }
+
+  .details-tag:hover {
+    background-color: #c2c2c2;
+  }
+
+  .review-section{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+   }
+/* Score Row */
+.scores-row {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the scores horizontally */
+    gap: 30px; /* Increased spacing between scores */
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    border: none; /* Ensure no borders around the scores row */
+  }
+  
+  .total-score {
+    font-size: 24px; /* Increased font size */
+    font-weight: bold;
+    color: #333;
+    margin-right: 30px; /* Adjusted spacing */
+    margin-left: 100px;
+  }
+  
+  .score-item {
+    font-size: 22px; /* Larger font for better readability */
+    font-weight: 500;
+    color: #555;
+    line-height: 1.2; /* Fixed height to remove any extra spacing */
+    border: none; /* Ensure no faint lines between scores */
+    background: none; /* Remove any background shadow */
+    padding: 0; /* Remove padding */
+  }
+
+  /* Write a Review Button */
+  .write-review-button {
+    background-color: #3c386b;
+    color: #ffffff;
+    font-size: 18px; /* Slightly larger font */
+    font-weight: bold;
+    padding: 12px 25px; /* Increased padding */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px; /* Added spacing above */
+    transition: background-color 0.3s ease;
+    justify-content: center; /* Center button text */
+    margin-left: auto; /* Centering trick */
+    margin-right: auto;
+    display: block; /* Ensures it's centered */
+  }
+  
+  .write-review-button i {
+    font-size: 20px; /* Adjust the icon size */
+  }
+  
+  .write-review-button:hover {
+    background-color: #4438b8;
+  }
+  
+  /* Review Cards */
+  .reviews-list {
+    margin-top: 30px;
+  }
+  
+  .review-card {
+    display: flex;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 25px;
+   
+  }
+  
+  .review-card-left {
+    flex: 0 0 100px;
+    margin-right: 15px;
+  }
+  
+  .review-poster {
+    width: 100px;
+    height: 150px;
+    border-radius: 5px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+  }
+  
+  .review-card-right {
+    flex: 1;
+  }
+  
+  .review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .review-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    
+  }
+  
+  .review-author {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .review-date {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .review-score {
+    margin-left: auto;
+    font-size: 18px;
+    color: #ff9800;
+    font-weight: bold;
+  }
+  
+  .review-body {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .read-more {
+    font-size: 16px;
+    color: #3c5edc;
+    cursor: pointer;
+    text-decoration: underline;
+    border: none;
+    background: none;
+  }
+  
+  .read-more:hover {
+    color: #4438b8;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .scores-row {
+      flex-direction: column;
+      gap: 15px;
+      justify-content: center; /* Center scores on smaller screens */
+    }
+  
+    .write-review-button {
+      width: 90%; /* Ensure the button stays centered */
+    }
+  
+    .review-card {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .review-card-left {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
+  .trailers-section {
+    padding: 0; /* Remove all padding */
+    background: none; /* No background color */
+  }
+  
+  .trailers-title {
+    font-size: 20px; /* Match the size in the screenshot */
+    font-weight: bold;
+    color: #000;
+    text-align: left; /* Align the title to the left */
+    margin: 0 0 2px 0;
+    padding-left: 20px; /* Slight padding for alignment */
+  }
+  
+  
+  .trailers-highlight {
+    margin: 0 auto; /* Center the highlighted trailer */
+    width: calc(100% - 40px); /* Add space on the sides */
+  }
+  
+  .highlighted-trailer {
+    width: 100%;
+    height: 450px; /* Match the proportions */
+    border: none; /* Remove any unnecessary borders */
+  }
+  
+  
+  .trailers-swiper {
+    width: calc(100% - 40px); /* Add space on the sides */
+    margin: 20px auto; /* Center the Swiper */
+  }
+  
+  .trailer-slide {
+    text-align: center;
+  }
+  
+  .swiper-trailer {
+    width: 100%;
+    height: 220px; /* Smaller height for Swiper trailers */
+    border-radius: 8px;
+    border: none; /* No border */
+  }
+  
+  .trailer-name {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+  }
+  
+  .no-trailers {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+  }
+ 
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  text-align: left;
+}
+
+
+.movie-details__section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4e4cfc;
+  text-transform: uppercase;
+}
+
+.cast-swiper {
+  display: flex;
+  align-items: center;
+
+}
+
+.cast-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 0px; /* Minimized horizontal spacing between slides */
+}
+
+.cast-item {
+  width: 90px; /* Reduced width for smaller layout */
+}
+
+.cast-image {
+  width: 100%;
+  height: 120px; /* Adjusted height */
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.cast-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 4px; /* Reduced margin above name */
+  color: #333;
+}
+
+.no-data {
+  font-size: 14px;
+  color: #888;
+}
+
+.crew-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px; /* Reduced gap between crew roles */
+  margin-top: 10px;
+  max-height: 150px; /* Limit initial height for crew roles */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+ 
+}
+
+.crew-role {
+  flex: 1 1 calc(33.333% - 10px); /* Three items per row */
+  display: flex;
+  flex-direction: column;
+}
+
+.crew-role strong {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #010049;
+}
+
+.crew-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px; /* Minimized gap between crew names */
+}
+
+.crew-name {
+  font-size: 12px;
+  padding: 4px 10px;
+  background-color: #f3f3f375;
+  border-radius: 16px;
+  color: #141414;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.see-all-button {
+  margin: 15px auto 0; /* Centered with automatic margins */
+  display: block; /* Centers the button */
+  width: 200px; /* Broader button */
+  font-size: 14px; /* Slightly larger font */
+  padding: 10px 15px; /* Increased padding for a larger button */
+  background-color: #200d55;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.see-all-button:hover {
+  background-color: #351766;
+}
+
+@media (max-width: 768px) {
+  .cast-slide {
+    width: 70px;
+  }
+
+  .cast-image {
+    height: 100px;
+  }
+
+  .crew-role {
+    flex: 1 1 calc(50% - 5px); /* Two items per row on smaller screens */
+  }
+}
+/* Swiper Styles */
+.release-swiper {
+  padding: 16px 0;
+}
+
+.release-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.release-icon {
+  width: 50px;
+  margin-bottom: 12px;
+}
+
+.release-info {
+  font-size: 14px;
+  color: #333;
+}
+
+.release-date {
+  font-weight: bold;
+}
+
+.release-certification {
+  font-style: italic;
+  color: #777;
+}
+
+/* Show More Button */
+.show-more-button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.show-more-button:hover {
+  background-color: #2b01c5;
+}
+
+/* Adjust Swiper Navigation Buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #8c00ff;
+}
+
+
+
+.similar-movie-item {
+  display: flex;
+  justify-content: center;
+}
+
+.movie-card {
+  width: 100%;
+  max-width: 200px; /* Adjust according to your design */
+  border-radius: 10px;
+  overflow: hidden;
+
+}
+
+.movie-poster {
+  width: 100%;
+  height: auto;
+}
+
+.movie-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.movie-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
