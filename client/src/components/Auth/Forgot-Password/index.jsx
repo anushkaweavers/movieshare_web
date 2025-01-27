@@ -1,21 +1,10 @@
 import React, { useState } from "react";
 import { Box, Container, FormGroup, Grid, Dialog, DialogContent, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-import TextFieldInput from "../Common/UiComps/TextField";
-import ButtonField from "../Common/UiComps/ButtonField";
-import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection";
-=======
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import TextFieldInput from "../../Common/UiComps/TextField";
+import TextFieldInput from "../..FullScreenLoader/Common/UiComps/TextField";
 import ButtonField from "../../Common/UiComps/ButtonField";
 import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
 import LeftSection from "../../Common/LeftSection";
->>>>>>> movie-module
 import { useForgotPassword } from "./useForgotpass";
 import toast from "react-hot-toast";
 import "../../custom.css";
