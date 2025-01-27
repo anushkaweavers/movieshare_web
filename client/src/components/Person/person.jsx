@@ -62,9 +62,10 @@ const Person = () => {
     ).slice(0, 12) || [];
 
   return (
+    <div className="total">
     <div className="person-page">
       <button onClick={() => navigate(-1)} className="back-button">
-        &larr; Back
+        &larr; Back To Movie Title
       </button>
       <div className="person-details">
         <img
@@ -170,6 +171,7 @@ const Person = () => {
       ) : (
         <p className="no-crew-message">No similar crew members found.</p>
       )}
+    </div>
     </div>
   );
 };
