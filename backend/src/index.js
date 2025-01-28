@@ -4,7 +4,7 @@ const config = require('./config/config');
 const logger = require('./config/logger');
 require("dotenv").config();
 const cors = require("cors");
-const tmdbRoutes = require("./routes/movieRoutes");
+
 
 let server;
 
@@ -17,7 +17,7 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
 
 // Middleware setup
 app.use(cors());
-app.use("/api/tmdb", tmdbRoutes);
+
 
 // Error handling
 const exitHandler = () => {
