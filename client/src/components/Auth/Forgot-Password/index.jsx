@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Container, FormGroup, Grid, Dialog, DialogContent, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import TextFieldInput from "../..FullScreenLoader/Common/UiComps/TextField";
+import TextFieldInput from "../../Common/UiComps/TextField";
 import ButtonField from "../../Common/UiComps/ButtonField";
 import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
 import LeftSection from "../../Common/LeftSection";

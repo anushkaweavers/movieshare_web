@@ -7,19 +7,15 @@ import {
   DialogContent,
   Grid,
 } from "@mui/material";
-<<<<<<< HEAD
-import TextFieldInput from "../Common/UiComps/TextField";
-import ButtonField from "../Common/UiComps/ButtonField";
-import FullScreenLoader from "../Common/UiComps/FullScreenLoader";
-import LeftSection from "../Common/LeftSection"; // Importing LeftSection
-=======
+
+import LeftSection from "../../Common/LeftSection";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import TextFieldInput from "../../Common/UiComps/TextField";
 import ButtonField from "../../Common/UiComps/ButtonField";
 import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
->>>>>>> movie-module
+
 import { useResetPassword } from "./useResetpass";
 
 const ResetPassword = () => {
