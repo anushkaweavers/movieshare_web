@@ -45,19 +45,25 @@ const Register = () => {
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
   
     try {
-      // Call the formik submit handler and await the result
+      // Await the result of form submission
       const response = await registerFormik.handleSubmit();
   
-      // Assuming the API returns a success flag or similar
-      if (response && response.success) {
-        navigate("/login"); // Navigate to login page
+      // Check the response using the status code
+      if (response?.status === 201) {
+        console.log("Registration successful:", response);
+        navigate("/login");
       } else {
-        console.error("Registration failed:", response?.message || "Unknown error");
+        console.error(
+          "Registration failed:",
+          response?.data?.message || "Unknown error"
+        );
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Error during registration:", error.message || error);
     }
   };
+  
+  
   
   return (
     <Container maxWidth={false} className="auth-wraper">
