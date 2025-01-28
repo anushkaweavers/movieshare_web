@@ -14,8 +14,6 @@ const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
-// Import TMDB route
-const movieRoutes = require('./routes/movieRoutes'); // Ensure this path is correct
 
 const app = express();
 
@@ -63,8 +61,7 @@ if (config.env === 'production') {
 // v1 api routes
 app.use('/v1', routes);
 
-// Register the movies route for TMDB API
-app.use('/movies', movieRoutes);
+
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
