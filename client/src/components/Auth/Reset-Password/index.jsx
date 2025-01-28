@@ -137,10 +137,11 @@ const ResetPassword = () => {
   </DialogContent>
 </Dialog>
 
-
-      <FullScreenLoader open={isPending} />
+     
+    <FullScreenLoader open={isPending} />
     </Container>
   );
 };
 
 export default ResetPassword;
+
