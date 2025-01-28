@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import toast from "react-hot-toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
 import { logInApi, resendEmailVerifyApi, socialLoginApi } from "../../../actions/auth.actions";
@@ -12,69 +11,84 @@ import loginValidation from "../../../Validations/Auth/login.validation";
 export const useLogin = () => {
   const cookies = new Cookies();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Ensure the navigate function is being used correctly
+  const navigate = useNavigate();
   const [isPending, setPending] = useState(false);
-
+  const [loginMessage, setLoginMessage] = useState("");  // State for managing login messages
+  const [isError, setIsError] = useState(false);  // State for managing error or success
+  
   // Handle login form submission
   const handleLogin = async (values) => {
-    console.log("handleLogin triggered with values:", values); // Check if handleLogin is triggered
+    setLoginMessage(""); // Reset message before starting login
+    setIsError(false); // Reset error flag before login attempt
     try {
       setPending(true);
       const loginData = await logInApi(values);
-      console.log("Login API Response:", loginData); // Log API response
   
-      if (loginData && loginData.tokens && loginData.user) {  // Check if tokens and user data are available
-        console.log("Login successful:", loginData);
-  
+      if (loginData && loginData.tokens && loginData.user) {
         // Store tokens and user data in cookies and state
         cookies.set("access_token", loginData.tokens.accessToken);
         cookies.set("refresh_token", loginData.tokens.refreshToken);
         dispatch(updateUserData(loginData.user));
-  
-        // Proceed to navigate
-        console.log("Navigating to /list");
+
+        // Show success message on UI
+        setLoginMessage("Login successful!");
+        setIsError(false);
+        
+        // Navigate to list page
         navigate("/list");
       } else {
-        console.log("Login failed: Invalid response", loginData); // Log failure when response is invalid
-        toast.error("Login failed: Invalid response");
+        // Show failure message on UI
+        setLoginMessage("Login failed: Invalid response.");
+        setIsError(true);
       }
     } catch (error) {
       console.error("Login Error: ", error);
-      toast.error("An unexpected error occurred.");
+      // Show error message on UI
+      setLoginMessage("An unexpected error occurred.");
+      setIsError(true);
     } finally {
       setPending(false);
     }
   };
   
-  
   // Formik setup for the login form
   const loginFormik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: loginValidation,
-    onSubmit: handleLogin,  // Link form submission to handleLogin function
+    onSubmit: handleLogin,
   });
 
   // Handling social login (e.g., Google login)
   const responseMessage = async (response, name) => {
+    setLoginMessage("");  // Reset message before starting login
+    setIsError(false); // Reset error flag before social login attempt
     try {
       setPending(true);
       const token = name === "google" ? response : response?.accessToken;
       const res = await socialLoginApi({ token, type: name });
+      
       if (res.status) {
-        toast.success(res.message);
+        // Show success message on UI
+        setLoginMessage("Login successful!");
+        setIsError(false);
+        
+        // Store tokens and user data in cookies and state
         cookies.set("access_token", res.result.tokens.access.token);
         cookies.set("refresh_token", res.result.tokens.refresh.token);
         dispatch(updateUserData(res.result.userData));
         
-        // Successfully logged in, navigate to /list
-        console.log("Navigating to /list");  // Debugging the navigation
+        // Navigate to list page
         navigate("/list");
       } else {
-        toast.error(res.message);
+        // Show failure message on UI
+        setLoginMessage(res.message);
+        setIsError(true);
       }
     } catch (error) {
       console.error("Social Login Error: ", error);
-      toast.error("An unexpected error occurred during social login.");
+      // Show error message on UI
+      setLoginMessage("An unexpected error occurred during social login.");
+      setIsError(true);
     } finally {
       setPending(false);
     }
@@ -86,5 +100,5 @@ export const useLogin = () => {
     onSuccess: (tokenResponse) => responseMessage(tokenResponse?.code, "google"),
   });
 
-  return { loginFormik, googleLogin, isPending };
+  return { loginFormik, googleLogin, isPending, loginMessage, isError };
 };

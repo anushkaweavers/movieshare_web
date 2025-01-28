@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,9 +9,6 @@ import {
 } from "@mui/material";
 
 import LeftSection from "../../Common/LeftSection";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
 import TextFieldInput from "../../Common/UiComps/TextField";
 import ButtonField from "../../Common/UiComps/ButtonField";
 import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
@@ -19,8 +16,12 @@ import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
 import { useResetPassword } from "./useResetpass";
 
 const ResetPassword = () => {
-  const { resetPassFormik, openConfirmModal, gotoLogin, isPending } =
-    useResetPassword();
+  const { resetPassFormik, openConfirmModal, gotoLogin, isPending } = useResetPassword();
+
+  // Debugging log to see if the dialog state is updating
+  useEffect(() => {
+    console.log("openConfirmModal state: ", openConfirmModal); // Check if it's updating
+  }, [openConfirmModal]);
 
   return (
     <Container
@@ -117,24 +118,25 @@ const ResetPassword = () => {
       </Grid>
 
       {/* Success Dialog */}
-      <Dialog open={openConfirmModal} onClose={gotoLogin}>
-        <DialogContent>
-          <Box>
-            <img
-              width={34}
-              height={34}
-              src="/images/successfully-icon.svg"
-              alt="Success"
-            />
-          </Box>
-          <h3>Password Reset Successfully</h3>
-          <p>Your password has been successfully reset.</p>
-          <p>You can now log in.</p>
-          <Button onClick={gotoLogin} className="p-btn">
-            Log In
-          </Button>
-        </DialogContent>
-      </Dialog>
+<Dialog open={openConfirmModal} onClose={gotoLogin}>
+  <DialogContent>
+    <Box>
+      <img
+        width={34}
+        height={34}
+        src="/images/successfully-icon.svg"
+        alt="Success"
+      />
+    </Box>
+    <h3>Password Reset Successfully</h3>
+    <p>Your password has been successfully reset.</p>
+    <p>You can now log in.</p>
+    <Button onClick={gotoLogin} className="p-btn">
+      Log In
+    </Button>
+  </DialogContent>
+</Dialog>
+
 
       <FullScreenLoader open={isPending} />
     </Container>

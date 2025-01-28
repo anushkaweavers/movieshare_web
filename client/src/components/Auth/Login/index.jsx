@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -20,7 +20,18 @@ import "../../global.css";
 import { useLogin } from "./useLogin";
 
 const LoginIndex = () => {
-  const { loginFormik, googleLogin, isPending } = useLogin();
+  const { loginFormik, googleLogin, isPending, loginMessage, isError } = useLogin();
+
+  // Automatically hide the message after 5 seconds
+  useEffect(() => {
+    if (loginMessage) {
+      const timer = setTimeout(() => {
+        // Clear the message after 5 seconds
+        loginFormik.setFieldValue('email', ''); // Clear the fields (optional)
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [loginMessage, loginFormik]);
 
   return (
     <Container maxWidth={false} className="auth-wrapper">
@@ -103,7 +114,28 @@ const LoginIndex = () => {
           </Box>
         </Grid>
       </Grid>
+
       <FullScreenLoader open={isPending} />
+
+      {/* Notification Popup */}
+      {loginMessage && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "10px 20px",
+            backgroundColor: isError ? "#f44336" : "#4caf50", // Red for error, Green for success
+            color: "white",
+            borderRadius: "5px",
+            zIndex: 9999,
+            fontSize: "16px",
+          }}
+        >
+          {loginMessage}
+        </Box>
+      )}
     </Container>
   );
 };

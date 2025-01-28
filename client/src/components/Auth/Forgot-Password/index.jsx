@@ -112,23 +112,16 @@ const ForgotPassword = () => {
       >
         <DialogContent>
           <Box className="popup-icon">
-            <img
-              width={34}
-              height={34}
-              src="/images/successufully-icon.svg"
-              alt="Success Icon"
-            />
           </Box>
-          <h3>Password Reset Successfully</h3>
-          <p>Your password has been successfully reset.</p>
-          <p>You can now log in by clicking below.</p>
+          <h3>Password Link Has Been Send Successfully</h3>
+          <p>Click on the Link received to reset your password</p>
           <Button
             className="p-btn"
             onClick={() => {
               setOpen(false); // Close dialog and optionally redirect
             }}
           >
-            Log in
+            Close
           </Button>
         </DialogContent>
       </Dialog>

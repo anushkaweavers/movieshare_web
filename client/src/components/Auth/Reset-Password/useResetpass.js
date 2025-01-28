@@ -12,34 +12,42 @@ export const useResetPassword = () => {
   const [isPending, setIsPending] = useState(false);
 
   const handleResetPass = async (values) => {
-    const token = new URLSearchParams(location.search).get("token"); // Extract 'token' from URL
+    const token = new URLSearchParams(location.search).get("token");
     if (!token) {
       toast.error("Token is missing or invalid");
+      console.log("No token found in the URL");
       return;
     }
-
+  
     const payload = {
       newPassword: values.password,
       confirmPassword: values.confirm_password,
     };
-
+  
     try {
       setIsPending(true); // Show loader
-      const response = await resetPasswordApi({ token, ...payload }); // Send token and payload
+      console.log("Sending request to reset password with token:", token);
+  
+      const response = await resetPasswordApi({ token, ...payload });
+  
+      console.log("API Response:", response); // Log the response
+  
       setIsPending(false); // Hide loader
-
-      if (response.status) {
-        toast.success("Password reset successful");
-        setOpenConfirmModal(true); // Show confirmation modal
+  
+      if (response.message === "Password reset successful") {
+        toast.success("Password reset successful!");
+        setOpenConfirmModal(true); // This should trigger the dialog to open
+        console.log("openConfirmModal state:", true); // Log when modal state is updated
       } else {
         toast.error(response.message || "Failed to reset password");
       }
     } catch (error) {
       setIsPending(false); // Hide loader
       toast.error("An error occurred during the reset process");
-      console.error(error);
+      console.error("Error during password reset:", error);
     }
   };
+  
 
   const resetPassFormik = useFormik({
     initialValues: {
@@ -48,11 +56,13 @@ export const useResetPassword = () => {
     },
     validationSchema: resetPassFormValidation,
     onSubmit: (values) => {
+      console.log("Form submitted with values:", values);
       handleResetPass(values);
     },
   });
 
   const gotoLogin = () => {
+    console.log("Navigating to login page");
     navigate("/login");
   };
 

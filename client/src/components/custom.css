@@ -1354,3 +1354,24 @@
   font-size: 20px;
   font-weight: bold;
 }
+/* Custom styling for the notification (if you prefer CSS rather than inline styles) */
+.auth-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 9999;
+}
+
+.auth-notification.success {
+  background-color: #3a2163;
+  color: white;
+}
+
+.auth-notification.error {
+  background-color: #8836f4;
+  color: white;
+}
