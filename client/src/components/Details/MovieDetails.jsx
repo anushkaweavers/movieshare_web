@@ -8,9 +8,13 @@ import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
 SwiperCore.use([Navigation]);
-const API_KEY = "41b7e34d009af460e22e4a8e91279433";
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
+const API_KEY = process.env.REACT_APP_API_KEY;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
+console.log("API KEY:", process.env.REACT_APP_API_KEY);
+console.log("BASE URL:", process.env.REACT_APP_BASE_URL);
+console.log("IMAGE BASE URL:", process.env.REACT_APP_IMAGE_BASE_URL);
+
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -29,7 +33,6 @@ function MovieDetails() {
   const [releases, setReleases] = useState([]); // Define releases state
   const [director, setDirector] = useState(null);
   const [showAllCrew, setShowAllCrew] = useState(false);
-  const [setPlaylists] = useState([]);
   const [similarMovies, setSimilarMovies] = useState([]);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
@@ -109,14 +112,7 @@ function MovieDetails() {
       }
     };
 
-    const fetchPlaylists = async () => {
-      try {
-        // Replace with your API call for playlists if applicable
-        setPlaylists(["My Favorite Movies", "Watchlist", "Oscar Winners"]);
-      } catch (error) {
-        console.error("Error fetching playlists:", error);
-      }
-    };
+   
     const fetchSimilarMovies = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}/similar`);
@@ -130,7 +126,6 @@ function MovieDetails() {
     fetchReviews();
     fetchTrailers();
     fetchReleases();
-    fetchPlaylists();
     fetchSimilarMovies();
   }, [id]);
 
@@ -255,27 +250,35 @@ function MovieDetails() {
         <strong>Language:</strong> {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
       </div>
       <div>
-        <strong>Studio:</strong> {movie.production_companies.map((company) => company.name).join(", ")}
-      </div>
+  <strong>Studio:</strong>
+  {movie.production_companies.map((company, index) => (
+    <span key={company.id || `company-${index}`} className="details-tag">
+      {company.name}
+    </span>
+  ))}
+</div>
+
     </div>
 
     <div className="details-right">
+    <div>
+  <strong>Genres:</strong>
+  {movie.genres.map((genre, index) => (
+    <span key={genre.id || `genre-${index}`} className="details-tag">
+      {genre.name}
+    </span>
+  ))}
+</div>
+
       <div>
-        <strong>Genres:</strong>
-        {movie.genres.map((genre) => (
-          <span key={genre.id} className="details-tag">
-            {genre.name}
-          </span>
-        ))}
-      </div>
-      <div>
-        <strong>Tags:</strong>
-        {keywords.map((keyword) => (
-          <span key={keyword.id} className="details-tag">
-            {keyword.name}
-          </span>
-        ))}
-      </div>
+  <strong>Tags:</strong>
+  {keywords.map((keyword, index) => (
+    <span key={keyword.id || `keyword-${index}`} className="details-tag">
+      {keyword.name}
+    </span>
+  ))}
+</div>
+
     </div>
   </div>
 </div>
@@ -415,7 +418,7 @@ function MovieDetails() {
             className="cast-swiper"
           >
             {movie.credits.cast.map((actor) => (
-              <SwiperSlide
+                <SwiperSlide 
                 key={actor.id}
                 className="cast-slide"
                 onClick={() => navigate(`/person/${actor.id}`)}

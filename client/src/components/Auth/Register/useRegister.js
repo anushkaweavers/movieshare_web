@@ -6,7 +6,7 @@ import { registrationFormValidation } from "../../../Validations/Auth/register.v
 
 export const useRegister = () => {
   const [isPending, setIsPending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");  // State to store error messages
+  const [errorMessage, setErrorMessage] = useState(""); // General error message
   const navigate = useNavigate();
 
   const registerFormik = useFormik({
@@ -22,39 +22,47 @@ export const useRegister = () => {
       termsAccepted: false,
     },
     validationSchema: registrationFormValidation,
-    onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+
+    onSubmit: async (values, { setErrors }) => {
+      console.log("📤 Form submitted with values:", values);
       setIsPending(true);
       setErrorMessage(""); // Clear previous errors
-    
+
       try {
         const fullResponse = await registerUserApi(values);
-        console.log("Full API Response:", fullResponse); // ✅ Check the actual structure
-    
-        // Since response does not contain status, check if 'user' exists
-        if (fullResponse && fullResponse.user) {
-          console.log("✅ Registration successful!");
+        console.log("✅ Full API Response:", fullResponse);
+
+        if (fullResponse?.user) {
+          console.log("🎉 Registration successful!");
           setIsPending(false);
-          navigate("/login");  // Navigate only on success
+          navigate("/login"); // Redirect on success
           return;
         }
-    
+
         throw new Error("Registration failed. Please try again.");
       } catch (error) {
-        console.error("Error occurred during registration:", error);
+        console.error("❌ Error occurred during registration:", error);
         setIsPending(false);
-    
+
         if (error.response) {
-          setErrorMessage(error.response.data?.message || "Registration failed. Please check your details.");
+          const apiErrors = error.response.data;
+
+          if (apiErrors?.errors) {
+            // API returns field-specific errors (e.g., { email: "Email already exists" })
+            setErrors(apiErrors.errors);
+          } else {
+            // API returns a general error message
+            setErrorMessage(apiErrors.message || "Registration failed. Please check your details.");
+          }
         } else if (error.request) {
+          // No response received from the server
           setErrorMessage("No response from the server. Please try again later.");
         } else {
+          // Other unexpected errors
           setErrorMessage(error.message || "An unexpected error occurred.");
         }
       }
-    }
-    
-    
+    },
   });
 
   return { registerFormik, isPending, errorMessage };

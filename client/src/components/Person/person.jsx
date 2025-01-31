@@ -7,8 +7,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 
-const API_KEY = "41b7e34d009af460e22e4a8e91279433"; // Replace with your TMDb API key
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+const API_KEY = process.env.REACT_APP_API_KEY;
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
+console.log("API KEY:", process.env.REACT_APP_API_KEY);
+console.log("BASE URL:", process.env.REACT_APP_BASE_URL);
+console.log("IMAGE BASE URL:", process.env.REACT_APP_IMAGE_BASE_URL);
+
 
 const Person = () => {
   const { personId } = useParams(); // Get the person ID from the URL

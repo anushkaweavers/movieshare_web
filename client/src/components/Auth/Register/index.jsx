@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import useNavigate
+import { Link } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
+  Alert,
 } from "@mui/material";
 import { Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -28,7 +29,7 @@ import "../../global.css";
 import { useRegister } from "./useRegister";
 
 const Register = () => {
-  const { registerFormik, isPending } = useRegister();
+  const { registerFormik, isPending, errorMessage } = useRegister();
 
   const genderOptions = [
     { value: "Male", title: "Male" },
@@ -44,8 +45,7 @@ const Register = () => {
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
     try {
-      await registerFormik.handleSubmit(); 
-      
+      await registerFormik.handleSubmit();
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -57,12 +57,7 @@ const Register = () => {
         {/* Left Section with Swiper */}
         <Grid item xs={12} sm={12} md={7}>
           <Box className="auth-slider-wrap">
-            <Swiper
-              slidesPerView={1}
-              loop
-              modules={[Navigation]}
-              className="authSwiper"
-            >
+            <Swiper slidesPerView={1} loop modules={[Navigation]} className="authSwiper">
               <SwiperSlide>
                 <Box className="auth-slider-img-holder">
                   <img src="/images/signup-slider-img1.jpg" alt="" />
@@ -77,10 +72,7 @@ const Register = () => {
                       </Box>
                       <p>
                         Lorem ipsum dolor sit amet consectetur. Integer vel sed
-                        enim aliquet volutpat adipiscing ante amet. Aliquet
-                        volutpat ut magna lectus mi eu consectetur placerat
-                        facilisi. Enim et cursus at semper massa justo gravida.
-                        Eu parturient et neque morbi felis vitae nunc fermentum.
+                        enim aliquet volutpat adipiscing ante amet.
                       </p>
                     </Box>
                   </Box>
@@ -101,8 +93,7 @@ const Register = () => {
                       </Box>
                       <p>
                         Join a community of passionate individuals. Explore
-                        opportunities, connect, and grow with us. Let’s
-                        embark on this journey together!
+                        opportunities, connect, and grow with us.
                       </p>
                     </Box>
                   </Box>
@@ -118,15 +109,17 @@ const Register = () => {
             <Box className="auth-form-top">
               <h2>
                 Create Free Account{" "}
-                <img
-                  width={32}
-                  height={32}
-                  src="/images/signup-hand-icon.svg"
-                  alt="Signup Icon"
-                />
+                <img width={32} height={32} src="/images/signup-hand-icon.svg" alt="Signup Icon" />
               </h2>
               <p>Let’s get started</p>
             </Box>
+
+            {/* Display General API Error */}
+            {errorMessage && (
+              <Alert severity="error" className="error-alert">
+                {errorMessage}
+              </Alert>
+            )}
 
             <form onSubmit={handleSubmit}>
               <Box className="auth-input-wrap">
@@ -135,37 +128,23 @@ const Register = () => {
                   <TextFieldInput
                     name="firstName"
                     id="firstName"
-                    lable="First Name"
+                    label="First Name"
                     placeholder="Enter first name"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
-                    error={
-                      registerFormik.touched.firstName &&
-                      !!registerFormik.errors.firstName
-                    }
-                    helperText={
-                      registerFormik.touched.firstName
-                        ? registerFormik.errors.firstName
-                        : ""
-                    }
+                    error={registerFormik.touched.firstName && !!registerFormik.errors.firstName}
+                    helperText={registerFormik.touched.firstName ? registerFormik.errors.firstName : ""}
                   />
 
                   <TextFieldInput
                     name="lastName"
                     id="lastName"
-                    lable="Last Name"
+                    label="Last Name"
                     placeholder="Enter last name"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
-                    error={
-                      registerFormik.touched.lastName &&
-                      !!registerFormik.errors.lastName
-                    }
-                    helperText={
-                      registerFormik.touched.lastName
-                        ? registerFormik.errors.lastName
-                        : ""
-                    }
+                    error={registerFormik.touched.lastName && !!registerFormik.errors.lastName}
+                    helperText={registerFormik.touched.lastName ? registerFormik.errors.lastName : ""}
                   />
                 </Box>
 
@@ -173,38 +152,24 @@ const Register = () => {
                 <TextFieldInput
                   name="username"
                   id="username"
-                  lable="User Name"
+                  label="User Name"
                   placeholder="Enter user name"
                   onChange={registerFormik.handleChange}
                   onBlur={registerFormik.handleBlur}
-                  error={
-                    registerFormik.touched.username &&
-                    !!registerFormik.errors.username
-                  }
-                  helperText={
-                    registerFormik.touched.username
-                      ? registerFormik.errors.username
-                      : ""
-                  }
+                  error={registerFormik.touched.username && !!registerFormik.errors.username}
+                  helperText={registerFormik.touched.username ? registerFormik.errors.username : ""}
                 />
 
                 {/* Email */}
                 <TextFieldInput
                   name="email"
                   id="email"
-                  lable="Email"
+                  label="Email"
                   placeholder="Enter email"
                   onChange={registerFormik.handleChange}
                   onBlur={registerFormik.handleBlur}
-                  error={
-                    registerFormik.touched.email &&
-                    !!registerFormik.errors.email
-                  }
-                  helperText={
-                    registerFormik.touched.email
-                      ? registerFormik.errors.email
-                      : ""
-                  }
+                  error={registerFormik.touched.email && !!registerFormik.errors.email}
+                  helperText={registerFormik.touched.email ? registerFormik.errors.email : ""}
                 />
 
                 {/* Birthday and Gender */}
@@ -224,10 +189,7 @@ const Register = () => {
                     options={genderOptions}
                     title="Gender"
                     onChange={registerFormik.handleChange}
-                    error={
-                      registerFormik.touched.gender &&
-                      !!registerFormik.errors.gender
-                    }
+                    error={registerFormik.touched.gender && !!registerFormik.errors.gender}
                     value={registerFormik.values.gender}
                     clsDrop="input-field"
                     placeholder="Select gender"
@@ -240,38 +202,24 @@ const Register = () => {
                     name="password"
                     type="password"
                     id="password"
-                    lable="Password"
+                    label="Password"
                     placeholder="Enter Password"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
-                    error={
-                      registerFormik.touched.password &&
-                      !!registerFormik.errors.password
-                    }
-                    helperText={
-                      registerFormik.touched.password
-                        ? registerFormik.errors.password
-                        : ""
-                    }
+                    error={registerFormik.touched.password && !!registerFormik.errors.password}
+                    helperText={registerFormik.touched.password ? registerFormik.errors.password : ""}
                   />
 
                   <TextFieldInput
                     name="confirmPassword"
                     type="password"
                     id="confirmPassword"
-                    lable="Confirm password"
+                    label="Confirm password"
                     placeholder="Enter Confirm password"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
-                    error={
-                      registerFormik.touched.confirmPassword &&
-                      !!registerFormik.errors.confirmPassword
-                    }
-                    helperText={
-                      registerFormik.touched.confirmPassword
-                        ? registerFormik.errors.confirmPassword
-                        : ""
-                    }
+                    error={registerFormik.touched.confirmPassword && !!registerFormik.errors.confirmPassword}
+                    helperText={registerFormik.touched.confirmPassword ? registerFormik.errors.confirmPassword : ""}
                   />
                 </Box>
               </Box>
@@ -279,37 +227,15 @@ const Register = () => {
               {/* Terms and Conditions */}
               <FormGroup className="auth-agree">
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="termsAccepted"
-                      checked={registerFormik.values.termsAccepted}
-                      onChange={registerFormik.handleChange}
-                    />
-                  }
-                  label={
-                    <div>
-                      <span>I accept </span>
-                      <Link to="/login">Terms and Conditions.</Link>
-                    </div>
-                  }
+                  control={<Checkbox name="termsAccepted" checked={registerFormik.values.termsAccepted} onChange={registerFormik.handleChange} />}
+                  label={<div><span>I accept </span><Link to="/terms">Terms and Conditions.</Link></div>}
                 />
               </FormGroup>
-              {registerFormik.errors.general && (
-  <Typography color="error" className="error-message">
-    {registerFormik.errors.general}
-  </Typography>
-)}
 
               {/* Submit Button */}
-              <ButtonField
-                type="submit"
-                fullWidth
-                label="Sign Up"
-                mainCls="p-btn"
-              />
+              <ButtonField type="submit" fullWidth label="Sign Up" mainCls="p-btn" />
             </form>
 
-            {/* Sign In Redirect */}
             <p className="text-center auth-btm-info">
               <span>Already have an account?</span> <Link to="/login">Sign In</Link>
             </p>
