@@ -149,24 +149,19 @@ function MovieDetails() {
         });
       },
       {
-        rootMargin: "-50% 0px", // Trigger when a section is half in the viewport
+        rootMargin: "-50% 0px", 
       }
     );
-
     sections.forEach(({ ref }) => {
       if (ref.current) {
         observer.observe(ref.current);
       }
     });
-
     return () => {
       observer.disconnect();
     };
   }, []);
-
-
   if (!movie) return <div>Loading...</div>;
-
   return (
     <div className="total" >
     <div className="movie-details">
@@ -526,9 +521,7 @@ function MovieDetails() {
         ) : (
           <p className="no-info">No release information available.</p>
         )}
-
       </div>
-
       <div ref={playlistsRef} className="movie-details__section similar-movies-section" data-section="SIMILAR_MOVIES">
         <h2 className="section-title">Similar Movies</h2>
         {similarMovies.length > 0 ? (
@@ -566,7 +559,7 @@ function MovieDetails() {
           </Swiper>
         ) : (
           <p className="no-info">No similar movies available.</p>
-        )}
+        )}  
       </div>
     </div>
     </div>
