@@ -63,7 +63,7 @@ const forgotPassword = catchAsync(async (req, res) => {
     await emailService.sendResetPasswordEmail(email, resetPasswordToken);
     res.status(httpStatus.OK).json({
       message: 'Password reset email sent successfully',
-      debug: { email, resetPasswordToken }, // Debug info for testing
+      debug: { email, resetPasswordToken }, 
     });
   } catch (error) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to send password reset email');

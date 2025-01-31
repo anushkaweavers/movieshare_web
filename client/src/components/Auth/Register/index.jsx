@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link } from "react-router-dom"; // Import useNavigate
 import {
   Box,
   Checkbox,
@@ -8,6 +8,7 @@ import {
   FormGroup,
   Grid,
 } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import SwiperNavButton from "../../Layout/SwiperNavButton";
@@ -19,7 +20,6 @@ import Datepicker from "../../Common/UiComps/DatePicker";
 import dayjs from "dayjs";
 import ButtonField from "../../Common/UiComps/ButtonField";
 import FullScreenLoader from "../../Common/UiComps/FullScreenLoader";
-import LeftSection from "../../Common/LeftSection";
 import "../../custom.css";
 import "../../responsive.css";
 import "../../dark.css";
@@ -28,7 +28,6 @@ import "../../global.css";
 import { useRegister } from "./useRegister";
 
 const Register = () => {
-  const navigate = useNavigate(); // Initialize navigate
   const { registerFormik, isPending } = useRegister();
 
   const genderOptions = [
@@ -45,9 +44,8 @@ const Register = () => {
     registerFormik.setFieldValue("birthday", formattedBirthday, false);
 
     try {
-      await registerFormik.handleSubmit(); // Submitting the form
-      // On successful registration, redirect to the login page
-      navigate("/login");
+      await registerFormik.handleSubmit(); 
+      
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -296,6 +294,11 @@ const Register = () => {
                   }
                 />
               </FormGroup>
+              {registerFormik.errors.general && (
+  <Typography color="error" className="error-message">
+    {registerFormik.errors.general}
+  </Typography>
+)}
 
               {/* Submit Button */}
               <ButtonField

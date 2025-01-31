@@ -26,8 +26,8 @@ const LoginIndex = () => {
   useEffect(() => {
     if (loginMessage) {
       const timer = setTimeout(() => {
-        // Clear the message after 5 seconds
-        loginFormik.setFieldValue('email', ''); // Clear the fields (optional)
+       
+        loginFormik.setFieldValue('email', '');
       }, 5000);
       return () => clearTimeout(timer);
     }

@@ -15,9 +15,9 @@ import "../developer.css";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { Pagination } from "swiper/modules";
 
-const API_KEY = "41b7e34d009af460e22e4a8e91279433";
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
+const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL;
+const IMAGE_BASE_URL = process.env.REACT_APP_TMDB_IMAGE_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

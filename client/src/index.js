@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';  // Import the Provider
+import { Provider } from 'react-redux';  
 import { GoogleOAuthProvider } from '@react-oauth/google';  // Google OAuth provider
 import App from './App';
 import store from './redux/store';  // Import your Redux store
 import "react-toastify/dist/ReactToastify.css";
 
-// Replace with your actual Google OAuth client ID
+
 const clientId = "YOUR_GOOGLE_CLIENT_ID";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
