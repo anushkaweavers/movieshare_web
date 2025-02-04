@@ -28,9 +28,11 @@ import "../../developer.css";
 import "../../global.css";
 import { useRegister } from "./useRegister";
 
+
 const Register = () => {
   const { registerFormik, isPending, errorMessage } = useRegister();
-
+  console.log(registerFormik.initialValues.username); // Check if it's set to a default value
+  
   const genderOptions = [
     { value: "Male", title: "Male" },
     { value: "Female", title: "Female" },
@@ -130,6 +132,7 @@ const Register = () => {
                     id="firstName"
                     label="First Name"
                     placeholder="Enter first name"
+                    autoComplete="off"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
                     error={registerFormik.touched.firstName && !!registerFormik.errors.firstName}
@@ -141,6 +144,7 @@ const Register = () => {
                     id="lastName"
                     label="Last Name"
                     placeholder="Enter last name"
+                    autoComplete="off"
                     onChange={registerFormik.handleChange}
                     onBlur={registerFormik.handleBlur}
                     error={registerFormik.touched.lastName && !!registerFormik.errors.lastName}
@@ -154,6 +158,7 @@ const Register = () => {
                   id="username"
                   label="User Name"
                   placeholder="Enter user name"
+                  autoComplete="off"
                   onChange={registerFormik.handleChange}
                   onBlur={registerFormik.handleBlur}
                   error={registerFormik.touched.username && !!registerFormik.errors.username}

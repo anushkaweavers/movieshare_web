@@ -27,32 +27,35 @@ export const useRegister = () => {
       console.log("📤 Form submitted with values:", values);
       setIsPending(true);
       setErrorMessage(""); // Clear previous errors
-
+    
       try {
         const fullResponse = await registerUserApi(values);
         console.log("✅ Full API Response:", fullResponse);
-
+    
         if (fullResponse?.user) {
           console.log("🎉 Registration successful!");
           setIsPending(false);
           navigate("/login"); // Redirect on success
           return;
         }
-
+    
         throw new Error("Registration failed. Please try again.");
       } catch (error) {
         console.error("❌ Error occurred during registration:", error);
         setIsPending(false);
-
+    
         if (error.response) {
           const apiErrors = error.response.data;
-
+    
           if (apiErrors?.errors) {
             // API returns field-specific errors (e.g., { email: "Email already exists" })
             setErrors(apiErrors.errors);
-          } else {
+          } else if (apiErrors?.message) {
             // API returns a general error message
-            setErrorMessage(apiErrors.message || "Registration failed. Please check your details.");
+            setErrorMessage(apiErrors.message);
+          } else {
+            // Fallback error message if no specific errors provided
+            setErrorMessage("Registration failed. Please check your details.");
           }
         } else if (error.request) {
           // No response received from the server
@@ -63,6 +66,7 @@ export const useRegister = () => {
         }
       }
     },
+    
   });
 
   return { registerFormik, isPending, errorMessage };

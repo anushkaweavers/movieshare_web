@@ -6,15 +6,25 @@ const User = require('../models/user.model'); // Adjust the path as needed
 const bcrypt = require('bcryptjs');
 const saltRounds = 10; // This is a typical value, you can increase it for higher security
 
-// Register a new user
 const register = catchAsync(async (req, res) => {
-  const user = await userService.createUser({
-    ...req.body,
-    passwordHash: req.body.password, // Pass plain password; will be hashed in `pre('save')`
-  });
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.status(httpStatus.CREATED).send({ user, tokens });
+  try {
+    const user = await userService.createUser({
+      ...req.body,
+      passwordHash: req.body.password,
+    });
+    const tokens = await tokenService.generateAuthTokens(user);
+    res.status(httpStatus.CREATED).send({ user, tokens });
+  } catch (error) {
+    if (error.code === 11000) {
+      const duplicateKey = Object.keys(error.keyValue)[0];
+      const errorMessage = `${duplicateKey.charAt(0).toUpperCase() + duplicateKey.slice(1)} already exists.`;
+      res.status(httpStatus.BAD_REQUEST).json({ errors: { [duplicateKey]: errorMessage } });
+    } else {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An unexpected error occurred.' });
+    }
+  }
 });
+
 
 // Login user
 const login = catchAsync(async (req, res) => {

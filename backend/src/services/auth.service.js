@@ -1,12 +1,10 @@
 const httpStatus = require('http-status');
-const userService = require('./user.service');
 const tokenService = require('./token.service');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const bcrypt = require('bcryptjs');  
-const saltRounds = 10; 
 const User = require('../models/user.model');  
 
 /**

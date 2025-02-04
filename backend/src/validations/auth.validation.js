@@ -21,7 +21,7 @@ const login = {
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
   }),
-};
+};  
 
 const logout = {
   body: Joi.object({

@@ -15,6 +15,7 @@ export const useLogin = () => {
   const [isPending, setPending] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");  // State for managing login messages
   const [isError, setIsError] = useState(false);  // State for managing error or success
+
   
   // Handle login form submission
   const handleLogin = async (values) => {
@@ -51,13 +52,12 @@ export const useLogin = () => {
     }
   };
   
-  // Formik setup for the login form
   const loginFormik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: '', password: '' },
     validationSchema: loginValidation,
     onSubmit: handleLogin,
   });
-
+  
   // Handling social login (e.g., Google login)
   const responseMessage = async (response, name) => {
     setLoginMessage("");  // Reset message before starting login
