@@ -51,7 +51,7 @@ const Banner = () => {
       }
     };
     fetchBannerMovies();
-  }, []);
+     },[] );
 
   if (movies.length === 0) return null;
 

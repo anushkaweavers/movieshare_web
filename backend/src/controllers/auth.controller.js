@@ -2,34 +2,33 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, emailService, tokenService } = require('../services');
 const ApiError = require('../utils/ApiError');
-const User = require('../models/user.model'); // Adjust the path as needed
+const User = require('../models/user.model'); 
 const bcrypt = require('bcryptjs');
-const saltRounds = 10; // This is a typical value, you can increase it for higher security
+const saltRounds = 10; 
 
+// Register a new user
 const register = catchAsync(async (req, res) => {
   try {
     const user = await userService.createUser({
       ...req.body,
-      passwordHash: req.body.password,
+      passwordHash: req.body.password, 
     });
+
     const tokens = await tokenService.generateAuthTokens(user);
-    res.status(httpStatus.CREATED).send({ user, tokens });
+    res.status(httpStatus.CREATED).json({ user, tokens });
+
   } catch (error) {
-    if (error.code === 11000) {
-      const duplicateKey = Object.keys(error.keyValue)[0];
-      const errorMessage = `${duplicateKey.charAt(0).toUpperCase() + duplicateKey.slice(1)} already exists.`;
-      res.status(httpStatus.BAD_REQUEST).json({ errors: { [duplicateKey]: errorMessage } });
-    } else {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An unexpected error occurred.' });
-    }
+    res.status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: error.message || 'User registration failed',
+    });
   }
 });
-
 
 // Login user
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
+ 
   const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
 });

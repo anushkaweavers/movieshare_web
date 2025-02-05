@@ -39,7 +39,7 @@ export const useRegister = () => {
           return;
         }
     
-        throw new Error("Registration failed. Please try again.");
+        throw new Error("Registration failed. Email already exists.");
       } catch (error) {
         console.error("❌ Error occurred during registration:", error);
         setIsPending(false);

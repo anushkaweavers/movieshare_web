@@ -19,20 +19,15 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
-
-  // Compare the provided password with the stored passwordHash
   const match = await bcrypt.compare(password, user.passwordHash);
   if (!match) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+    //throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+    throw new ApiError(402, "Incorrect email or password"); 
   }
 
   return user;
 };
-
-
-
-
-
+  
 /**
  * Log out a user by invalidating their refresh token.
  * @param {string} refreshToken - The refresh token to invalidate.

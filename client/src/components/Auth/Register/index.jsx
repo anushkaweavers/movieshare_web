@@ -9,7 +9,6 @@ import {
   Grid,
   Alert,
 } from "@mui/material";
-import { Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import SwiperNavButton from "../../Layout/SwiperNavButton";
@@ -164,18 +163,18 @@ const Register = () => {
                   error={registerFormik.touched.username && !!registerFormik.errors.username}
                   helperText={registerFormik.touched.username ? registerFormik.errors.username : ""}
                 />
+ 
+               {/* Display backend error messages for the email field */}
+               <TextFieldInput
+                name="email"
+                label="Email"
+                value={registerFormik.values.email}
+                onChange={registerFormik.handleChange}
+                onBlur={registerFormik.handleBlur}
+                error={registerFormik.touched.email && !!registerFormik.errors.email}
+                helperText={registerFormik.touched.email ? registerFormik.errors.email : ""}
+              />
 
-                {/* Email */}
-                <TextFieldInput
-                  name="email"
-                  id="email"
-                  label="Email"
-                  placeholder="Enter email"
-                  onChange={registerFormik.handleChange}
-                  onBlur={registerFormik.handleBlur}
-                  error={registerFormik.touched.email && !!registerFormik.errors.email}
-                  helperText={registerFormik.touched.email ? registerFormik.errors.email : ""}
-                />
 
                 {/* Birthday and Gender */}
                 <Box className="input-each-wrap">

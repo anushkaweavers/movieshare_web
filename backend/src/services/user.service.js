@@ -8,17 +8,25 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
-const createUser = async (userData) => {
-  const { password } = userData;
-  const hashedPassword = await bcrypt.hash(password, 10);  // Hash the password
-  const user = new User({
-    ...userData,
-    passwordHash: hashedPassword,  // Save the hashed password
-  });
+const createUser = async (userBody) => {
+  try {
+    const existingUser = await User.findOne({ email: userBody.email });
+    if (existingUser) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists, try again with a different email');
+    }
 
-  await user.save();
-  return user;
+    const newUser = new User(userBody);
+    await newUser.save();
+    return newUser;
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Duplicate key error: Email already exists');
+    }
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.message || 'User creation failed');
+  }
 };
+
+
 /**
  * Query for users
  * @param {Object} filter - MongoDB filter

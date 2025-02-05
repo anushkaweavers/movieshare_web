@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Swiper, SwiperSlide } from "swiper/react"; // Corrected import
+import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "./MovieDetails.css";
 import SwiperCore from "swiper";
@@ -11,11 +11,6 @@ SwiperCore.use([Navigation]);
 const API_KEY = process.env.REACT_APP_API_KEY;
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
-console.log("API KEY:", process.env.REACT_APP_API_KEY);
-console.log("BASE URL:", process.env.REACT_APP_BASE_URL);
-console.log("IMAGE BASE URL:", process.env.REACT_APP_IMAGE_BASE_URL);
-
-
 const apiClient = axios.create({
   baseURL: BASE_URL,
   params: {
