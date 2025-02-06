@@ -1,105 +1,201 @@
-/* WriteReviewPage.css */
-
+/* Base page styles */
 body {
-    background-color: #10101b;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .review-page {
-    background-color: #23233a;
-    color: #ffffff;
-    padding: 30px;
-    max-width: 900px;
-    width: 100%;
-    border-radius: 15px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-    font-family: Arial, sans-serif;
-  }
-  
-  .review-header {
-    text-align: center;
-    color: #bb86fc;
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .review-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 20px;
-  }
-  
-  .poster-box {
-    flex: 1;
-  }
-  
-  .review-poster {
-    width: 250px;
-    border-radius: 10px;
-  }
-  
-  .details-box {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .input-field, .movie-name-field {
-    background-color: #3a3a5e;
-    border-radius: 5px;
-    color: white;
-    border: 1px solid #bb86fc;
-  }
-  
-  .rating-section {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .rating-header {
-    color: #bb86fc;
-  }
-  
-  .rating-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 15px;
-    margin-top: 10px;
-  }
-  
-  .rating-box {
-    text-align: center;
-    background: #3a3a5e;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #bb86fc;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .cancel-button {
-    background-color: #fde8ff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
-  
-  .post-button {
-    background-color: #7a3a7e;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
-  
+  background-color: hsl(294, 36%, 5%);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.review-page {
+  background-color: hsl(285, 35%, 9%);
+  color: #ffffff;
+  padding: 30px;
+  max-width: 900px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  font-family: Arial, sans-serif;
+}
+
+.review-header {
+  text-align: center;
+  color: #e6e6e6;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.review-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.poster-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-poster {
+  width: 280px;
+  height: 400px;
+  border-radius: 10px;
+  border: 2px solid #bb86fc;
+}
+
+.details-box {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Field group to pair label and input */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Field label style */
+.field-label {
+  font-size: 14px;
+  color: #f0f0f0;
+}
+
+/* Common input field styles */
+.input-field .MuiOutlinedInput-root {
+  background-color: hsl(285, 35%, 9%);
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.input-field .MuiOutlinedInput-input {
+  color: #ffffff;
+  padding: 8px;
+}
+
+/* Override placeholder text */
+.MuiInputBase-input::placeholder {
+  color: #f0f0f0 !important;
+  opacity: 1 !important;
+}
+
+/* Override disabled text color */
+.MuiInputBase-input.Mui-disabled {
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Override input label color */
+.MuiInputLabel-root {
+  color: #f0f0f0;
+}
+
+/* Outlined border style */
+.MuiOutlinedInput-notchedOutline {
+  border-color: #f0f0f0;
+  border-width: 1px;
+}
+
+/* Tag input box styling */
+.tag-input-box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Style for the add tag button */
+.tag-add-btn {
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+  padding: 6px;
+}
+
+/* Display area for added tags */
+.tags-display {
+  margin-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-chip {
+  background-color: #7a3a7e;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Rating Section */
+.rating-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.rating-header {
+  color: #bb86fc;
+}
+
+/* Detailed ratings grid */
+.rating-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.rating-box {
+  text-align: center;
+  background-color: hsl(285, 35%, 9%);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #f0f0f0;
+}
+
+/* General score box: inline-flex style */
+.general-score-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  padding: 0;
+}
+
+/* Button container */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Button styles */
+.cancel-button {
+  background-color: #5e3d61 !important;
+  color: #ffffff !important;
+  padding: 10px 20px !important;
+  border-radius: 5px !important;
+  border: 1px solid #bb86fc !important;
+}
+
+.post-button {
+  background-color: #7a3a7e !important;
+  color: #ffffff !important;
+  padding: 10px 20px !important;
+  border-radius: 5px !important;
+  border: 1px solid #bb86fc !important;
+}
+
+/* Optional: hover styles for buttons */
+.cancel-button:hover {
+  background-color: #4a2d4e !important;
+}
+
+.post-button:hover {
+  background-color: #69396c !important;
+}
