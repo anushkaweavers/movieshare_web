@@ -27,7 +27,6 @@ import "../../developer.css";
 import "../../global.css";
 import { useRegister } from "./useRegister";
 
-
 const Register = () => {
   const { registerFormik, isPending, errorMessage } = useRegister();
   console.log(registerFormik.initialValues.username); // Check if it's set to a default value
@@ -126,17 +125,17 @@ const Register = () => {
               <Box className="auth-input-wrap">
                 {/* First Name and Last Name */}
                 <Box className="input-each-wrap">
-                  <TextFieldInput
-                    name="firstName"
-                    id="firstName"
-                    label="First Name"
-                    placeholder="Enter first name"
-                    autoComplete="off"
-                    onChange={registerFormik.handleChange}
-                    onBlur={registerFormik.handleBlur}
-                    error={registerFormik.touched.firstName && !!registerFormik.errors.firstName}
-                    helperText={registerFormik.touched.firstName ? registerFormik.errors.firstName : ""}
-                  />
+                <TextFieldInput
+  name="firstName"
+  id="firstName"
+  label="First Name *"
+  placeholder="Enter first name"
+  autoComplete="off"
+  onChange={registerFormik.handleChange}
+  onBlur={registerFormik.handleBlur}
+  error={registerFormik.touched.firstName && !!registerFormik.errors.firstName}
+  helperText={registerFormik.touched.firstName ? registerFormik.errors.firstName : ""}
+/>
 
                   <TextFieldInput
                     name="lastName"

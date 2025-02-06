@@ -46,7 +46,9 @@ function MovieDetails() {
     navigate(`/movie/${movieId}`, { state: { scrollToTop: true } });
     window.scrollTo(0, 0); // Scroll to the top when the movie is clicked
   };
-
+  const handleWriteReview = () => {
+    navigate(`/write-review/${movie.id}`, { state: { movie } });
+  };
   const [activeTab, setActiveTab] = useState("DETAILS");
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -284,7 +286,7 @@ function MovieDetails() {
             </p>
             <span className="score-item">Based on {movie.vote_count} votes</span>
           </div>
-          <button className="write-review-button">
+          <button className="write-review-button" onClick={handleWriteReview}>
             <i className="fas fa-comment-dots"></i> Write a Review
           </button>
         </div>

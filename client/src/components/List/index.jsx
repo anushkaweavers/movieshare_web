@@ -12,7 +12,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
 import "../developer.css";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom"; 
 import { Pagination } from "swiper/modules";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
