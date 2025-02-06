@@ -1,0 +1,105 @@
+/* WriteReviewPage.css */
+
+body {
+    background-color: #10101b;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .review-page {
+    background-color: #23233a;
+    color: #ffffff;
+    padding: 30px;
+    max-width: 900px;
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+  }
+  
+  .review-header {
+    text-align: center;
+    color: #bb86fc;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .review-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .poster-box {
+    flex: 1;
+  }
+  
+  .review-poster {
+    width: 250px;
+    border-radius: 10px;
+  }
+  
+  .details-box {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .input-field, .movie-name-field {
+    background-color: #3a3a5e;
+    border-radius: 5px;
+    color: white;
+    border: 1px solid #bb86fc;
+  }
+  
+  .rating-section {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .rating-header {
+    color: #bb86fc;
+  }
+  
+  .rating-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .rating-box {
+    text-align: center;
+    background: #3a3a5e;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bb86fc;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .cancel-button {
+    background-color: #5a2a5e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+  
+  .post-button {
+    background-color: #7a3a7e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+  
