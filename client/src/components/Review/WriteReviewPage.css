@@ -176,25 +176,20 @@ body {
 
 /* Button styles */
 .cancel-button {
-  background-color: #5e3d61 !important;
-  color: #ffffff !important;
+  background-color:hsl(285, 35%, 9%)!important;
+  color: #ffffff;
   padding: 10px 20px !important;
   border-radius: 5px !important;
-  border: 1px solid #bb86fc !important;
 }
 
 .post-button {
   background-color: #7a3a7e !important;
   color: #ffffff !important;
   padding: 10px 20px !important;
-  border-radius: 5px !important;
+  border-radius: 20px !important;
   border: 1px solid #bb86fc !important;
 }
 
-/* Optional: hover styles for buttons */
-.cancel-button:hover {
-  background-color: #4a2d4e !important;
-}
 
 .post-button:hover {
   background-color: #69396c !important;
