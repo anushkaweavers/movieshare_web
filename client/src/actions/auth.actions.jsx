@@ -1,7 +1,7 @@
 // Importing the custom axios instance and error handler utility
 // Replace with relative paths
 import axiosCustom from "../Services/AxiosConfig/axiosCustom";  // Use relative path
-import catchAsync from "../Utils/CommonFunctions/catchAsync.js";  // Use relative path
+import catchAsync from "../Utils/CommonFunctions/catchAsync.jsx";  // Use relative path
 
 
 /**

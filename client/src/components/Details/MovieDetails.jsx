@@ -8,9 +8,9 @@ import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
 SwiperCore.use([Navigation]);
-const API_KEY = process.env.REACT_APP_API_KEY;
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
+const API_KEY= import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 const apiClient = axios.create({
   baseURL: BASE_URL,
   params: {

@@ -14,13 +14,9 @@ import "../dark.css";
 import "../developer.css";
 import { Link } from "react-router-dom"; 
 import { Pagination } from "swiper/modules";
-
-const API_KEY = process.env.REACT_APP_API_KEY;
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
-console.log("API KEY:", process.env.REACT_APP_API_KEY);
-console.log("BASE URL:", process.env.REACT_APP_BASE_URL);
-console.log("IMAGE BASE URL:", process.env.REACT_APP_IMAGE_BASE_URL);
+const API_KEY= import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

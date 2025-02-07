@@ -7,8 +7,7 @@ import App from './App';
 import store from './redux/store';  // Import your Redux store
 import "react-toastify/dist/ReactToastify.css";
 
-
-const clientId = "YOUR_GOOGLE_CLIENT_ID";
+const clientId = "YOUR_GOOGLE_CLIENT_ID";  // Replace with your Google Client ID
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

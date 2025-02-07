@@ -20,6 +20,9 @@ if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+app.get('/', (req, res) => {
+  res.send({ message: 'Welcome to Movie Share API' });
+});
 
 app.get('/ws', (req, res) => {
   res.send('WebSocket or relevant data');

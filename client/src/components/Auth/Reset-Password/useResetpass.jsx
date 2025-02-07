@@ -3,7 +3,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useLocation } from "react-router-dom";
 import { resetPasswordApi } from "../../../actions/auth.actions";
-import { resetPassFormValidation } from "../../../Validations/Auth/reset.validations";
 
 export const useResetPassword = () => {
   const location = useLocation();
@@ -54,7 +53,7 @@ export const useResetPassword = () => {
       password: "",
       confirm_password: "",
     },
-    validationSchema: resetPassFormValidation,
+    
     onSubmit: (values) => {
       console.log("Form submitted with values:", values);
       handleResetPass(values);

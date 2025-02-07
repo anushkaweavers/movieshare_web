@@ -1,5 +1,5 @@
 export const storeName = "app-name";
-export const ApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const ApiBaseUrl = process.env.REACT_APP_BASE_URL;
 export const TMDBConfig = {
   // https://developer.themoviedb.org/reference/configuration-details
   images: {
