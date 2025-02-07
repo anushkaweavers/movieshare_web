@@ -7,7 +7,8 @@ import ResetPassword from "./components/Auth/Reset-Password/index";
 import MovieList from "./components/List/index";
 import MovieDetails from "./components/Details/MovieDetails";
 import Person from "./components/Person/person";
-
+import WriteReviewPage from "./components/Review/WriteReviewPage"; // Import the component
+import Navbar from "./components/Navbar/Navbar"; 
 
 const App = () => {
   return (
@@ -22,7 +23,8 @@ const App = () => {
       <Route path="/list" element={<MovieList />} />
       <Route path="/movie/:id" element={<MovieDetails />} />
       <Route path="/person/:personId" element={<Person />} />
-
+      <Route path="/write-review/:movieId" element={<WriteReviewPage />} /> {/* Added Route */}
+      <Route path="/navbar" element={<Navbar />} />
     </Routes>
   );
 };

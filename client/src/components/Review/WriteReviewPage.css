@@ -1,155 +1,154 @@
-/* Base page styles */
-body {
-  background-color: hsl(294, 36%, 5%);
-  margin: 0;
-  padding: 0;
+.write-review-wrapper {
+  background-color: hsl(285, 45%, 5%);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 90vh;
+  width: 100vw;
 }
 
 .review-page {
   background-color: hsl(285, 35%, 9%);
   color: #ffffff;
-  padding: 30px;
-  max-width: 900px;
+  padding: 5px; /* Reduced padding */
+  max-width: 600px;
   width: 100%;
   border-radius: 15px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
   font-family: Arial, sans-serif;
 }
 
-.review-header {
+.review-page .review-header {
   text-align: center;
   color: #e6e6e6;
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.review-container {
+.review-page .review-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 20px;
+  gap:15px;
 }
 
-.poster-box {
+.review-page .poster-box {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.review-poster {
-  width: 280px;
-  height: 400px;
+.review-page .review-poster {
+  width: 250px;
+  height: 300px;
   border-radius: 10px;
-  border: 2px solid #bb86fc;
+  border: 1px solid #bb86fc;
 }
 
-.details-box {
+.review-page .details-box {
   flex: 2;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap:1px;
 }
 
 /* Field group to pair label and input */
-.field-group {
+.review-page .field-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 1px;
 }
 
 /* Field label style */
-.field-label {
-  font-size: 14px;
+.review-page .field-label {
+  font-size: 12px;
   color: #f0f0f0;
 }
 
-/* Common input field styles */
-.input-field .MuiOutlinedInput-root {
+/* Scoped Input Field Styles */
+.review-page .input-field  {
   background-color: hsl(285, 35%, 9%);
   color: #ffffff;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
-.input-field .MuiOutlinedInput-input {
+.review-page .input-field .MuiOutlinedInput-input {
   color: #ffffff;
-  padding: 8px;
+  padding: 4px;
 }
 
-/* Override placeholder text */
-.MuiInputBase-input::placeholder {
+/* Scoped Placeholder Styles */
+.review-page .MuiInputBase-input::placeholder {
   color: #f0f0f0 !important;
   opacity: 1 !important;
 }
 
-/* Override disabled text color */
-.MuiInputBase-input.Mui-disabled {
+/* Scoped Disabled Text Color */
+.review-page .MuiInputBase-input.Mui-disabled {
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Override input label color */
-.MuiInputLabel-root {
+/* Scoped Input Label Color */
+.review-page .MuiInputLabel-root {
   color: #f0f0f0;
 }
 
-/* Outlined border style */
-.MuiOutlinedInput-notchedOutline {
+/* Scoped Outlined Border */
+.review-page .MuiOutlinedInput-notchedOutline {
   border-color: #f0f0f0;
   border-width: 1px;
 }
 
-/* Tag input box styling */
-.tag-input-box {
+/* Tag Input Box Styling */
+.review-page .tag-input-box {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
 }
 
-/* Style for the add tag button */
-.tag-add-btn {
+/* Style for the Add Tag Button */
+.review-page .tag-add-btn {
   border: 1px solid #f0f0f0;
   border-radius: 5px;
   padding: 6px;
 }
 
-/* Display area for added tags */
-.tags-display {
+/* Display Area for Added Tags */
+.review-page .tags-display {
   margin-top: 5px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.tag-chip {
+.review-page .tag-chip {
   background-color: #7a3a7e;
   padding: 4px 8px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 /* Rating Section */
-.rating-section {
+.review-page .rating-section {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
-.rating-header {
-  color: #bb86fc;
+.review-page .rating-header {
+  color: #fbf9fd;
 }
 
-/* Detailed ratings grid */
-.rating-grid {
+/* Detailed Ratings Grid */
+.review-page .rating-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 15px;
   margin-top: 10px;
+  color: #e6e6e6;
 }
 
-.rating-box {
+.review-page .rating-box {
   text-align: center;
   background-color: hsl(285, 35%, 9%);
   padding: 10px;
@@ -157,8 +156,8 @@ body {
   border: 1px solid #f0f0f0;
 }
 
-/* General score box: inline-flex style */
-.general-score-box {
+/* General Score Box */
+.review-page .general-score-box {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -166,30 +165,120 @@ body {
   padding: 0;
 }
 
-/* Button container */
-.button-container {
+/* Button Container */
+.review-page .button-container {
   display: flex;
   justify-content: flex-end;
   gap: 15px;
   margin-top: 20px;
 }
 
-/* Button styles */
-.cancel-button {
-  background-color:hsl(285, 35%, 9%)!important;
+/* Button Styles */
+.review-page .cancel-button {
+  background-color: hsl(285, 35%, 9%) !important;
   color: #ffffff;
   padding: 10px 20px !important;
-  border-radius: 5px !important;
+  border-radius: 15px !important;
+  height: 30px;
+}
+
+.review-page .post-button {
+  background-color: #6848f8 !important;
+  color: #ffffff !important;
+  padding: 10px 20px !important;
+  border-radius: 15px !important;
+  height: 30px;
+}
+
+.review-page .post-button:hover {
+  background-color: #69396c !important;
+}
+.write-review-wrapper {
+  background-color: hsl(285, 45%, 5%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  width: 100vw;
+  padding-top: 60px; /* Adjusted for Navbar */
+}
+
+.review-page {
+  background-color: hsl(285, 35%, 9%);
+  color: #ffffff;
+  padding: 20px;
+  max-width: 600px; /* Smaller width */
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  font-family: Arial, sans-serif;
+}
+
+.review-container {
+  display: flex;
+  flex-direction: column; /* Adjusted layout */
+  align-items: center;
+  gap: 10px;
+}
+
+.poster-box {
+  text-align: center;
+}
+
+.review-poster {
+  width: 180px; /* Smaller poster */
+  height: 250px;
+  border-radius: 8px;
+  border: 2px solid #bb86fc;
+}
+
+.details-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.input-field .MuiOutlinedInput-root {
+  background-color: hsl(285, 35%, 9%);
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.field-label {
+  font-size: 14px;
+  color: #f0f0f0;
+}
+
+.rating-section {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.cancel-button {
+  background-color: hsl(285, 35%, 9%) !important;
+  color: #ffffff;
+  padding: 8px 15px !important;
+  border-radius: 12px !important;
+  height: 30px;
+}
+.cancel-button:hover{
+  background-color: #69396c !important;
 }
 
 .post-button {
-  background-color: #7a3a7e !important;
+  background-color: #6848f8 !important;
   color: #ffffff !important;
-  padding: 10px 20px !important;
-  border-radius: 20px !important;
-  border: 1px solid #bb86fc !important;
+  padding: 8px 15px !important;
+  border-radius: 12px !important;
+  height: 30px;
 }
-
 
 .post-button:hover {
   background-color: #69396c !important;
