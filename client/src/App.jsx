@@ -8,6 +8,7 @@ import MovieList from "./components/List/index";
 import MovieDetails from "./components/Details/MovieDetails";
 import Person from "./components/Person/person";
 
+
 const App = () => {
   return (
     <Routes>
@@ -21,6 +22,7 @@ const App = () => {
       <Route path="/list" element={<MovieList />} />
       <Route path="/movie/:id" element={<MovieDetails />} />
       <Route path="/person/:personId" element={<Person />} />
+
     </Routes>
   );
 };
