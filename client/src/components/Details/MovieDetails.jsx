@@ -7,6 +7,7 @@ import "./MovieDetails.css";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
+import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -44,7 +45,7 @@ function MovieDetails() {
   const navigate = useNavigate();
   const handleClick = (movieId) => {
     navigate(`/movie/${movieId}`, { state: { scrollToTop: true } });
-    window.scrollTo(0, 0); // Scroll to the top when the movie is clicked
+    window.scrollTo(0, 0); 
   };
   const handleWriteReview = () => {
     navigate(`/write-review/${movie.id}`, { state: { movie } });
@@ -62,7 +63,7 @@ function MovieDetails() {
         // Set movie details and include credits
         setMovie({
           ...movieResponse.data,
-          credits: creditsResponse.data, // Include cast and crew in movie state
+          credits: creditsResponse.data, 
         });
 
         // Extract and set the director name
@@ -78,15 +79,21 @@ function MovieDetails() {
         console.error("Error fetching movie details:", error);
       }
     };
-
     const fetchReviews = async () => {
+      if (!movie?.id) return;
+    
       try {
-        const response = await apiClient.get(`/movie/${id}/reviews`);
-        setReviews(response.data.results || []);
+        const response = await axiosCustom.get(`/reviews/movie/${movie.id}`);
+        console.log("Fetched Reviews:", response.data); 
+    
+        // Check if reviews are wrapped inside an object
+        setReviews(response.data.reviews || []);
       } catch (error) {
         console.error("Error fetching movie reviews:", error);
+        setError("Failed to fetch reviews. Please try again later.");
       }
     };
+    
 
     const fetchTrailers = async () => {
       try {
@@ -124,7 +131,7 @@ function MovieDetails() {
     fetchTrailers();
     fetchReleases();
     fetchSimilarMovies();
-  }, [id]);
+  }, [id,movie?.id]);
 
   useEffect(() => {
     const sections = [
@@ -276,8 +283,7 @@ function MovieDetails() {
 </div>
 
 <div className="review-section">
-      {/* Reviews Section */}
-      <div ref={reviewsRef} className="movie-details__section" data-section="REVIEWS">
+      <div className="movie-details__section" data-section="REVIEWS">
         <h2>Movie Sharer’s Reviews</h2>
         <div className="score-and-action">
           <div className="scores-row">
@@ -297,29 +303,25 @@ function MovieDetails() {
               <div key={review.id} className="review-card">
                 <div className="review-card-left">
                   <img
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "/images/default-poster.jpg"}
                     alt={movie.title}
                     className="review-poster"
-                    onError={(e) => (e.target.src = "/images/default-poster.jpg")} />
+                    onError={(e) => (e.target.src = "/images/default-poster.jpg")}
+                  />
                 </div>
                 <div className="review-card-right">
                   <div className="review-header">
                     <img
-                      src={review.author_details.avatar_path
-                        ? `https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`
-                        : "/images/default-avatar.png"}
+                      src={review.avatar ? review.avatar : "/images/default-avatar.png"}
                       alt={review.author || "Anonymous"}
                       className="review-avatar"
-                      onError={(e) => (e.target.src = "/images/default-avatar.png")} />
+                      onError={(e) => (e.target.src = "/images/default-avatar.png")}
+                    />
                     <div>
                       <p className="review-author">{review.author || "Anonymous"}</p>
-                      <p className="review-date">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </p>
+                      <p className="review-date">{new Date(review.created_at).toLocaleDateString()}</p>
                     </div>
-                    <p className="review-score">
-                      {review.author_details.rating || "N/A"} / 10 ⭐
-                    </p>
+                    <p className="review-score">{review.rating || "N/A"} / 10 ⭐</p>
                   </div>
                   <div className="review-body">
                     <p className="review-content">
@@ -327,7 +329,7 @@ function MovieDetails() {
                     </p>
                     <button
                       className="read-more"
-                      onClick={() => window.open(`https://www.themoviedb.org/review/${review.id}`, "_blank")}
+                      onClick={() => window.open(`/review/${review.id}`, "_blank")}
                     >
                       Read more
                     </button>
@@ -340,7 +342,7 @@ function MovieDetails() {
           )}
         </div>
       </div>
-      </div>
+    </div>
 
       {/* Trailers Section */}
       <div className="trailer-section">

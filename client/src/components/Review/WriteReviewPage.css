@@ -1,3 +1,4 @@
+/* General Wrapper for Write Review Page */
 .write-review-wrapper {
   background-color: hsl(285, 45%, 5%);
   display: flex;
@@ -5,12 +6,14 @@
   align-items: center;
   height: 90vh;
   width: 100vw;
+  padding-top: 60px; /* Adjusted for Navbar */
 }
 
+/* Main Review Page Container */
 .review-page {
   background-color: hsl(285, 35%, 9%);
   color: #ffffff;
-  padding: 5px; /* Reduced padding */
+  padding: 20px;
   max-width: 600px;
   width: 100%;
   border-radius: 15px;
@@ -18,6 +21,7 @@
   font-family: Arial, sans-serif;
 }
 
+/* Header */
 .review-page .review-header {
   text-align: center;
   color: #e6e6e6;
@@ -25,13 +29,15 @@
   margin-bottom: 10px;
 }
 
+/* Review Layout */
 .review-page .review-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap:15px;
+  gap: 15px;
 }
 
+/* Poster Box */
 .review-page .poster-box {
   flex: 1;
   display: flex;
@@ -40,93 +46,54 @@
 }
 
 .review-page .review-poster {
-  width: 250px;
-  height: 300px;
-  border-radius: 10px;
-  border: 1px solid #bb86fc;
+  width: 180px;
+  height: 250px;
+  border-radius: 8px;
+  border: 2px solid #bb86fc;
 }
 
+/* Review Details */
 .review-page .details-box {
   flex: 2;
   display: flex;
   flex-direction: column;
-  gap:1px;
+  gap: 10px;
 }
 
-/* Field group to pair label and input */
-.review-page .field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-/* Field label style */
-.review-page .field-label {
-  font-size: 12px;
-  color: #f0f0f0;
-}
-
-/* Scoped Input Field Styles */
-.review-page .input-field  {
+/* Input Field Styles */
+.review-page .input-field {
   background-color: hsl(285, 35%, 9%);
   color: #ffffff;
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
-.review-page .input-field .MuiOutlinedInput-input {
+.review-page .MuiOutlinedInput-root {
+  background-color: hsl(285, 35%, 9%);
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.review-page .MuiOutlinedInput-input {
   color: #ffffff;
   padding: 4px;
 }
 
-/* Scoped Placeholder Styles */
 .review-page .MuiInputBase-input::placeholder {
   color: #f0f0f0 !important;
   opacity: 1 !important;
 }
 
-/* Scoped Disabled Text Color */
 .review-page .MuiInputBase-input.Mui-disabled {
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Scoped Input Label Color */
 .review-page .MuiInputLabel-root {
   color: #f0f0f0;
 }
 
-/* Scoped Outlined Border */
 .review-page .MuiOutlinedInput-notchedOutline {
   border-color: #f0f0f0;
   border-width: 1px;
-}
-
-/* Tag Input Box Styling */
-.review-page .tag-input-box {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-/* Style for the Add Tag Button */
-.review-page .tag-add-btn {
-  border: 1px solid #f0f0f0;
-  border-radius: 5px;
-  padding: 6px;
-}
-
-/* Display Area for Added Tags */
-.review-page .tags-display {
-  margin-top: 5px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.review-page .tag-chip {
-  background-color: #7a3a7e;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 10px;
 }
 
 /* Rating Section */
@@ -139,7 +106,6 @@
   color: #fbf9fd;
 }
 
-/* Detailed Ratings Grid */
 .review-page .rating-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -153,133 +119,56 @@
   background-color: hsl(285, 35%, 9%);
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid #f0f0f0;
 }
 
-/* General Score Box */
-.review-page .general-score-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: none;
-  padding: 0;
-}
-
-/* Button Container */
+/* Buttons */
 .review-page .button-container {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-/* Button Styles */
-.review-page .cancel-button {
-  background-color: hsl(285, 35%, 9%) !important;
-  color: #ffffff;
-  padding: 10px 20px !important;
-  border-radius: 15px !important;
-  height: 30px;
-}
-
-.review-page .post-button {
-  background-color: #6848f8 !important;
-  color: #ffffff !important;
-  padding: 10px 20px !important;
-  border-radius: 15px !important;
-  height: 30px;
-}
-
-.review-page .post-button:hover {
-  background-color: #69396c !important;
-}
-.write-review-wrapper {
-  background-color: hsl(285, 45%, 5%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 90vh;
-  width: 100vw;
-  padding-top: 60px; /* Adjusted for Navbar */
-}
-
-.review-page {
-  background-color: hsl(285, 35%, 9%);
-  color: #ffffff;
-  padding: 20px;
-  max-width: 600px; /* Smaller width */
-  width: 100%;
-  border-radius: 15px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-  font-family: Arial, sans-serif;
-}
-
-.review-container {
-  display: flex;
-  flex-direction: column; /* Adjusted layout */
-  align-items: center;
-  gap: 10px;
-}
-
-.poster-box {
-  text-align: center;
-}
-
-.review-poster {
-  width: 180px; /* Smaller poster */
-  height: 250px;
-  border-radius: 8px;
-  border: 2px solid #bb86fc;
-}
-
-.details-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.input-field .MuiOutlinedInput-root {
-  background-color: hsl(285, 35%, 9%);
-  color: #ffffff;
-  border-radius: 5px;
-}
-
-.field-label {
-  font-size: 14px;
-  color: #f0f0f0;
-}
-
-.rating-section {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.button-container {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
 }
 
-.cancel-button {
-  background-color: hsl(285, 35%, 9%) !important;
-  color: #ffffff;
+.review-page .cancel-button,
+.review-page .post-button {
   padding: 8px 15px !important;
   border-radius: 12px !important;
   height: 30px;
-}
-.cancel-button:hover{
-  background-color: #69396c !important;
-}
-
-.post-button {
-  background-color: #6848f8 !important;
   color: #ffffff !important;
-  padding: 8px 15px !important;
-  border-radius: 12px !important;
-  height: 30px;
 }
 
-.post-button:hover {
+.review-page .cancel-button {
+  background-color: hsl(285, 35%, 9%) !important;
+}
+
+.review-page .cancel-button:hover,
+.review-page .post-button:hover {
   background-color: #69396c !important;
+}
+
+.review-page .post-button {
+  background-color: #6848f8 !important;
+}
+/* Add tag display styling */
+.review-page .tag-input-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-page .tags-display-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-page .MuiChip-root {
+  font-size: 14px;
+  background-color: #6a4c88;
+  color: #fff;
+  border-radius: 15px;
+}
+
+.review-page .MuiChip-deleteIcon {
+  color: #fff;
 }

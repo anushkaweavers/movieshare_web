@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { TextField, Button, Rating, Box, IconButton } from "@mui/material";
+import { TextField, Button, Rating, Box, IconButton, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Navbar from "../Navbar/Navbar";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
@@ -12,9 +12,6 @@ const WriteReviewPage = () => {
   const navigate = useNavigate();
 
   const movie = state?.movie || { title: "Unknown", poster_path: "" };
-
-  
-  const userId = localStorage.getItem("userId"); 
 
   const [review, setReview] = useState({
     title: "",
@@ -42,6 +39,10 @@ const WriteReviewPage = () => {
     setTagInput("");
   };
 
+  const handleRemoveTag = (tag) => {
+    setReview((prev) => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }));
+  };
+
   const handlePostReview = async () => {
     try {
       const userId = localStorage.getItem("userId");
@@ -52,7 +53,6 @@ const WriteReviewPage = () => {
         return;
       }
   
-      // ✅ API expects JSON data, ensure correct structure
       const reviewData = {
         movieId,
         review_title: review.title,
@@ -66,22 +66,16 @@ const WriteReviewPage = () => {
         rateScore: review.rateScore,
       };
   
-      console.log("🟢 Sending reviewData to API:", reviewData);
-  
       const response = await axiosCustom.post("/reviews/create", reviewData, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      console.log("✅ Review Posted Successfully:", response.data);
       alert("Review posted successfully!");
       navigate(-1); // Go back after posting
     } catch (error) {
-      console.error("❌ Error posting review:", error.response?.data || error.message);
       alert("Failed to post review. Please try again.");
     }
   };
-  
-
 
   return (
     <>
@@ -133,7 +127,7 @@ const WriteReviewPage = () => {
                   />
                 </div>
                 <div className="field-group">
-                  <label className="field-label">Add Tag</label>
+                  <label className="field-label">Add Tags</label>
                   <Box className="tag-input-box">
                     <TextField
                       fullWidth
@@ -152,6 +146,16 @@ const WriteReviewPage = () => {
                     <IconButton className="tag-add-btn" onClick={handleAddTag}>
                       <AddIcon style={{ color: "#f0f0f0" }} />
                     </IconButton>
+                  </Box>
+                  <Box className="tags-display-box">
+                    {review.tags.map((tag, index) => (
+                      <Chip
+                        key={index}
+                        label={tag}
+                        onDelete={() => handleRemoveTag(tag)}
+                        style={{ margin: "2px", backgroundColor: "#69396c", color: "#fff" }}
+                      />
+                    ))}
                   </Box>
                 </div>
               </div>

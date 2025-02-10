@@ -5,7 +5,7 @@ const axiosCustom = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Automatically attach token to each request
+
 axiosCustom.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
@@ -14,7 +14,7 @@ axiosCustom.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
-// Handle token expiration
+
 axiosCustom.interceptors.response.use(
   (response) => response,
   (error) => {

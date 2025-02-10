@@ -3,7 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const reviewService = require("../services/review.service");
 
 const createReview = catchAsync(async (req, res) => {
-  console.log("🔑 Authenticated User:", req.user); // Logs user info
+  console.log("Authenticated User:", req.user); // Logs user info
 
   if (!req.user || !req.user.id) {
     return res.status(httpStatus.UNAUTHORIZED).json({ message: "User not authenticated!" });
@@ -30,11 +30,13 @@ const createReview = catchAsync(async (req, res) => {
     rateScore,
   };
 
-  console.log("📩 Incoming Review Data:", reviewData);
+  console.log("Incoming Review Data:", reviewData);
 
   const review = await reviewService.createReview(reviewData);
   res.status(httpStatus.CREATED).json(review);
 });
+
+module.exports = { createReview };
 const getReviewsByMovieId = catchAsync(async (req, res) => {
   const { movieId } = req.params;
 

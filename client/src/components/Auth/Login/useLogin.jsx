@@ -16,21 +16,18 @@ export const useLogin = () => {
   const [loginMessage, setLoginMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
-  // ✅ Function to store user data in localStorage & cookies
   const storeUserData = (tokens, user) => {
     if (!tokens || !user?._id) {
-      console.error("❌ Invalid tokens or user data:", tokens, user);
+      console.error(" Invalid tokens or user data:", tokens, user);
       return;
     }
 
-    console.log("📌 Storing user data:", { tokens, user });
+    console.log(" Storing user data:", { tokens, user });
 
-    // ✅ Store in localStorage
     localStorage.setItem("access_token", tokens.accessToken);
     localStorage.setItem("refresh_token", tokens.refreshToken);
     localStorage.setItem("userId", user._id);  // API returns `_id`, not `id`
 
-    // ✅ Store in cookies (with correct settings)
     cookies.set("access_token", tokens.accessToken, { path: "/", sameSite: "Lax" });
     cookies.set("refresh_token", tokens.refreshToken, { path: "/", sameSite: "Lax" });
     cookies.set("userId", user._id, { path: "/", sameSite: "Lax" });
@@ -44,7 +41,7 @@ export const useLogin = () => {
       setPending(true);
       const loginData = await logInApi(values);
 
-      console.log("✅ Login Data Response:", loginData);  // Debug API response
+      console.log(" Login Data Response:", loginData);  // Debug API response
 
       if (loginData?.tokens?.accessToken && loginData?.user?._id) {
         storeUserData(loginData.tokens, loginData.user);
@@ -60,7 +57,7 @@ export const useLogin = () => {
         setIsError(true);
       }
     } catch (error) {
-      console.error("❌ Login Error:", error);
+      console.error(" Login Error:", error);
       setLoginMessage("An unexpected error occurred.");
       setIsError(true);
     } finally {
@@ -68,7 +65,6 @@ export const useLogin = () => {
     }
   };
 
-  // ✅ Social login response handling
   const responseMessage = async (response, provider) => {
     setLoginMessage("");
     setIsError(false);
@@ -78,7 +74,7 @@ export const useLogin = () => {
       const token = provider === "google" ? response : response?.accessToken;
       const res = await socialLoginApi({ token, type: provider });
 
-      console.log("✅ Social Login Response:", res);  // Debugging social login response
+      console.log("Social Login Response:", res);  
 
       if (res?.status && res?.result?.tokens?.access?.token && res?.result?.userData?._id) {
         storeUserData(res.result.tokens.access, res.result.userData);
@@ -94,7 +90,7 @@ export const useLogin = () => {
         setIsError(true);
       }
     } catch (error) {
-      console.error("❌ Social Login Error:", error);
+      console.error(" Social Login Error:", error);
       setLoginMessage("An unexpected error occurred during social login.");
       setIsError(true);
     } finally {
@@ -102,7 +98,7 @@ export const useLogin = () => {
     }
   };
 
-  // ✅ Google login setup
+
   const googleLogin = useGoogleLogin({
     flow: "auth-code",
     onSuccess: (tokenResponse) => responseMessage(tokenResponse?.code, "google"),

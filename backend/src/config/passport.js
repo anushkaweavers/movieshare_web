@@ -13,7 +13,7 @@ const jwtVerify = async (payload, done) => {
     if (!payload || payload.type !== tokenTypes.ACCESS) {
       return done(null, false, { message: 'Invalid token type' });
     }
-    const user = await User.findById(payload.userId); // Use userId instead of sub
+    const user = await User.findById(payload.userId); 
     if (!user) {
       return done(null, false, { message: 'User not found' });
     }
@@ -27,5 +27,5 @@ const jwtVerify = async (payload, done) => {
 const jwtStrategy = new JwtStrategy(jwtOptions, jwtVerify);
 
 module.exports = {
-  jwtStrategy, // This should match what is imported in `app.js`
+  jwtStrategy, 
 };
