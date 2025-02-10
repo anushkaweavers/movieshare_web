@@ -17,7 +17,7 @@ const createReview = catchAsync(async (req, res) => {
   }
 
   const reviewData = { 
-    userId: req.user.id, // Set userId from authentication
+    userId: req.user.id, 
     movieId,
     review_title,
     review_details,
@@ -35,5 +35,20 @@ const createReview = catchAsync(async (req, res) => {
   const review = await reviewService.createReview(reviewData);
   res.status(httpStatus.CREATED).json(review);
 });
+const getReviewsByMovieId = catchAsync(async (req, res) => {
+  const { movieId } = req.params;
 
-module.exports = { createReview };
+  if (!movieId) {
+    return res.status(httpStatus.BAD_REQUEST).json({ message: "Movie ID is required" });
+  }
+
+  const reviews = await reviewService.getReviewsByMovieId(movieId);
+
+  if (!reviews || reviews.length === 0) {
+    return res.status(httpStatus.NOT_FOUND).json({ message: "No reviews found for this movie" });
+  }
+
+  res.status(httpStatus.OK).json({ reviews });
+});
+
+module.exports = { createReview, getReviewsByMovieId };
