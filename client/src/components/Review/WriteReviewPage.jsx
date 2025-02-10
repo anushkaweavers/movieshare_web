@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TextField, Button, Rating, Box, IconButton } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import Navbar from "../Navbar/Navbar";
-import "./WriteReviewPage.css"; 
+import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+import "./WriteReviewPage.css";
 
 const WriteReviewPage = () => {
   const { state } = useLocation();
@@ -12,16 +13,19 @@ const WriteReviewPage = () => {
 
   const movie = state?.movie || { title: "Unknown", poster_path: "" };
 
+  
+  const userId = localStorage.getItem("userId"); 
+
   const [review, setReview] = useState({
     title: "",
     content: "",
     tags: [],
     generalScore: 0,
-    plot: "",
-    story: "",
-    characters: "",
-    cinematography: "",
-    rate: ""
+    plotScore: 0,
+    storyScore: 0,
+    characterScore: 0,
+    cinematographyScore: 0,
+    rateScore: 0,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -38,23 +42,59 @@ const WriteReviewPage = () => {
     setTagInput("");
   };
 
-  const handlePostReview = () => {
-    console.log("Review Posted:", review);
-    navigate(-1);
+  const handlePostReview = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("access_token");
+  
+      if (!userId || !token) {
+        alert("User not authenticated! Please log in.");
+        return;
+      }
+  
+      // ✅ API expects JSON data, ensure correct structure
+      const reviewData = {
+        movieId,
+        review_title: review.title,
+        review_details: review.content,
+        tags: review.tags,
+        generalScore: review.generalScore,
+        plotScore: review.plotScore,
+        storyScore: review.storyScore,
+        characterScore: review.characterScore,
+        cinematographyScore: review.cinematographyScore,
+        rateScore: review.rateScore,
+      };
+  
+      console.log("🟢 Sending reviewData to API:", reviewData);
+  
+      const response = await axiosCustom.post("/reviews/create", reviewData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      console.log("✅ Review Posted Successfully:", response.data);
+      alert("Review posted successfully!");
+      navigate(-1); // Go back after posting
+    } catch (error) {
+      console.error("❌ Error posting review:", error.response?.data || error.message);
+      alert("Failed to post review. Please try again.");
+    }
   };
+  
+
 
   return (
     <>
-      <Navbar />  {/* Navbar is separate and spans the full width */}
+      <Navbar />
       <div className="write-review-wrapper">
         <div className="review-page-container">
           <div className="review-page">
             <h2 className="review-header">Write a Review</h2>
             <div className="review-container">
               <div className="poster-box">
-                <img 
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
-                  alt={movie.title} 
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
                   className="review-poster"
                 />
               </div>
@@ -113,13 +153,6 @@ const WriteReviewPage = () => {
                       <AddIcon style={{ color: "#f0f0f0" }} />
                     </IconButton>
                   </Box>
-                  {review.tags.length > 0 && (
-                    <Box className="tags-display">
-                      {review.tags.map((tag, index) => (
-                        <span key={index} className="tag-chip">{tag}</span>
-                      ))}
-                    </Box>
-                  )}
                 </div>
               </div>
             </div>

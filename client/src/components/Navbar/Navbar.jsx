@@ -29,7 +29,7 @@ const Navbar = () => {
       {/* Middle Navigation Links */}
       <div className="nav-links">
         <Link to="/community">Community</Link>
-        <Link to="/movies">Movies</Link>
+        <Link to="/list">Movies</Link>
       </div>
 
       {/* Search Bar */}

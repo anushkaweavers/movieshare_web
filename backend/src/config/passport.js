@@ -10,21 +10,22 @@ const jwtOptions = {
 
 const jwtVerify = async (payload, done) => {
   try {
-    if (payload.type !== tokenTypes.ACCESS) {
-      throw new Error('Invalid token type');
+    if (!payload || payload.type !== tokenTypes.ACCESS) {
+      return done(null, false, { message: 'Invalid token type' });
     }
-    const user = await User.findById(payload.sub);
+    const user = await User.findById(payload.userId); // Use userId instead of sub
     if (!user) {
-      return done(null, false);
+      return done(null, false, { message: 'User not found' });
     }
-    done(null, user);
+    return done(null, user);
   } catch (error) {
-    done(error, false);
+    return done(error, false);
   }
 };
 
+// ✅ Ensure the export is correct
 const jwtStrategy = new JwtStrategy(jwtOptions, jwtVerify);
 
 module.exports = {
-  jwtStrategy,
+  jwtStrategy, // This should match what is imported in `app.js`
 };
