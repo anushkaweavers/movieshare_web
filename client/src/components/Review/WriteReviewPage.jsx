@@ -26,11 +26,15 @@ const WriteReviewPage = () => {
   });
 
   const [tagInput, setTagInput] = useState("");
-
   const handleChange = (field, value) => {
-    setReview((prev) => ({ ...prev, [field]: value }));
+    if (field.includes("Score")) {
+      const numericValue = Math.min(10, Math.max(0, Number(value))); // Ensure within range
+      setReview((prev) => ({ ...prev, [field]: numericValue }));
+    } else {
+      setReview((prev) => ({ ...prev, [field]: value }));
+    }
   };
-
+  
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim();
     if (trimmedTag && !review.tags.includes(trimmedTag)) {
@@ -59,7 +63,7 @@ const WriteReviewPage = () => {
         review_details: review.content,
         tags: review.tags,
         generalScore: review.generalScore,
-        plotScore: review.plotScore,
+        plotScore: review.plotScore,  // Ensure all scores are included
         storyScore: review.storyScore,
         characterScore: review.characterScore,
         cinematographyScore: review.cinematographyScore,
@@ -71,11 +75,12 @@ const WriteReviewPage = () => {
       });
   
       alert("Review posted successfully!");
-      navigate(-1); // Go back after posting
+      navigate(-1);
     } catch (error) {
       alert("Failed to post review. Please try again.");
     }
   };
+  
 
   return (
     <>
@@ -163,30 +168,40 @@ const WriteReviewPage = () => {
             <Box className="rating-section">
               <h3 className="rating-header">General Score</h3>
               <div className="rating-box general-score-box">
-                <Rating
-                  value={review.generalScore}
-                  max={10}
-                  onChange={(e, newValue) => handleChange("generalScore", newValue)}
-                />
+              <Rating
+  value={review.generalScore}
+  max={10}
+  precision={0.5} // Allow half-star ratings
+  onChange={(e, newValue) => handleChange("generalScore", newValue || 0)}
+/>
+
                 <span className="score-label">{review.generalScore}/10</span>
               </div>
             </Box>
             <Box className="rating-grid">
-              {["plot", "story", "characters", "cinematography", "rate"].map((category) => (
-                <div key={category} className="rating-box">
-                  <p className="rating-label">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </p>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="0/10"
-                    onChange={(e) => handleChange(category, e.target.value)}
-                    className="numeric-rating"
-                  />
-                </div>
-              ))}
-            </Box>
+  {[
+    { key: "plotScore", label: "Plot" },
+    { key: "storyScore", label: "Story" },
+    { key: "characterScore", label: "Characters" },
+    { key: "cinematographyScore", label: "Cinematography" },
+    { key: "rateScore", label: "Rate" },
+  ].map(({ key, label }) => (
+    <div key={key} className="rating-box">
+      <p className="rating-label">{label}</p>
+      <TextField
+        fullWidth
+        variant="outlined"
+        type="number"
+        placeholder="0-10"
+        value={review[key]} // Make sure the input reflects the current state
+        onChange={(e) => handleChange(key, e.target.value)}
+        className="numeric-rating"
+        inputProps={{ min: 0, max: 10, step: 0.5 }}
+      />
+    </div>
+  ))}
+</Box>
+
             <Box className="button-container">
               <Button 
                 variant="contained" 

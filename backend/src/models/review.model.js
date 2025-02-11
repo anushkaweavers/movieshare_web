@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const reviewSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    username: { type: String, required: true, trim: true },  
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     movieId: { type: String, required: true },
     review_title: { type: String, required: true },
     review_details: { type: String, required: true },
-    tags: { type: [String], default: [] }, 
+    tags: { type: [String], default: [] },
     generalScore: { type: Number, min: 0, max: 10, required: true },
     plotScore: { type: Number, min: 0, max: 10, required: true },
     storyScore: { type: Number, min: 0, max: 10, required: true },
@@ -18,4 +17,4 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = mongoose.model("Review", reviewSchema);

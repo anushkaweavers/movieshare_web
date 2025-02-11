@@ -30,6 +30,9 @@ function MovieDetails() {
   const [director, setDirector] = useState(null);
   const [showAllCrew, setShowAllCrew] = useState(false);
   const [similarMovies, setSimilarMovies] = useState([]);
+  const [expanded, setExpanded] = useState(false);
+  const [averageScores, setAverageScores] = useState(null); // Store average scores
+  const [error, setError] = useState(null);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
@@ -79,21 +82,47 @@ function MovieDetails() {
         console.error("Error fetching movie details:", error);
       }
     };
-    const fetchReviews = async () => {
-      if (!movie?.id) return;
-    
-      try {
-        const response = await axiosCustom.get(`/reviews/movie/${movie.id}`);
-        console.log("Fetched Reviews:", response.data); 
-    
-        // Check if reviews are wrapped inside an object
-        setReviews(response.data.reviews || []);
-      } catch (error) {
-        console.error("Error fetching movie reviews:", error);
-        setError("Failed to fetch reviews. Please try again later.");
-      }
-    };
-    
+
+const fetchReviews = async () => {
+  if (!movie?.id) return;
+
+  try {
+    const response = await axiosCustom.get(`/reviews/movie/${movie.id}`);
+    console.log("Fetched Reviews:", response.data);
+
+    const reviewsData = response.data.reviews || [];
+    setReviews(reviewsData);
+
+    // Calculate average scores
+    if (reviewsData.length > 0) {
+      const totalReviews = reviewsData.length;
+      const avgScores = reviewsData.reduce(
+        (acc, r) => {
+          acc.general += r.generalScore;
+          acc.plot += r.plotScore;
+          acc.story += r.storyScore;
+          acc.character += r.characterScore;
+          acc.cinematography += r.cinematographyScore;
+          acc.rate += r.rateScore;
+          return acc;
+        },
+        { general: 0, plot: 0, story: 0, character: 0, cinematography: 0, rate: 0 }
+      );
+
+      setAverageScores({
+        general: (avgScores.general / totalReviews).toFixed(1),
+        plot: (avgScores.plot / totalReviews).toFixed(1),
+        story: (avgScores.story / totalReviews).toFixed(1),
+        character: (avgScores.character / totalReviews).toFixed(1),
+        cinematography: (avgScores.cinematography / totalReviews).toFixed(1),
+        rate: (avgScores.rate / totalReviews).toFixed(1),
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching movie reviews:", error);
+    setError("Failed to fetch reviews. Please try again later.");
+  }
+};
 
     const fetchTrailers = async () => {
       try {
@@ -283,66 +312,80 @@ function MovieDetails() {
 </div>
 
 <div className="review-section">
-      <div className="movie-details__section" data-section="REVIEWS">
-        <h2>Movie Sharer’s Reviews</h2>
-        <div className="score-and-action">
-          <div className="scores-row">
-            <p className="total-score">
-              Total Score: ⭐ {movie.vote_average.toFixed(1)} / 10
-            </p>
-            <span className="score-item">Based on {movie.vote_count} votes</span>
-          </div>
-          <button className="write-review-button" onClick={handleWriteReview}>
-            <i className="fas fa-comment-dots"></i> Write a Review
-          </button>
+  <div className="movie-details__section" data-section="REVIEWS">
+    <h2>Movie Sharer’s Reviews</h2>
+  
+    {averageScores && (
+      <div className="average-score-container">
+        {/* Total Score Label (Outside the Box) */}
+        <span className="total-score-label">Total Score:</span>
+
+        {/* Score Box with Total Score Inside */}
+        <div className="score-box">
+          ⭐ {Math.round(averageScores.general)} / 10
         </div>
 
-        <div className="reviews-list">
-          {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <div key={review.id} className="review-card">
-                <div className="review-card-left">
-                  <img
-                    src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "/images/default-poster.jpg"}
-                    alt={movie.title}
-                    className="review-poster"
-                    onError={(e) => (e.target.src = "/images/default-poster.jpg")}
-                  />
-                </div>
-                <div className="review-card-right">
-                  <div className="review-header">
-                    <img
-                      src={review.avatar ? review.avatar : "/images/default-avatar.png"}
-                      alt={review.author || "Anonymous"}
-                      className="review-avatar"
-                      onError={(e) => (e.target.src = "/images/default-avatar.png")}
-                    />
-                    <div>
-                      <p className="review-author">{review.author || "Anonymous"}</p>
-                      <p className="review-date">{new Date(review.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <p className="review-score">{review.rating || "N/A"} / 10 ⭐</p>
-                  </div>
-                  <div className="review-body">
-                    <p className="review-content">
-                      “{review.content ? review.content.slice(0, 150) : "No review content available."}...”
-                    </p>
-                    <button
-                      className="read-more"
-                      onClick={() => window.open(`/review/${review.id}`, "_blank")}
-                    >
-                      Read more
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No reviews available for this movie.</p>
-          )}
+        {/* Other Scores */}
+        <div className="score-details">
+          <div className="score-item">Plot {Math.round(averageScores.plot)}/10</div>
+          <div className="score-item">Story {Math.round(averageScores.story)}/10</div>
+          <div className="score-item">Characters {Math.round(averageScores.character)}/10</div>
+          <div className="score-item">Cinematography {Math.round(averageScores.cinematography)}/10</div>
+          <div className="score-item">Pacing {Math.round(averageScores.rate)}/10</div>
         </div>
       </div>
-    </div>
+    )}
+
+    <button className="write-review-button" onClick={handleWriteReview}>
+      <i className="fas fa-comment-dots"></i> Write a Review
+    </button>
+
+    <div className="reviews-list">
+  {reviews.length > 0 ? (
+    reviews.map((review) => (
+      <div key={review._id} className="review-card">
+        {/* Display Avatar */}
+        <img
+          src={review.avatar ? review.avatar : "/images/default-avatar.png"}
+          alt={review.username || "Anonymous"}
+          className="review-avatar"
+          onError={(e) => (e.target.src = "/images/default-avatar.png")}
+        />
+
+        <div className="review-card-right">
+          {/* Review Header */}
+          <div className="review-header">
+            <div>
+              <p className="review-author">{review.username || "Anonymous"}</p> {/* FIXED HERE */}
+              <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
+            </div>
+            <p className="review-score">{review.generalScore} / 10 ⭐</p>
+          </div>
+
+          {/* Review Body */}
+          <div className="review-body">
+            <h3 className="review-title">{review.review_title}</h3>
+            <p className="review-content">
+              {expanded
+                ? `“${review.review_details}”` // Show full review when expanded
+                : `“${review.review_details ? review.review_details.slice(0, 150) : "No review content available."}...”`}
+            </p>
+            <button
+              className="read-more"
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? "Show Less" : "Read more"}
+            </button>
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>No reviews available for this movie.</p>
+  )}
+</div>
+  </div>
+</div>
 
       {/* Trailers Section */}
       <div className="trailer-section">

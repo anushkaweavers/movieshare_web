@@ -5,17 +5,16 @@ const { roleRights } = require('../config/roles');
 
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
   if (err) {
-    console.error("❌ Authentication Error:", err);
+    console.error(" Authentication Error:", err);
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Authentication error.'));
   }
 
   if (!user) {
-    console.error("🔴 Invalid Token or Session Expired:", info?.message || "No user found.");
+    console.error("Invalid Token or Session Expired:", info?.message || "No user found.");
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token or session expired.'));
   }
 
-  req.user = user; // Attach user to request object
-
+  req.user = user; 
   if (requiredRights.length) {
     const userRights = roleRights.get(user.role) || [];
     const hasRequiredRights = requiredRights.every((right) => userRights.includes(right));
@@ -34,11 +33,11 @@ const auth = (...requiredRights) => async (req, res, next) => {
     passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
   })
     .then(() => {
-      console.log("✅ Authentication Successful - User:", req.user);
+      console.log(" Authentication Successful - User:", req.user);
       next();
     })
     .catch((err) => {
-      console.error("❌ Authentication Middleware Error:", err.message);
+      console.error(" Authentication Middleware Error:", err.message);
       next(err);
     });
 };
