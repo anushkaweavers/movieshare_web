@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TextField, Button, Rating, Box, IconButton, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -63,7 +63,7 @@ const WriteReviewPage = () => {
         review_details: review.content,
         tags: review.tags,
         generalScore: review.generalScore,
-        plotScore: review.plotScore,  // Ensure all scores are included
+        plotScore: review.plotScore,  
         storyScore: review.storyScore,
         characterScore: review.characterScore,
         cinematographyScore: review.cinematographyScore,

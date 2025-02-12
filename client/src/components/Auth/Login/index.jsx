@@ -126,7 +126,7 @@ const LoginIndex = () => {
             left: "50%",
             transform: "translateX(-50%)",
             padding: "10px 20px",
-            backgroundColor: isError ? "#f44336" : "#4caf50", // Red for error, Green for success
+            backgroundColor: isError ? "#f44336" : "#4caf50",
             color: "white",
             borderRadius: "5px",
             zIndex: 9999,

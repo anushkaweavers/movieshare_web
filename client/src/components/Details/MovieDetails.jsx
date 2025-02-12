@@ -32,7 +32,7 @@ function MovieDetails() {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [averageScores, setAverageScores] = useState(null); // Store average scores
-  const [error, setError] = useState(null);
+  const [setError] = useState(null);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
@@ -145,7 +145,6 @@ const fetchReviews = async () => {
       }
     };
 
-   
     const fetchSimilarMovies = async () => {
       try {
         const response = await apiClient.get(`/movie/${id}/similar`);

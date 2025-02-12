@@ -1,20 +1,16 @@
 const Review = require("../models/review.model");
 const User = require("../models/user.model");
 
-// Create Review (WITHOUT storing username)
+
 exports.createReview = async (reviewData) => {
   try {
     console.log("Saving Review Data to Database...", reviewData);
-
-    // Ensure the user exists
     const user = await User.findById(reviewData.userId);
     if (!user) {
       throw new Error("User not found");
     }
-
-    // Create review without storing username
     const review = new Review({
-      ...reviewData, // Keep only userId
+      ...reviewData, 
     });
 
     await review.save();
@@ -27,16 +23,13 @@ exports.createReview = async (reviewData) => {
   }
 };
 
-// Get Reviews and Populate with Username Instead of userId
 exports.getReviewsByMovieId = async (movieId) => {
   try {
     console.log("Fetching Reviews for Movie:", movieId);
-
-    // Fetch reviews and replace userId with username
     const reviews = await Review.find({ movieId })
       .sort({ createdAt: -1 })
-      .populate({ path: "userId", select: "username" }); // Populate only username
-
+      .populate({ path: "userId", select: "username" }); 
+    
     return reviews.map((review) => ({
       _id: review._id,
       movieId: review.movieId,
@@ -50,7 +43,7 @@ exports.getReviewsByMovieId = async (movieId) => {
       cinematographyScore: review.cinematographyScore,
       rateScore: review.rateScore,
       createdAt: review.createdAt,
-      username: review.userId?.username, // Replace userId with username
+      username: review.userId?.username, 
     }));
   } catch (error) {
     console.error("Error fetching reviews:", error);

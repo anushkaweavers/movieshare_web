@@ -7,24 +7,30 @@ import ResetPassword from "./components/Auth/Reset-Password/index";
 import MovieList from "./components/List/index";
 import MovieDetails from "./components/Details/MovieDetails";
 import Person from "./components/Person/person";
-import WriteReviewPage from "./components/Review/WriteReviewPage"; // Import the component
-import Navbar from "./components/Navbar/Navbar"; 
+import WriteReviewPage from "./components/Review/WriteReviewPage";
+import Navbar from "./components/Navbar/Navbar";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import PublicRoute from "./components/Auth/PublicRoute";
 
 const App = () => {
   return (
     <Routes>
-      {/* Routes for authentication */}
-      <Route path="/" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot_password" element={<ForgotPassword />} />
-      <Route path="/reset_password" element={<ResetPassword />} />
+      {/* Public Routes */}
+      <Route element={<PublicRoute />}>
+        <Route path="/" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot_password" element={<ForgotPassword />} />
+        <Route path="/reset_password" element={<ResetPassword />} />
+      </Route>
 
-      {/* Routes for movie-related pages */}
-      <Route path="/list" element={<MovieList />} />
-      <Route path="/movie/:id" element={<MovieDetails />} />
-      <Route path="/person/:personId" element={<Person />} />
-      <Route path="/write-review/:movieId" element={<WriteReviewPage />} /> {/* Added Route */}
-      <Route path="/navbar" element={<Navbar />} />
+      {/* Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/list" element={<MovieList />} />
+        <Route path="/movie/:id" element={<MovieDetails />} />
+        <Route path="/write-review/:movieId" element={<WriteReviewPage />} />
+        <Route path="/person/:personId" element={<Person />} />
+        <Route path="/navbar" element={<Navbar />} />
+      </Route>
     </Routes>
   );
 };

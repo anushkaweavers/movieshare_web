@@ -33,24 +33,25 @@ const login = catchAsync(async (req, res) => {
   res.send({ user, tokens });
 });
 
-// Logout user
 const logout = async (req, res) => {
   try {
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-    if (!token) {
-      return res.status(400).json({ message: 'Token is required' });
+    const { refreshToken } = req.body; // Make sure it's coming from request body
+
+    if (!refreshToken) {
+      return res.status(400).json({ message: "Token is required" });
     }
 
-    const result = await tokenService.invalidateToken(token);
+    const result = await tokenService.invalidateToken(refreshToken);
     if (!result) {
-      return res.status(400).json({ message: 'Token invalidation failed' });
+      return res.status(400).json({ message: "Token invalidation failed" });
     }
 
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (err) {
-    res.status(500).json({ message: 'Error logging out', error: err.message });
+    res.status(500).json({ message: "Error logging out", error: err.message });
   }
 };
+
 
 // Refresh tokens
 const refreshTokens = catchAsync(async (req, res) => {

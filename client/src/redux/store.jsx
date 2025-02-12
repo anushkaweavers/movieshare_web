@@ -1,14 +1,18 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { thunk } from 'redux-thunk';  // Correct import
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./Auth/user.slice";
 
+// Load persisted state
+const persistedState = {
+  user: {
+    user: JSON.parse(localStorage.getItem("user")) || null,
+  },
+};
 
-// User Reducer
-import userReducer from './userReducer';
-
-const rootReducer = combineReducers({
-  user: userReducer,
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+  },
+  preloadedState: persistedState,  // Ensure user is loaded correctly
 });
-
-const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;

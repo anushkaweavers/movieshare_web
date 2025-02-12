@@ -14,10 +14,10 @@ import "../dark.css";
 import "../developer.css";
 import { Link } from "react-router-dom"; 
 import { Pagination } from "swiper/modules";
+import Navbar from "../Navbar/Navbar";
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
-
 const apiClient = axios.create({
   baseURL: BASE_URL,
   params: {
@@ -34,6 +34,7 @@ const fetchData = async (endpoint, params = {}) => {
     return null;
   }
 };
+
 
 const Banner = () => {
   const [movies, setMovies] = useState([]);
@@ -191,6 +192,15 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
 const MovieList = () => {
   const [filters, setFilters] = useState({ genre: "", releaseYear: "", rating: "", sortBy: "" });
   const [isFiltered, setIsFiltered] = useState(false);
+  useEffect(() => {
+    const disableBackButton = () => {
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = () => {
+        window.history.pushState(null, null, window.location.href);
+      };
+    };
+    disableBackButton();
+  }, []);
 
   const genres = [
     { id: 28, name: "Action" },
@@ -223,8 +233,8 @@ const MovieList = () => {
 
   return (
     <div className="movie-list">
+       <Navbar />
       <Banner />
-
       <Filter
         filters={filters}
         onFilterChange={(newFilters) => {
@@ -252,5 +262,6 @@ const MovieList = () => {
     </div>
   );
 };
+
 
 export default MovieList;
