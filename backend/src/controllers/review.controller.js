@@ -3,34 +3,24 @@ const catchAsync = require("../utils/catchAsync");
 const reviewService = require("../services/review.service");
 
 const createReview = catchAsync(async (req, res) => {
-  console.log("Authenticated User:", req.user); 
+  try {
+    const {
+      userId, movieId, review_title, review_details, tags = [],
+      generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore
+    } = req.body;
 
-  if (!req.user || !req.user.id) {
-    return res.status(httpStatus.UNAUTHORIZED).json({ message: "User not authenticated!" });
+    if (!userId || !movieId || !review_title || !review_details) {
+      return res.status(httpStatus.BAD_REQUEST).json({ message: "Missing required fields" });
+    }
+
+    const reviewData = { userId, movieId, review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore };
+    const review = await reviewService.createReview(reviewData);
+    
+    return res.status(httpStatus.CREATED).json(review);
+  } catch (error) {
+    console.error("Error creating review:", error); 
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message || "Error creating review" });
   }
-  const { movieId, review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore } = req.body;
-
-  if (!movieId || !review_title || !review_details) {
-    return res.status(httpStatus.BAD_REQUEST).json({ message: "Missing required fields" });
-  }
-  const reviewData = { 
-    userId: req.user.id, 
-    movieId,
-    review_title,
-    review_details,
-    tags,
-    generalScore,
-    plotScore,
-    storyScore,
-    characterScore,
-    cinematographyScore,
-    rateScore,
-  };
-
-  console.log("Incoming Review Data:", reviewData);
-
-  const review = await reviewService.createReview(reviewData);
-  res.status(httpStatus.CREATED).json(review);
 });
 
 const getReviewsByMovieId = catchAsync(async (req, res) => {

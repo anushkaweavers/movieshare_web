@@ -1,9 +1,10 @@
-import { useState} from "react";
+import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TextField, Button, Rating, Box, IconButton, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Navbar from "../Navbar/Navbar";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+import { useSelector } from "react-redux";  // Import useSelector
 import "./WriteReviewPage.css";
 
 const WriteReviewPage = () => {
@@ -12,6 +13,9 @@ const WriteReviewPage = () => {
   const navigate = useNavigate();
 
   const movie = state?.movie || { title: "Unknown", poster_path: "" };
+
+  // Get user from Redux store
+  const user = useSelector((state) => state.user.user);
 
   const [review, setReview] = useState({
     title: "",
@@ -26,6 +30,7 @@ const WriteReviewPage = () => {
   });
 
   const [tagInput, setTagInput] = useState("");
+  
   const handleChange = (field, value) => {
     if (field.includes("Score")) {
       const numericValue = Math.min(10, Math.max(0, Number(value))); // Ensure within range
@@ -49,31 +54,26 @@ const WriteReviewPage = () => {
 
   const handlePostReview = async () => {
     try {
-      const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("access_token");
-  
-      if (!userId || !token) {
-        alert("User not authenticated! Please log in.");
+      if (!user || !user._id) {
+        alert("User not found! Please log in.");
         return;
       }
   
       const reviewData = {
+        userId: user._id, // Send user ID from Redux
         movieId,
         review_title: review.title,
         review_details: review.content,
         tags: review.tags,
         generalScore: review.generalScore,
-        plotScore: review.plotScore,  
+        plotScore: review.plotScore,
         storyScore: review.storyScore,
         characterScore: review.characterScore,
         cinematographyScore: review.cinematographyScore,
         rateScore: review.rateScore,
       };
   
-      const response = await axiosCustom.post("/reviews/create", reviewData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
+      const response = await axiosCustom.post("/reviews/create", reviewData);
       alert("Review posted successfully!");
       navigate(-1);
     } catch (error) {
@@ -81,7 +81,6 @@ const WriteReviewPage = () => {
     }
   };
   
-
   return (
     <>
       <Navbar />

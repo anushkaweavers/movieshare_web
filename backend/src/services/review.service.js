@@ -1,27 +1,21 @@
 const Review = require("../models/review.model");
 const User = require("../models/user.model");
 
-
 exports.createReview = async (reviewData) => {
   try {
-    console.log("Saving Review Data to Database...", reviewData);
     const user = await User.findById(reviewData.userId);
     if (!user) {
       throw new Error("User not found");
     }
-    const review = new Review({
-      ...reviewData, 
-    });
 
+    const review = new Review(reviewData);
     await review.save();
-
-    console.log("Review Saved:", review);
     return review;
   } catch (error) {
-    console.error("Error creating review:", error);
     throw new Error("Error creating review");
   }
 };
+
 
 exports.getReviewsByMovieId = async (movieId) => {
   try {

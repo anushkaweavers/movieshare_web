@@ -4,12 +4,8 @@ const reviewController = require("../../controllers/review.controller");
 
 const router = express.Router();
 
+router.post("/create", reviewController.createReview);
 
-router.post(
-  "/create",
-  passport.authenticate("jwt", { session: false }),
-  reviewController.createReview
-);
 
 router.get("/movie/:movieId", reviewController.getReviewsByMovieId);
 

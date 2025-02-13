@@ -23,4 +23,3 @@ export const getUpcomingMovies = async (query) => {
   return data;
 };
 
-// Add similar functions for all other API endpoints...
