@@ -24,7 +24,7 @@ export const useLogin = () => {
     if (user && user._id) {
       setLoginMessage("Login successful!");
       console.log("Navigating to /list...");
-      setTimeout(() => navigate("/list"), 200); // Small delay to allow Redux to update
+      setTimeout(() => navigate("/list"), 200); 
     }else {
       // Show failure message on UI
       setLoginMessage("Login failed: Invalid response.");
