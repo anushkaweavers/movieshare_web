@@ -4,7 +4,7 @@ import { TextField, Button, Rating, Box, IconButton, Chip } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add";
 import Navbar from "../Navbar/Navbar";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import { useSelector } from "react-redux";  // Import useSelector
+import { useSelector } from "react-redux";  
 import "./WriteReviewPage.css";
 
 const WriteReviewPage = () => {
@@ -60,7 +60,7 @@ const WriteReviewPage = () => {
       }
   
       const reviewData = {
-        userId: user._id, // Send user ID from Redux
+        userId: user._id, // redux
         movieId,
         review_title: review.title,
         review_details: review.content,
@@ -192,7 +192,7 @@ const WriteReviewPage = () => {
         variant="outlined"
         type="number"
         placeholder="0-10"
-        value={review[key]} // Make sure the input reflects the current state
+        value={review[key]} 
         onChange={(e) => handleChange(key, e.target.value)}
         className="numeric-rating"
         inputProps={{ min: 0, max: 10, step: 0.5 }}

@@ -12,7 +12,7 @@ const store = configureStore({
   reducer: {
     user: userReducer,
   },
-  preloadedState: persistedState,  // Ensure user is loaded correctly
+  preloadedState: persistedState,
 });
 
 export default store;

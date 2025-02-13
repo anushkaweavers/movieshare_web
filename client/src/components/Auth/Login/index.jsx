@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -7,6 +7,11 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import TextFieldInput from "../../Common/UiComps/TextField";
 import ButtonField from "../../Common/UiComps/ButtonField";
@@ -21,17 +26,17 @@ import { useLogin } from "./useLogin";
 
 const LoginIndex = () => {
   const { loginFormik, googleLogin, isPending, loginMessage, isError } = useLogin();
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
 
-  // Automatically hide the message after 5 seconds
   useEffect(() => {
-    if (loginMessage) {
-      const timer = setTimeout(() => {
-       
-        loginFormik.setFieldValue('email', '');
-      }, 5000);
-      return () => clearTimeout(timer);
+    if (isError) {
+      setOpenErrorDialog(true);
     }
-  }, [loginMessage, loginFormik]);
+  }, [isError]);
+
+  const handleCloseErrorDialog = () => {
+    setOpenErrorDialog(false);
+  };
 
   return (
     <Container maxWidth={false} className="auth-wrapper">
@@ -117,27 +122,19 @@ const LoginIndex = () => {
 
       <FullScreenLoader open={isPending} />
 
-      {/* Notification Popup */}
-      {loginMessage && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            padding: "10px 20px",
-            backgroundColor: isError ? "#f44336" : "#4caf50",
-            color: "white",
-            borderRadius: "5px",
-            zIndex: 9999,
-            fontSize: "16px",
-          }}
-        >
-          {loginMessage}
-        </Box>
-      )}
+      {/* Error Dialog */}
+      <Dialog open={openErrorDialog} onClose={handleCloseErrorDialog}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <p>Login failed. Check your password and try again.</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseErrorDialog} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
-
 export default LoginIndex;

@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 const storedUser = JSON.parse(localStorage.getItem("user")) || null;
 
 const initialState = {
-  user: storedUser,  // Store full user object
+  user: storedUser,  
 };
 
 const userSlice = createSlice({
