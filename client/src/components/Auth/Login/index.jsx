@@ -29,10 +29,10 @@ const LoginIndex = () => {
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
 
   useEffect(() => {
-    if (isError) {
+    if (isError && loginMessage) {
       setOpenErrorDialog(true);
     }
-  }, [isError]);
+  }, [isError, loginMessage]);
 
   const handleCloseErrorDialog = () => {
     setOpenErrorDialog(false);
@@ -126,7 +126,7 @@ const LoginIndex = () => {
       <Dialog open={openErrorDialog} onClose={handleCloseErrorDialog}>
         <DialogTitle>Error</DialogTitle>
         <DialogContent>
-          <p>Login failed. Check your password and try again.</p>
+          <p>{loginMessage || "An error occurred. Please try again."}</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseErrorDialog} color="primary" autoFocus>
