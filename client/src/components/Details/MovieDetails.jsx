@@ -32,7 +32,6 @@ function MovieDetails() {
   const [director, setDirector] = useState(null);
   const [showAllCrew, setShowAllCrew] = useState(false);
   const [similarMovies, setSimilarMovies] = useState([]);
-  const [expanded, setExpanded] = useState(false);
   const [averageScores, setAverageScores] = useState(null); // Store average scores
   const user = useSelector((state) => state.user.user); // Get user from Redux
   const [openDialog, setOpenDialog] = useState(false);
@@ -44,8 +43,8 @@ function MovieDetails() {
   };
   const handleDeleteReview = async (reviewId) => {
     try {
-      await axiosCustom.delete(`/reviews/${reviewId}`); // Ensure this matches backend route
-      setReviews(reviews.filter((review) => review._id !== reviewId)); // Remove from UI
+      await axiosCustom.delete(`/reviews/${reviewId}`); 
+      setReviews(reviews.filter((review) => review._id !== reviewId)); 
     } catch (error) {
       console.error("Error deleting review:", error);
       alert("Failed to delete review. Please try again.");
@@ -88,10 +87,7 @@ function MovieDetails() {
     window.scrollTo(0, 0); 
   };
   const handleWriteReview = () => {
-    if (!user || !user._id) {
-      alert("You need to be logged in to write a review.");
-      return;
-    }
+  
   
     console.log("Current User ID:", user._id);
     console.log("Reviews Data:", reviews);
