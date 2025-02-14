@@ -11,12 +11,9 @@ const WriteReviewPage = () => {
   const { state } = useLocation();
   const { movieId } = useParams();
   const navigate = useNavigate();
-
   const movie = state?.movie || { title: "Unknown", poster_path: "" };
-
   // Get user from Redux store
   const user = useSelector((state) => state.user.user);
-
   const [review, setReview] = useState({
     title: "",
     content: "",
@@ -29,17 +26,15 @@ const WriteReviewPage = () => {
     rateScore: 0,
   });
 
-  const [tagInput, setTagInput] = useState("");
-  
+  const [tagInput, setTagInput] = useState(""); 
   const handleChange = (field, value) => {
     if (field.includes("Score")) {
-      const numericValue = Math.min(10, Math.max(0, Number(value))); // Ensure within range
+      const numericValue = Math.min(10, Math.max(0, Number(value))); 
       setReview((prev) => ({ ...prev, [field]: numericValue }));
     } else {
       setReview((prev) => ({ ...prev, [field]: value }));
     }
   };
-  
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim();
     if (trimmedTag && !review.tags.includes(trimmedTag)) {
@@ -72,7 +67,6 @@ const WriteReviewPage = () => {
         cinematographyScore: review.cinematographyScore,
         rateScore: review.rateScore,
       };
-  
       const response = await axiosCustom.post("/reviews/create", reviewData);
       alert("Review posted successfully!");
       navigate(-1);
@@ -80,7 +74,6 @@ const WriteReviewPage = () => {
       alert("Failed to post review. Please try again.");
     }
   };
-  
   return (
     <>
       <Navbar />
@@ -170,10 +163,9 @@ const WriteReviewPage = () => {
               <Rating
   value={review.generalScore}
   max={10}
-  precision={0.5} // Allow half-star ratings
+  precision={0.5}
   onChange={(e, newValue) => handleChange("generalScore", newValue || 0)}
 />
-
                 <span className="score-label">{review.generalScore}/10</span>
               </div>
             </Box>
@@ -200,8 +192,7 @@ const WriteReviewPage = () => {
     </div>
   ))}
 </Box>
-
-            <Box className="button-container">
+          <Box className="button-container">
               <Button 
                 variant="contained" 
                 className="cancel-button"
@@ -223,5 +214,6 @@ const WriteReviewPage = () => {
     </>
   );
 };
-
 export default WriteReviewPage;
+
+

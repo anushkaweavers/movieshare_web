@@ -455,4 +455,30 @@ body {
     opacity: 1;
     transform: scale(1.2); /* Slightly enlarge the active dot */
   }
+  .movie-list {
+    min-height: 100vh; /* Ensures consistent height */
+  }
+  
+  .movie-container {
+    min-height: 400px; /* Keeps space reserved for movie rows */
+  }
+  
+  .no-results {
+    text-align: center;
+    font-size: 18px;
+    color: white;
+    padding: 20px;
+  }
+  .banner, .movie-row {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
   

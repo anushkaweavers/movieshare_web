@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -12,12 +12,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
 import "../developer.css";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { Pagination } from "swiper/modules";
 import Navbar from "../Navbar/Navbar";
-const API_KEY= import.meta.env.VITE_API_KEY;
+
+const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+
 const apiClient = axios.create({
   baseURL: BASE_URL,
   params: {
@@ -35,8 +37,8 @@ const fetchData = async (endpoint, params = {}) => {
   }
 };
 
-
-const Banner = () => {
+// Banner Component 
+const Banner = React.memo(() => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
@@ -48,19 +50,13 @@ const Banner = () => {
       }
     };
     fetchBannerMovies();
-     },[] );
+  }, []);
 
   if (movies.length === 0) return null;
 
   return (
     <div className="banner-slider">
-      <Swiper
-        modules={[Pagination]}
-        pagination={{ clickable: true }}
-        spaceBetween={0}
-        slidesPerView={1}
-        loop
-      >
+      <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={0} slidesPerView={1} loop>
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
             <header
@@ -88,9 +84,10 @@ const Banner = () => {
       </Swiper>
     </div>
   );
-};
+});
 
-const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
+// Row Component
+const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
@@ -103,23 +100,20 @@ const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
     fetchMovies();
   }, [endpoint, params]);
 
+  const DEFAULT_IMAGE = "https://w7.pngwing.com/pngs/116/765/png-transparent-clapperboard-computer-icons-film-movie-poster-angle-text-logo-thumbnail.png";
+
   return (
     <div className="movie-row">
       <h2 className="movie-row__title">{title}</h2>
-      <Swiper
-        modules={[Navigation, Scrollbar]}
-        navigation
-        scrollbar={{ draggable: true }}
-        spaceBetween={10}
-        slidesPerView={isLargeRow ? 6 : 5}
-      >
+      <Swiper modules={[Navigation, Scrollbar]} navigation scrollbar={{ draggable: true }} spaceBetween={10} slidesPerView={isLargeRow ? 6 : 5}>
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
             <Link to={`/movie/${movie.id}`}>
               <img
                 className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`}
-                src={`${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}`}
+                src={movie.poster_path || movie.backdrop_path ? `${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}` : DEFAULT_IMAGE}
                 alt={movie.title || movie.name}
+                onError={(e) => (e.target.src = DEFAULT_IMAGE)}
               />
             </Link>
           </SwiperSlide>
@@ -127,21 +121,15 @@ const Row = ({ title, endpoint, params = {}, isLargeRow = false }) => {
       </Swiper>
     </div>
   );
-};
+});
 
+// Filter Component
 const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleFilterChange = (field, value) => {
-    onFilterChange((prevFilters) => ({ ...prevFilters, [field]: value }));
-  };
-
   return (
     <div className="filter">
-      <select
-        onChange={(e) => handleFilterChange("genre", e.target.value)}
-        className="filter__dropdown"
-      >
+      <select onChange={(e) => onFilterChange("genre", e.target.value)} className="filter__dropdown">
         <option value="">All Genres</option>
         {genres.map((genre) => (
           <option key={genre.id} value={genre.id}>
@@ -154,7 +142,7 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
         selected={selectedDate}
         onChange={(date) => {
           setSelectedDate(date);
-          handleFilterChange("releaseYear", date?.getFullYear() || "");
+          onFilterChange("releaseYear", date?.getFullYear() || "");
         }}
         showYearPicker
         dateFormat="yyyy"
@@ -167,15 +155,12 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
           <FaStar
             key={index}
             className={`filter__star ${index + 1 <= (parseInt(filters.rating) || 0) ? "active" : ""}`}
-            onClick={() => handleFilterChange("rating", index + 1)}
+            onClick={() => onFilterChange("rating", index + 1)}
           />
         ))}
       </div>
 
-      <select
-        onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-        className="filter__dropdown"
-      >
+      <select onChange={(e) => onFilterChange("sortBy", e.target.value)} className="filter__dropdown">
         <option value="">Sort By</option>
         <option value="popularity.desc">Popularity</option>
         <option value="release_date.desc">Release Date</option>
@@ -189,76 +174,74 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   );
 };
 
+// Main MovieList Component
 const MovieList = () => {
   const [filters, setFilters] = useState({ genre: "", releaseYear: "", rating: "", sortBy: "" });
-  const [isFiltered, setIsFiltered] = useState(false);
-  useEffect(() => {
-    const disableBackButton = () => {
-      window.history.pushState(null, null, window.location.href);
-      window.onpopstate = () => {
-        window.history.pushState(null, null, window.location.href);
-      };
-    };
-    disableBackButton();
-  }, []);
+  const [filteredMovies, setFilteredMovies] = useState([]);
 
-  const genres = [
-    { id: 28, name: "Action" },
-    { id: 35, name: "Comedy" },
-    { id: 18, name: "Drama" },
-    { id: 27, name: "Horror" },
-    { id: 10749, name: "Romance" },
-  ];
+  // Memoizing filter state to avoid re-renders
+  const isFilterApplied = useMemo(() => {
+    return filters.genre || filters.releaseYear || filters.rating || filters.sortBy;
+  }, [filters]);
 
-  const getGenreName = (id) =>
-    genres.find((genre) => genre.id === parseInt(id))?.name || "Filtered Results";
-
-  const buildParams = () => {
+  const buildParams = useMemo(() => {
     const params = {};
     if (filters.genre) params.with_genres = filters.genre;
     if (filters.releaseYear) params.primary_release_year = filters.releaseYear;
     if (filters.rating) params["vote_average.gte"] = filters.rating;
     if (filters.sortBy) params.sort_by = filters.sortBy;
     return params;
-  };
+  }, [filters]);
 
-  const handleResetFilters = () => {
-    setFilters({ genre: "", releaseYear: "", rating: "", sortBy: "" });
-    setIsFiltered(false);
-  };
+  const handleResetFilters = () => setFilters({ genre: "", releaseYear: "", rating: "", sortBy: "" });
 
-  const filteredTitle = filters.genre
-    ? `Filtered Results (${getGenreName(filters.genre)})`
-    : "Filtered Results";
+  useEffect(() => {
+    if (isFilterApplied) {
+      const fetchFilteredMovies = async () => {
+        const data = await fetchData("/discover/movie", buildParams);
+        setFilteredMovies(data?.results || []);
+      };
+      fetchFilteredMovies();
+    }
+  }, [isFilterApplied, buildParams]);
 
   return (
     <div className="movie-list">
-       <Navbar />
+      <Navbar />
+
+      {/* Ensuring Banner does not re-render */}
       <Banner />
-      <Filter
-        filters={filters}
-        onFilterChange={(newFilters) => {
-          setFilters(newFilters);
-          setIsFiltered(true);
-        }}
-        onResetFilters={handleResetFilters}
-        genres={genres}
+
+      <Filter 
+        filters={filters} 
+        onFilterChange={(field, value) => setFilters((prev) => ({ ...prev, [field]: value }))} 
+        onResetFilters={handleResetFilters} 
+        genres={[
+          { id: 28, name: "Action" },
+          { id: 35, name: "Comedy" },
+          { id: 18, name: "Drama" },
+          { id: 27, name: "Horror" },
+          { id: 10749, name: "Romance" },
+        ]}
       />
 
-      {isFiltered ? (
-        <Row
-          title={filteredTitle}
-          endpoint="/discover/movie"
-          params={buildParams()}
-        />
-      ) : (
-        <>
-          <Row title="Trending Now" endpoint="/trending/all/week" isLargeRow />
-          <Row title="Top Rated" endpoint="/movie/top_rated" />
-          <Row title="Action Movies" endpoint="/discover/movie" params={{ with_genres: 28 }} />
-          <Row title="Comedy Movies" endpoint="/discover/movie" params={{ with_genres: 35 }} />
-        </>
-      )}
+      {/* Fixing Flicker: Keeping Swiper Visible */}
+      <div className="movie-container">
+        {isFilterApplied ? (
+          filteredMovies.length > 0 ? (
+            <Row title="Filtered Results" endpoint="/discover/movie" params={buildParams} />
+          ) : (
+            <p className="no-results">No movies found.</p>
+          )
+        ) : (
+          <>
+            <Row title="Trending Movies" endpoint="/trending/movie/week" />
+            <Row title="Top Rated Movies" endpoint="/movie/top_rated" />
+            <Row title="Upcoming Movies" endpoint="/movie/upcoming" />
+            <Row title="Now Playing" endpoint="/movie/now_playing" />
+          </>
+        )}
+      </div>
     </div>
   );
 };

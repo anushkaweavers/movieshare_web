@@ -11,7 +11,7 @@ const clientId = "YOUR_GOOGLE_CLIENT_ID";  // Replace with your Google Client ID
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  
     <Provider store={store}>  {/* Wrap the app with the Redux Provider */}
       <GoogleOAuthProvider clientId={clientId}>  {/* Wrap with GoogleOAuthProvider */}
         <BrowserRouter>
@@ -19,5 +19,5 @@ root.render(
         </BrowserRouter>
       </GoogleOAuthProvider>
     </Provider>
-  </React.StrictMode>
+
 );
