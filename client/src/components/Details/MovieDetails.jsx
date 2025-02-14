@@ -11,6 +11,7 @@ import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useSelector } from "react-redux";  // Import useSelector
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert } from "@mui/material";
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -34,13 +35,14 @@ function MovieDetails() {
   const [expanded, setExpanded] = useState(false);
   const [averageScores, setAverageScores] = useState(null); // Store average scores
   const user = useSelector((state) => state.user.user); // Get user from Redux
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [setError] = useState(null);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
   const handleDeleteReview = async (reviewId) => {
-    if (!window.confirm("Are you sure you want to delete this review?")) return;
-  
     try {
       await axiosCustom.delete(`/reviews/${reviewId}`); // Ensure this matches backend route
       setReviews(reviews.filter((review) => review._id !== reviewId)); // Remove from UI
@@ -49,7 +51,29 @@ function MovieDetails() {
       alert("Failed to delete review. Please try again.");
     }
   };
-  
+  const handleOpenDialog = (review) => {
+    setSelectedReview(review);
+    setOpenDialog(true);
+  };
+
+  // Close dialog
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedReview(null);
+  };
+
+  // Confirm Delete Review
+  const confirmDelete = async () => {
+    if (selectedReview) {
+      try {
+        await handleDeleteReview(selectedReview._id);
+        setSnackbar({ open: true, message: "Review deleted successfully!", severity: "success" });
+      } catch (error) {
+        setSnackbar({ open: true, message: "Failed to delete review!", severity: "error" });
+      }
+    }
+    handleCloseDialog();
+  };
   // Refs for each section
   const detailsRef = useRef(null);
   const reviewsRef = useRef(null);
@@ -377,60 +401,76 @@ const fetchReviews = async () => {
       <i className="fas fa-comment-dots"></i> Write a Review
     </button>
     <div className="reviews-list">
-  {reviews.length > 0 ? (
-    reviews.map((review) => (
-      <div key={review._id} className="review-card">
-        {/* Display Avatar */}
-        <img
-          src={review.avatar ? review.avatar : "/images/default-avatar.png"}
-          alt={review.username || "Anonymous"}
-          className="review-avatar"
-          onError={(e) => (e.target.src = "/images/default-avatar.png")}
-        />
+      {reviews.length > 0 ? (
+        reviews.map((review) => (
+          <div key={review._id} className="review-card">
+            {/* Display Avatar */}
+            <img
+              src={review.avatar ? review.avatar : "/images/default-avatar.png"}
+              alt={review.username || "Anonymous"}
+              className="review-avatar"
+              onError={(e) => (e.target.src = "/images/default-avatar.png")}
+            />
 
-        <div className="review-card-right">
-          {/* Review Header */}
-          <div className="review-header">
-            <div>
-              <p className="review-author">{review.username || "Anonymous"}</p>
-              <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
+            <div className="review-card-right">
+              {/* Review Header */}
+              <div className="review-header">
+                <div>
+                  <p className="review-author">{review.username || "Anonymous"}</p>
+                  <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
+                </div>
+                <p className="review-score">{review.generalScore} / 10 ⭐</p>
+              </div>
+
+              {/* Show Edit & Delete Icons Only for Logged-in User's Review */}
+              {user && review.userId === user._id && (
+                <div className="review-actions">
+                  <EditIcon
+                    className="edit-icon"
+                    onClick={() => navigate(`/edit-review/${review._id}`, { state: { movie, review } })}
+                  />
+                  <DeleteIcon
+                    className="delete-icon"
+                    onClick={() => handleOpenDialog(review)}
+                  />
+                </div>
+              )}
+
+              {/* Review Body */}
+              <div className="review-body">
+                <h3 className="review-title">{review.review_title}</h3>
+                <p className="review-content">
+                  {review.review_details
+                    ? `“${review.review_details.slice(0, 150)}..."`
+                    : "No review content available."}
+                </p>
+              </div>
             </div>
-            <p className="review-score">{review.generalScore} / 10 ⭐</p>
           </div>
+        ))
+      ) : (
+        <p>No reviews available for this movie.</p>
+      )}
 
-          {/* Show Edit & Delete Icons Only for Logged-in User's Review */}
-          {user && review.userId === user._id && (
-            <div className="review-actions">
-              <EditIcon
-                className="edit-icon"
-                onClick={() => navigate(`/edit-review/${review._id}`, { state: { movie, review } })}
-              />
-              <DeleteIcon
-                className="delete-icon"
-                onClick={() => handleDeleteReview(review._id)}
-              />
-            </div>
-          )}
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete this review? This action cannot be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">Cancel</Button>
+          <Button onClick={confirmDelete} color="error">Delete</Button>
+        </DialogActions>
+      </Dialog>
 
-          {/* Review Body */}
-          <div className="review-body">
-            <h3 className="review-title">{review.review_title}</h3>
-            <p className="review-content">
-              {expanded
-                ? `“${review.review_details}”`
-                : `“${review.review_details ? review.review_details.slice(0, 150) : "No review content available."}...”`}
-            </p>
-            <button className="read-more" onClick={() => setExpanded(!expanded)}>
-              {expanded ? "Show Less" : "Read more"}
-            </button>
-          </div>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p>No reviews available for this movie.</p>
-  )}
-</div>;
+      {/* Snackbar Notification */}
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </div>
   </div>
 </div>
 
