@@ -9,6 +9,8 @@ import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useSelector } from "react-redux";  // Import useSelector
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -19,8 +21,6 @@ const apiClient = axios.create({
     api_key: API_KEY,
   },
 });
-
-
 function MovieDetails() {
   const { id } = useParams(); // Get the movie ID from the URL
   const [movie, setMovie] = useState(null);
@@ -38,7 +38,18 @@ function MovieDetails() {
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
-
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+  
+    try {
+      await axiosCustom.delete(`/reviews/${reviewId}`); // Ensure this matches backend route
+      setReviews(reviews.filter((review) => review._id !== reviewId)); // Remove from UI
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      alert("Failed to delete review. Please try again.");
+    }
+  };
+  
   // Refs for each section
   const detailsRef = useRef(null);
   const reviewsRef = useRef(null);
@@ -77,6 +88,7 @@ function MovieDetails() {
       navigate(`/write-review/${movie.id}`, { state: { movie } });
     }
   };
+
   
   const [activeTab, setActiveTab] = useState("DETAILS");
   useEffect(() => {
@@ -108,6 +120,7 @@ function MovieDetails() {
       }
     };
 
+    
 const fetchReviews = async () => {
   if (!movie?.id) return;
 
@@ -363,7 +376,6 @@ const fetchReviews = async () => {
     <button className="write-review-button" onClick={handleWriteReview}>
       <i className="fas fa-comment-dots"></i> Write a Review
     </button>
-
     <div className="reviews-list">
   {reviews.length > 0 ? (
     reviews.map((review) => (
@@ -380,24 +392,35 @@ const fetchReviews = async () => {
           {/* Review Header */}
           <div className="review-header">
             <div>
-              <p className="review-author">{review.username || "Anonymous"}</p> {/* FIXED HERE */}
+              <p className="review-author">{review.username || "Anonymous"}</p>
               <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
             </div>
             <p className="review-score">{review.generalScore} / 10 ⭐</p>
           </div>
+
+          {/* Show Edit & Delete Icons Only for Logged-in User's Review */}
+          {user && review.userId === user._id && (
+            <div className="review-actions">
+              <EditIcon
+                className="edit-icon"
+                onClick={() => navigate(`/edit-review/${review._id}`, { state: { movie, review } })}
+              />
+              <DeleteIcon
+                className="delete-icon"
+                onClick={() => handleDeleteReview(review._id)}
+              />
+            </div>
+          )}
 
           {/* Review Body */}
           <div className="review-body">
             <h3 className="review-title">{review.review_title}</h3>
             <p className="review-content">
               {expanded
-                ? `“${review.review_details}”` // Show full review when expanded
+                ? `“${review.review_details}”`
                 : `“${review.review_details ? review.review_details.slice(0, 150) : "No review content available."}...”`}
             </p>
-            <button
-              className="read-more"
-              onClick={() => setExpanded(!expanded)}
-            >
+            <button className="read-more" onClick={() => setExpanded(!expanded)}>
               {expanded ? "Show Less" : "Read more"}
             </button>
           </div>
@@ -407,7 +430,7 @@ const fetchReviews = async () => {
   ) : (
     <p>No reviews available for this movie.</p>
   )}
-</div>
+</div>;
   </div>
 </div>
 

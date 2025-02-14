@@ -1,6 +1,8 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
 const reviewService = require("../services/review.service");
+const Review = require("../models/review.model"); // Ensure correct path
+
 
 // Controller for creating a review
 const createReview = catchAsync(async (req, res) => {
@@ -69,4 +71,21 @@ const updateReview = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json({ message: "Review updated successfully", review });
 });
 
-module.exports = { createReview, getReviewsByMovieId, getReviewById, updateReview };
+// Delete review by ID
+const deleteReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+    if (!deletedReview) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    res.status(200).json({ message: "Review deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    res.status(500).json({ message: "Server error. Unable to delete review." });
+  }
+};
+
+module.exports = { createReview, getReviewsByMovieId, getReviewById, updateReview ,deleteReview};
