@@ -1,0 +1,175 @@
+/* General Wrapper for Write Review Page */
+.write-review-wrapper {
+    background-color: hsl(285, 45%, 5%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    width: 100vw;
+    padding-top: 60px; /* Adjusted for Navbar */
+  }
+  
+  /* Main Review Page Container */
+  .review-page {
+    background-color: hsl(285, 35%, 9%);
+    color: #ffffff;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Header */
+  .review-page .review-header {
+    text-align: center;
+    color: #e6e6e6;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  /* Review Layout */
+  .review-page .review-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  /* Poster Box */
+  .review-page .poster-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .review-page .review-poster {
+    width: 180px;
+    height: 250px;
+    border-radius: 8px;
+    border: 2px solid #bb86fc;
+  }
+  
+  /* Review Details */
+  .review-page .details-box {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Input Field Styles */
+  .review-page .input-field {
+    background-color: hsl(285, 35%, 9%);
+    color: #ffffff;
+    border-radius: 5px;
+  }
+  
+  .review-page .MuiOutlinedInput-root {
+    background-color: hsl(285, 35%, 9%);
+    color: #ffffff;
+    border-radius: 5px;
+  }
+  
+  .review-page .MuiOutlinedInput-input {
+    color: #ffffff;
+    padding: 4px;
+  }
+  
+  .review-page .MuiInputBase-input::placeholder {
+    color: #f0f0f0 !important;
+    opacity: 1 !important;
+  }
+  
+  .review-page .MuiInputBase-input.Mui-disabled {
+    -webkit-text-fill-color: #ffffff !important;
+  }
+  
+  .review-page .MuiInputLabel-root {
+    color: #f0f0f0;
+  }
+  
+  .review-page .MuiOutlinedInput-notchedOutline {
+    border-color: #f0f0f0;
+    border-width: 1px;
+  }
+  
+  /* Rating Section */
+  .review-page .rating-section {
+    text-align: center;
+    margin-top: 12px;
+  }
+  
+  .review-page .rating-header {
+    color: #fbf9fd;
+  }
+  
+  .review-page .rating-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+    color: #e6e6e6;
+  }
+  
+  .review-page .rating-box {
+    text-align: center;
+    background-color: hsl(285, 35%, 9%);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Buttons */
+  .review-page .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  .review-page .cancel-button,
+  .review-page .post-button {
+    padding: 8px 15px !important;
+    border-radius: 12px !important;
+    height: 30px;
+    color: #ffffff !important;
+  }
+  
+  .review-page .cancel-button {
+    background-color: hsl(285, 35%, 9%) !important;
+  }
+  
+  .review-page .cancel-button:hover,
+  .review-page .post-button:hover {
+    background-color: #69396c !important;
+  }
+  
+  .review-page .post-button {
+    background-color: #6848f8 !important;
+  }
+  /* Add tag display styling */
+  .review-page .tag-input-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .review-page .tags-display-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .review-page .MuiChip-root {
+    font-size: 14px;
+    background-color: #6a4c88;
+    color: #fff;
+    border-radius: 15px;
+  }
+  
+  .review-page .MuiChip-deleteIcon {
+    color: #fff;
+  }
+  

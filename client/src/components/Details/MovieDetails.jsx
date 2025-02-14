@@ -8,6 +8,7 @@ import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+import { useSelector } from "react-redux";  // Import useSelector
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -32,6 +33,7 @@ function MovieDetails() {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [averageScores, setAverageScores] = useState(null); // Store average scores
+  const user = useSelector((state) => state.user.user); // Get user from Redux
   const [setError] = useState(null);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
@@ -51,8 +53,31 @@ function MovieDetails() {
     window.scrollTo(0, 0); 
   };
   const handleWriteReview = () => {
-    navigate(`/write-review/${movie.id}`, { state: { movie } });
+    if (!user || !user._id) {
+      alert("You need to be logged in to write a review.");
+      return;
+    }
+  
+    console.log("Current User ID:", user._id);
+    console.log("Reviews Data:", reviews);
+  
+    // Check if the user has already reviewed this movie
+    const existingReview = reviews.find((review) => {
+      console.log("Checking review:", review);
+      return review.userId === user._id;
+    });
+  
+    console.log("Existing Review Found:", existingReview);
+  
+    if (existingReview) {
+      console.log("Navigating to Edit Review:", `/edit-review/${existingReview._id}`);
+      navigate(`/edit-review/${existingReview._id}`, { state: { movie, review: existingReview } });
+    } else {
+      console.log("Navigating to Write Review:", `/write-review/${movie.id}`);
+      navigate(`/write-review/${movie.id}`, { state: { movie } });
+    }
   };
+  
   const [activeTab, setActiveTab] = useState("DETAILS");
   useEffect(() => {
     const fetchMovieDetails = async () => {

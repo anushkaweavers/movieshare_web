@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
 const reviewService = require("../services/review.service");
 
+// Controller for creating a review
 const createReview = catchAsync(async (req, res) => {
   try {
     const {
@@ -23,6 +24,7 @@ const createReview = catchAsync(async (req, res) => {
   }
 });
 
+// Controller for getting reviews by movie ID
 const getReviewsByMovieId = catchAsync(async (req, res) => {
   const { movieId } = req.params;
 
@@ -39,4 +41,32 @@ const getReviewsByMovieId = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json({ reviews });
 });
 
-module.exports = { createReview, getReviewsByMovieId };
+const getReviewById = catchAsync(async (req, res) => {
+  const { reviewId } = req.params;
+
+  const review = await reviewService.getReviewById(reviewId);
+
+  if (!review) {
+    return res.status(httpStatus.NOT_FOUND).json({ message: "Review not found" });
+  }
+
+  res.status(httpStatus.OK).json(review);
+});
+
+// Controller for updating a review by reviewId
+const updateReview = catchAsync(async (req, res) => {
+  const { reviewId } = req.params;
+  const { review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore } = req.body;
+
+  const review = await reviewService.updateReview(reviewId, {
+    review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore
+  });
+
+  if (!review) {
+    return res.status(httpStatus.NOT_FOUND).json({ message: "Review not found or unable to update" });
+  }
+
+  res.status(httpStatus.OK).json({ message: "Review updated successfully", review });
+});
+
+module.exports = { createReview, getReviewsByMovieId, getReviewById, updateReview };

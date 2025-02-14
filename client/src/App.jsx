@@ -11,6 +11,7 @@ import WriteReviewPage from "./components/Review/WriteReviewPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
+import EditReviewPage from "./components/Review/EditReviewPage";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/list" element={<MovieList />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/write-review/:movieId" element={<WriteReviewPage />} />
+        <Route path="/edit-review/:reviewId" element={<EditReviewPage />} />
         <Route path="/person/:personId" element={<Person />} />
         <Route path="/navbar" element={<Navbar />} />
       </Route>
