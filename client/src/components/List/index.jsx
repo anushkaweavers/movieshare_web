@@ -208,8 +208,8 @@ const MovieList = () => {
   return (
     <div className="movie-list">
       <Navbar />
-
-      {/* Ensuring Banner does not re-render */}
+````
+      {/* Ensuring Banner does not re-render */}````
       <Banner />
 
       <Filter 
