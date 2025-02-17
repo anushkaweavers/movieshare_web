@@ -15,18 +15,24 @@ const User = require('../models/user.model');
  * @throws {ApiError} - If email or password is incorrect.
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
-  const user = await User.findOne({ email }).select("+passwordHash"); // Ensure password field is retrieved
+  const user = await User.findOne({ email });
+
   if (!user) {
+    console.log("Login failed: Email not found");
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
   const match = await bcrypt.compare(password, user.passwordHash);
+
   if (!match) {
+    console.log(" Login failed: Incorrect password for", email);
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
   return user;
 };
+
+
 /**
  * Log out a user by invalidating their refresh token.
  * @param {string} refreshToken - The refresh token to invalidate.

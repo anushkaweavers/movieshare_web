@@ -11,38 +11,35 @@ export const useLogin = () => {
   const cookies = new Cookies();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // Get user from Redux (may be already set from a previous session)
   const user = useSelector((state) => state.user.user);
 
   const [isPending, setPending] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
+  // Reset error state on mount
   useEffect(() => {
-    setLoginMessage(""); 
+    setLoginMessage("");
     setIsError(false);
   }, []);
 
-  // ✅ Only navigate if login is successful (no sudden flickers)
-  useEffect(() => {
-    if (user && user._id) {
-      console.log("✅ Login successful! Navigating to /list...");
-      setTimeout(() => navigate("/list"), 1000);
-    }
-  }, [user, navigate]);
-
   const handleLogin = async (values) => {
-    setLoginMessage(""); 
+    // Reset error state at the beginning of a login attempt
+    setLoginMessage("");
     setIsError(false);
-  
+
     try {
       setPending(true);
       const loginData = await logInApi(values);
-      console.log("✅ Login response:", loginData); // Debugging
-  
+      console.log("✅ API Response:", loginData);
+
       if (loginData?.tokens?.accessToken && loginData?.user?._id) {
+        // Save tokens and user info
         storeUserData(loginData.tokens, loginData.user);
         dispatch(updateUserData(loginData.user));
-  
+
+        // Inform user of success and redirect after a brief pause
         setLoginMessage("✅ Login successful! Redirecting...");
         setIsError(false);
         setTimeout(() => navigate("/list"), 1000);
@@ -51,19 +48,26 @@ export const useLogin = () => {
       }
     } catch (error) {
       console.error("❌ Login Error:", error);
-  
-      const errorMessage =
-        error.response?.data?.message || "❌ Incorrect email or password.";
-  
+
+      let errorMessage = "❌ Incorrect email or password.";
+      if (error.response) {
+        console.error("🔴 Error Response:", error.response);
+        errorMessage = error.response.data?.message || errorMessage;
+      } else if (error.message) {
+        console.error("🔴 Error Message:", error.message);
+        errorMessage = error.message;
+      }
+
+      // Update the error state immediately
       setLoginMessage(errorMessage);
       setIsError(true);
-  
-      console.log("🔴 Error message state updated:", errorMessage); // Debugging
+
+      console.log("🔴 Updated error state:", { isError, loginMessage });
     } finally {
       setPending(false);
     }
   };
-  
+
   const storeUserData = (tokens, user) => {
     if (!tokens || !user?._id) return;
 
