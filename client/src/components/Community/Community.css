@@ -1,26 +1,26 @@
 /* Community Page Styling */
 
 .community-container {
-    background-color: #14111a;
-    color: #ffffff;
+    background-color: white;
+    color:black;
     padding: 20px;
     border-radius: 8px;
     max-width: 800px;
   }
   
   .community-form {
-    background: #1e1b26;
+    background:white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   .movie-autocomplete .MuiInputBase-input {
-    color: #ffffff;
+    color:black;
   }
   
   .MuiOutlinedInput-root {
-    color: white;
+    color:black;
   }
   
   .MuiOutlinedInput-notchedOutline {
@@ -28,15 +28,15 @@
   }
   
   .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: white !important;
+    border-color:black!important;
   }
   
   .post-card {
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: #1e1b26;
-    color: white;
+    background:whitesmoke;
+    color:black;
     margin-top: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -56,13 +56,13 @@
   
   
   button {
-    background-color: #6200ea;
+    background-color: #a768ff;
     color: white;
     border-radius: 4px;
   }
   
   button:hover {
-    background-color: #3700b3;
+    background-color: #5828c7;
   }
   
   /* Media Upload Styling */
