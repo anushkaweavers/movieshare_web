@@ -24,7 +24,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     updateUserData: (state, action) => {
-      console.log("Updating Redux state with user:", action.payload); // Debug log
+      console.log("Updating Redux state with user:", action.payload); 
       state.user = action.payload;
 
       if (action.payload) {

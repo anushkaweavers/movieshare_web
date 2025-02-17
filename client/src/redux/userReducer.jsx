@@ -1,4 +1,4 @@
-const initialState = {
+/*const initialState = {
     user: null,
   };
   
@@ -28,5 +28,4 @@ const initialState = {
     type: "USER_LOGOUT",
   });
   
-  export default userReducer;
-  
+  export default userReducer;*/

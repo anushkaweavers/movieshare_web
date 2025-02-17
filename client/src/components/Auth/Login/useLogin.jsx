@@ -70,14 +70,17 @@ export const useLogin = () => {
 
   const storeUserData = (tokens, user) => {
     if (!tokens || !user?._id) return;
-
+  
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("access_token", tokens.accessToken);
     localStorage.setItem("refresh_token", tokens.refreshToken);
-
+  
     cookies.set("access_token", tokens.accessToken, { path: "/", sameSite: "Lax" });
     cookies.set("refresh_token", tokens.refreshToken, { path: "/", sameSite: "Lax" });
+  
+    console.log("🔹 Tokens stored successfully:", tokens);
   };
+  
 
   return {
     loginFormik: useFormik({
