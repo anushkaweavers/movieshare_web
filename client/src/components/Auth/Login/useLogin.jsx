@@ -42,7 +42,7 @@ export const useLogin = () => {
         // Inform user of success and redirect after a brief pause
         setLoginMessage("✅ Login successful! Redirecting...");
         setIsError(false);
-        setTimeout(() => navigate("/list"), 1000);
+        setTimeout(() => navigate("/community"), 1000);
       } else {
         throw new Error("Incorrect email or password");
       }

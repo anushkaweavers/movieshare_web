@@ -1,0 +1,106 @@
+/* Community Page Styling */
+
+.community-container {
+    background-color: #14111a;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+  }
+  
+  .community-form {
+    background: #1e1b26;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .movie-autocomplete .MuiInputBase-input {
+    color: #ffffff;
+  }
+  
+  .MuiOutlinedInput-root {
+    color: white;
+  }
+  
+  .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
+  
+  .post-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #1e1b26;
+    color: white;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+  }
+  
+  .post-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .post-content {
+    flex: 1;
+    padding-left: 20px;
+  }
+  
+  
+  button {
+    background-color: #6200ea;
+    color: white;
+    border-radius: 4px;
+  }
+  
+  button:hover {
+    background-color: #3700b3;
+  }
+  
+  /* Media Upload Styling */
+  .upload-container {
+    background: #2a2733;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px dashed #ffffff50;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .upload-container input {
+    display: none;
+  }
+  
+  .upload-label {
+    cursor: pointer;
+    padding: 10px 20px;
+    background: #6200ea;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 10px;
+    color: white;
+  }
+  
+  .upload-preview {
+    margin-top: 10px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .upload-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }

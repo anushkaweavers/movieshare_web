@@ -988,3 +988,17 @@ html {
 .delete-icon:hover {
   color: #f44336; /* Red */
 }
+.review-tags {
+  margin-top: 8px;
+}
+
+.review-tag {
+  display: inline-block;
+  color: red;                /* Red text */
+  background-color: #ffc0cb; /* Pink background */
+  border-radius: 12px;       /* Rounded corners */
+  padding: 4px 8px;          /* Some padding */
+  margin-right: 6px;         /* Space between tags */
+  margin-bottom: 4px;        /* Space on bottom */
+  font-size: 0.85rem;        /* Slightly smaller font size */
+}

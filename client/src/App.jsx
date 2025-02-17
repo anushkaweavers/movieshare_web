@@ -5,6 +5,7 @@ import Login from "./components/Auth/Login/index";
 import ForgotPassword from "./components/Auth/Forgot-Password/index";
 import ResetPassword from "./components/Auth/Reset-Password/index";
 import MovieList from "./components/List/index";
+import Community from './components/Community/Community'; // Adjust path as needed
 import MovieDetails from "./components/Details/MovieDetails";
 import Person from "./components/Person/person";
 import WriteReviewPage from "./components/Review/WriteReviewPage";
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/edit-review/:reviewId" element={<EditReviewPage />} />
         <Route path="/person/:personId" element={<Person />} />
         <Route path="/navbar" element={<Navbar />} />
+        <Route path="/community" element={<Community />} />
       </Route>
     </Routes>
   );

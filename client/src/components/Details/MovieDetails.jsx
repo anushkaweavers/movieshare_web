@@ -11,6 +11,7 @@ import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useSelector } from "react-redux";  // Import useSelector
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Navbar from '../Navbar/Navbar';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert } from "@mui/material";
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
@@ -252,203 +253,191 @@ const fetchReviews = async () => {
     };
   }, []);
   if (!movie) return <div>Loading...</div>;
-  return (
-    <div className="total" >
-    <div className="movie-details">
-      {/* Banner */}
-      <div
-        className="movie-details__banner"
-        style={{
-          backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center center",
-        }}
-      ></div>
+ return (
+  <div>
+    {/* Navbar - Above everything */}
+    <Navbar />
 
-      {/* Content Section */}
-      <div className="movie-details__content">
-        {/* Poster */}
-        <img
-          className="movie-details__poster"
-          src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-          alt={movie.title} />
+    <div className="total">
+      <div className="movie-details">
+        {/* Banner */}
+        <div
+          className="movie-details__banner"
+          style={{
+            backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
+          }}
+        ></div>
 
-        {/* Movie Info */}
-        <div className="movie-details__info">
-          <h1 className="movie-details__title">{movie.title}</h1>
-          <p className="movie-details__year">
-            {movie.release_date?.split("-")[0]} • {movie.runtime} min
-          </p>
-          <p className="movie-details__overview">{movie.overview}</p>
-          <div className="movie-details__actions">
-            <button className="movie-details__rent-button">Rent Movie ($0.99)</button>
-            <button className="movie-details__playlist-button">
-              Add to Playlist <span className="arrow-down">▼</span>
-            </button>
+        {/* Content Section */}
+        <div className="movie-details__content">
+          {/* Poster */}
+          <img
+            className="movie-details__poster"
+            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+            alt={movie.title}
+          />
+
+          {/* Movie Info */}
+          <div className="movie-details__info">
+            <h1 className="movie-details__title">{movie.title}</h1>
+            <p className="movie-details__year">
+              {movie.release_date?.split("-")[0]} • {movie.runtime} min
+            </p>
+            <p className="movie-details__overview">{movie.overview}</p>
+            <div className="movie-details__actions">
+              <button className="movie-details__rent-button">Rent Movie ($0.99)</button>
+              <button className="movie-details__playlist-button">
+                Add to Playlist <span className="arrow-down">▼</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="movie-details__tabs">
-        <ul>
-          {["DETAILS", "REVIEWS", "TRAILERS", "CAST", "CREW", "RELEASES", "SIMILAR MOVIES"].map((tab) => (
-            <li
-              key={tab}
-              className={activeTab === tab ? "active" : ""}
-              onClick={() => {
-                const refMap = {
-                  DETAILS: detailsRef,
-                  REVIEWS: reviewsRef,
-                  TRAILERS: trailersRef,
-                  CAST: castRef,
-                  CREW: crewRef,
-                  RELEASES: releasesRef,
-                  "SIMILAR MOVIES": playlistsRef, // Fix: Quotes around "SIMILAR MOVIES"
-                };
-                refMap[tab]?.current?.scrollIntoView({ behavior: "smooth" }); // Ensure refs are optional chained
-              } }
-            >
-              {tab}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-{/* Updated Details Section */}
-<div ref={detailsRef} className="movie-details__section" data-section="DETAILS">
-  <h2>Details</h2>
-  <div className="details-container">
-    <div className="details-left">
-      <div>
-        <strong>Director:</strong>
-        {Array.isArray(director)
-          ? director.map((name, index) => (
-              <span key={index} className="details-tag">
-                {name}
-              </span>
-            ))
-          : (
-              <span className="details-tag">{director}</span>
-            )}
-      </div>
-      <div>
-        <strong>Language:</strong> {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
-      </div>
-      <div>
-  <strong>Studio:</strong>
-  {movie.production_companies.map((company, index) => (
-    <span key={company.id || `company-${index}`} className="details-tag">
-      {company.name}
-    </span>
-  ))}
-</div>
-
-    </div>
-
-    <div className="details-right">
-    <div>
-  <strong>Genres:</strong>
-  {movie.genres.map((genre, index) => (
-    <span key={genre.id || `genre-${index}`} className="details-tag">
-      {genre.name}
-    </span>
-  ))}
-</div>
-
-      <div>
-  <strong>Tags:</strong>
-  {keywords.map((keyword, index) => (
-    <span key={keyword.id || `keyword-${index}`} className="details-tag">
-      {keyword.name}
-    </span>
-  ))}
-</div>
-
-    </div>
-  </div>
-</div>
-
-<div className="review-section">
-  <div className="movie-details__section" data-section="REVIEWS">
-    <h2>Movie Sharer’s Reviews</h2>
-  
-    {averageScores && (
-      <div className="average-score-container">
-        {/* Total Score Label (Outside the Box) */}
-        <span className="total-score-label">Total Score:</span>
-
-        {/* Score Box with Total Score Inside */}
-        <div className="score-box">
-          ⭐ {Math.round(averageScores.general)} / 10
+        {/* Tabs Section */}
+        <div className="movie-details__tabs">
+          <ul>
+            {["DETAILS", "REVIEWS", "TRAILERS", "CAST", "CREW", "RELEASES", "SIMILAR MOVIES"].map((tab) => (
+              <li
+                key={tab}
+                className={activeTab === tab ? "active" : ""}
+                onClick={() => {
+                  const refMap = {
+                    DETAILS: detailsRef,
+                    REVIEWS: reviewsRef,
+                    TRAILERS: trailersRef,
+                    CAST: castRef,
+                    CREW: crewRef,
+                    RELEASES: releasesRef,
+                    "SIMILAR MOVIES": playlistsRef, // Fix: Quotes around "SIMILAR MOVIES"
+                  };
+                  refMap[tab]?.current?.scrollIntoView({ behavior: "smooth" }); // Ensure refs are optional chained
+                }}
+              >
+                {tab}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Other Scores */}
-        <div className="score-details">
-          <div className="score-item">Plot {Math.round(averageScores.plot)}/10</div>
-          <div className="score-item">Story {Math.round(averageScores.story)}/10</div>
-          <div className="score-item">Characters {Math.round(averageScores.character)}/10</div>
-          <div className="score-item">Cinematography {Math.round(averageScores.cinematography)}/10</div>
-          <div className="score-item">Pacing {Math.round(averageScores.rate)}/10</div>
-        </div>
-      </div>
-    )}
+        {/* Updated Details Section */}
+        <div ref={detailsRef} className="movie-details__section" data-section="DETAILS">
+          <h2>Details</h2>
+          <div className="details-container">
+            <div className="details-left">
+              <div>
+                <strong>Director:</strong>
+                {Array.isArray(director)
+                  ? director.map((name, index) => (
+                      <span key={index} className="details-tag">
+                        {name}
+                      </span>
+                    ))
+                  : <span className="details-tag">{director}</span>}
+              </div>
+              <div>
+                <strong>Language:</strong> {movie.spoken_languages.map((lang) => lang.english_name).join(", ")}
+              </div>
+              <div>
+                <strong>Studio:</strong>
+                {movie.production_companies.map((company, index) => (
+                  <span key={company.id || `company-${index}`} className="details-tag">
+                    {company.name}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-    <button className="write-review-button" onClick={handleWriteReview}>
-      <i className="fas fa-comment-dots"></i> Write a Review
-    </button>
-    <div className="reviews-list">
-      {reviews.length > 0 ? (
-        reviews.map((review) => (
-          <div key={review._id} className="review-card">
-            {/* Display Avatar */}
-            <img
-              src={review.avatar ? review.avatar : "/images/default-avatar.png"}
-              alt={review.username || "Anonymous"}
-              className="review-avatar"
-              onError={(e) => (e.target.src = "/images/default-avatar.png")}
-            />
-
-            <div className="review-card-right">
-              {/* Review Header */}
-              <div className="review-header">
-                <div>
-                  <p className="review-author">{review.username || "Anonymous"}</p>
-                  <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
-                </div>
-                <p className="review-score">{review.generalScore} / 10 ⭐</p>
+            <div className="details-right">
+              <div>
+                <strong>Genres:</strong>
+                {movie.genres.map((genre, index) => (
+                  <span key={genre.id || `genre-${index}`} className="details-tag">
+                    {genre.name}
+                  </span>
+                ))}
               </div>
 
-              {/* Show Edit & Delete Icons Only for Logged-in User's Review */}
-              {user && review.userId === user._id && (
-                <div className="review-actions">
-                  <EditIcon
-                    className="edit-icon"
-                    onClick={() => navigate(`/edit-review/${review._id}`, { state: { movie, review } })}
-                  />
-                  <DeleteIcon
-                    className="delete-icon"
-                    onClick={() => handleOpenDialog(review)}
-                  />
-                </div>
-              )}
-
-              {/* Review Body */}
-              <div className="review-body">
-                <h3 className="review-title">{review.review_title}</h3>
-                <p className="review-content">
-                  {review.review_details
-                    ? `“${review.review_details.slice(0, 150)}..."`
-                    : "No review content available."}
-                </p>
+              <div>
+                <strong>Tags:</strong>
+                {keywords.map((keyword, index) => (
+                  <span key={keyword.id || `keyword-${index}`} className="details-tag">
+                    {keyword.name}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
-        ))
-      ) : (
-        <p>No reviews available for this movie.</p>
-      )}
+        </div>
 
-      {/* Delete Confirmation Dialog */}
+        {/* Reviews Section */}
+        <div className="review-section">
+          <div className="movie-details__section" data-section="REVIEWS">
+            <h2>Movie Sharer’s Reviews</h2>
+            {averageScores && (
+              <div className="average-score-container">
+                <span className="total-score-label">Total Score:</span>
+                <div className="score-box">⭐ {Math.round(averageScores.general)} / 10</div>
+                <div className="score-details">
+                  <div className="score-item">Plot {Math.round(averageScores.plot)}/10</div>
+                  <div className="score-item">Story {Math.round(averageScores.story)}/10</div>
+                  <div className="score-item">Characters {Math.round(averageScores.character)}/10</div>
+                  <div className="score-item">Cinematography {Math.round(averageScores.cinematography)}/10</div>
+                  <div className="score-item">Pacing {Math.round(averageScores.rate)}/10</div>
+                </div>
+              </div>
+            )}
+
+            <button className="write-review-button" onClick={handleWriteReview}>
+              <i className="fas fa-comment-dots"></i> Write a Review
+            </button>
+            <div className="reviews-list">
+              {reviews.length > 0 ? (
+                reviews.map((review) => (
+                  <div key={review._id} className="review-card">
+                    <img
+                      src={review.avatar ? review.avatar : "/images/default-avatar.png"}
+                      alt={review.username || "Anonymous"}
+                      className="review-avatar"
+                      onError={(e) => (e.target.src = "/images/default-avatar.png")}
+                    />
+                    <div className="review-card-right">
+                      <div className="review-header">
+                        <div>
+                          <p className="review-author">{review.username || "Anonymous"}</p>
+                          <p className="review-date">{new Date(review.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <p className="review-score">{review.generalScore} / 10 ⭐</p>
+                      </div>
+                      {user && review.userId === user._id && (
+                        <div className="review-actions">
+                          <EditIcon
+                            className="edit-icon"
+                            onClick={() => navigate(`/edit-review/${review._id}`, { state: { movie, review } })}
+                          />
+                          <DeleteIcon
+                            className="delete-icon"
+                            onClick={() => handleOpenDialog(review)}
+                          />
+                        </div>
+                      )}
+                      <div className="review-body">
+                        <h3 className="review-title">{review.review_title}</h3>
+                        <p className="review-content">
+                          {review.review_details
+                            ? `“${review.review_details.slice(0, 150)}..."`
+                            : "No review content available."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No reviews available for this movie.</p>
+              )}
+            </div>
+         {/* Delete Confirmation Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
@@ -648,47 +637,52 @@ const fetchReviews = async () => {
         )}
       </div>
       <div ref={playlistsRef} className="movie-details__section similar-movies-section" data-section="SIMILAR_MOVIES">
-        <h2 className="section-title">Similar Movies</h2>
-        {similarMovies.length > 0 ? (
-          <Swiper
-            spaceBetween={20} // Space between slides
-            slidesPerView={3} // Number of slides visible at once
-            breakpoints={{
-              1024: {
-                slidesPerView: 3,
-              },
-              768: {
-                slidesPerView: 2,
-              },
-              480: {
-                slidesPerView: 1,
-              },
-            }}
-          >
-            {similarMovies.map((movie) => (
-              <SwiperSlide key={movie.id} className="similar-movie-item">
-                <div className="movie-card">
-                  <div onClick={() => handleClick(movie.id)} className="movie-link">
-                    <img
-                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} // TMDB poster image URL
-                      alt={`${movie.title} Poster`}
-                      className="movie-poster" />
-                    <div className="movie-info">
-                      <h3 className="movie-title">{movie.title}</h3>
-                      <p className="movie-release-date">{movie.release_date}</p>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : (
-          <p className="no-info">No similar movies available.</p>
-        )}  
+  <h2 className="section-title">Similar Movies</h2>
+  {similarMovies.length > 0 ? (
+    <Swiper
+      spaceBetween={20} // Space between slides
+      slidesPerView={3} // Number of slides visible at once
+      breakpoints={{
+        1024: {
+          slidesPerView: 3,
+        },
+        768: {
+          slidesPerView: 2,
+        },
+        480: {
+          slidesPerView: 1,
+        },
+      }}
+    >
+      {similarMovies.map((movie) => (
+        <SwiperSlide key={movie.id} className="similar-movie-item">
+          <div className="movie-card">
+            <div onClick={() => handleClick(movie.id)} className="movie-link">
+              <img
+                src={movie.poster_path 
+                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+                  : "/images/movie-default.png"} // Fallback image URL
+                alt={`${movie.title} Poster`}
+                className="movie-poster" />
+              <div className="movie-info">
+                <h3 className="movie-title">{movie.title}</h3>
+                <p className="movie-release-date">{movie.release_date}</p>
+              </div>
+            </div>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  ) : (
+    <p className="no-info">No similar movies available.</p>
+  )}
+
+
       </div>
     </div>
-    </div>
-  );
+  </div>
+);
+
 }
 
 export default MovieDetails;

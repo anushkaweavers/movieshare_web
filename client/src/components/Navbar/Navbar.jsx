@@ -77,18 +77,18 @@ const Navbar = () => {
           Movie<span className="highlight">Share</span>
         </span>
       </div>
-
+      <div className="nav-links">
       <div className="nav-center">
-        <div className="nav-links">
-          <Link to="/community">Community</Link>
-          <Link to="/list">Movies</Link>
-        </div>
-        <div className="search-container">
-          <input type="text" placeholder="Search..." className="search-input" />
-          <SearchIcon className="search-icon" />
-        </div>
-      </div>
-
+  <div className="nav-links">
+    <Link to="/community">Community</Link>
+    <Link to="/list">Movies</Link>
+  </div>
+  <div className="search-container">
+    <input type="text" placeholder="Search..." className="search-input" />
+    <SearchIcon className="search-icon" />
+  </div>
+</div>
+</div>
       <div className="nav-icons">
         <button className="create-btn">
           <FontAwesomeIcon icon={faPlus} /> Create
@@ -101,7 +101,7 @@ const Navbar = () => {
             src={profileImage}
             alt="Profile"
             className="profile-img"
-            onClick={() => setDropdownOpen((prev) => !prev)}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
             onError={(e) => (e.target.src = defaultAvatar)}
           />
           {dropdownOpen && (
@@ -115,5 +115,5 @@ const Navbar = () => {
     </nav>
   );
 };
-
 export default Navbar;
+

@@ -100,8 +100,7 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) =>
     fetchMovies();
   }, [endpoint, params]);
 
-  const DEFAULT_IMAGE = "https://w7.pngwing.com/pngs/116/765/png-transparent-clapperboard-computer-icons-film-movie-poster-angle-text-logo-thumbnail.png";
-
+  const DEFAULT_IMAGE = "../public/images/movie-default.png"
   return (
     <div className="movie-row">
       <h2 className="movie-row__title">{title}</h2>
@@ -208,8 +207,8 @@ const MovieList = () => {
   return (
     <div className="movie-list">
       <Navbar />
-````
-      {/* Ensuring Banner does not re-render */}````
+
+      {/* Ensuring Banner does not re-render */}
       <Banner />
 
       <Filter 
