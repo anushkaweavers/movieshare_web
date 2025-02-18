@@ -44,7 +44,8 @@ const Community = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
   const [showForm, setShowForm] = useState(false);
-  const [editingPost, setEditingPost] = useState(null); 
+  const [editingPost, setEditingPost] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -84,18 +85,16 @@ const Community = () => {
     }
   };
 
-  const [isLoading, setIsLoading] = useState(false); 
-
   const handleCreatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
       alert('Title and content are required.');
       return;
     }
-  
-    setIsLoading(true); // Start loading
+
+    setIsLoading(true);
     const userId = localStorage.getItem('userId');
-  
+
     const formData = new FormData();
     formData.append('movieTitle', selectedMovieTitle);
     formData.append('tags', JSON.stringify(tags));
@@ -104,7 +103,7 @@ const Community = () => {
     formData.append('rating', rating);
     formData.append('userId', userId);
     if (mediaFile) formData.append('mediaFile', mediaFile);
-  
+
     try {
       const response = await axiosCustom.post('/posts', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -116,7 +115,7 @@ const Community = () => {
       }
     } catch (error) {
       console.error('Error creating post:', error);
-      alert('Failed to create post. Please try again.'); 
+      alert('Failed to create post. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -141,8 +140,8 @@ const Community = () => {
         },
       });
       if (response.status === 200) {
-        fetchPosts(); 
-        setShowForm(false); 
+        fetchPosts();
+        setShowForm(false);
         resetForm();
       }
     } catch (error) {
@@ -163,6 +162,7 @@ const Community = () => {
 
   const handleTagKeyPress = (e) => {
     if (e.key === 'Enter' && e.target.value.trim()) {
+      e.preventDefault();
       setTags([...tags, e.target.value.trim()]);
       e.target.value = '';
     }
@@ -209,7 +209,6 @@ const Community = () => {
       <Container maxWidth="md" className="community-container">
         <Typography variant="h4" gutterBottom>Community</Typography>
 
-        {/* Sorting Dropdown */}
         <FormControl variant="outlined" size="small" sx={{ float: 'right', mb: 2 }}>
           <InputLabel>Sort By</InputLabel>
           <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} label="Sort By">
@@ -219,12 +218,10 @@ const Community = () => {
           </Select>
         </FormControl>
 
-        {/* Button to toggle form visibility */}
         <Button variant="contained" onClick={() => setShowForm(!showForm)} sx={{ mb: 2 }}>
           {showForm ? 'Cancel' : 'Write a Post'}
         </Button>
 
-        {/* Form for creating/editing a post */}
         {showForm && (
           <form onSubmit={editingPost ? handleEditPost : handleCreatePost} className="community-form">
             <Grid container spacing={2}>
@@ -241,22 +238,32 @@ const Community = () => {
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Autocomplete
-                  className="movie-autocomplete"
-                  freeSolo
-                  options={movieResults}
-                  getOptionLabel={(option) => option.title || ''}
-                  onInputChange={(event, newInputValue) => setMovieSearchTerm(newInputValue)}
-                  onChange={(event, newValue) => {
-                    if (newValue) {
-                      setSelectedMovieTitle(newValue.title);
-                    }
-                  }}
-                  
-                  renderInput={(params) => (
-                    <TextField {...params} label="Search for a movie (TMDB)" variant="outlined" fullWidth margin="normal" />
-                  )}
-                />
+                {editingPost ? (
+                  <TextField
+                    label="Movie Title"
+                    variant="outlined"
+                    fullWidth
+                    value={selectedMovieTitle}
+                    disabled
+                    margin="normal"
+                  />
+                ) : (
+                  <Autocomplete
+                    className="movie-autocomplete"
+                    freeSolo
+                    options={movieResults}
+                    getOptionLabel={(option) => option.title || ''}
+                    onInputChange={(event, newInputValue) => setMovieSearchTerm(newInputValue)}
+                    onChange={(event, newValue) => {
+                      if (newValue) {
+                        setSelectedMovieTitle(newValue.title);
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Search for a movie (TMDB)" variant="outlined" fullWidth margin="normal" />
+                    )}
+                  />
+                )}
                 <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
                 <TextField label="Details" variant="outlined" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
 
@@ -283,13 +290,13 @@ const Community = () => {
           </form>
         )}
 
-        {/* Display posts */}
         {sortedPosts.map((post) => (
           <Card key={post._id} className="post-card">
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                {post.mediaFile && <CardMedia component="img" height="200" image={`http://localhost:3000/uploads/${post.mediaFile}`} alt={post.title} />
-              }
+                {post.mediaFile && (
+                  <CardMedia component="img" height="200" image={`http://localhost:3000/uploads/${post.mediaFile}`} alt={post.title} />
+                )}
               </Grid>
               <Grid item xs={8}>
                 <CardContent>
@@ -298,6 +305,14 @@ const Community = () => {
                   <Typography variant="body2">
                     Rating: {post.rating}/10 <Star fontSize="small" />
                   </Typography>
+                  <Typography variant="body2">
+                    Movie: {post.movieTitle}
+                  </Typography>
+                  <div className="tags-container">
+                    {post.tags.map((tag, index) => (
+                      <Chip key={index} label={tag} sx={{ margin: 0.5, backgroundColor: 'red', color: 'white' }} />
+                    ))}
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                     <IconButton aria-label="edit" onClick={() => handleEditButtonClick(post)}>
                       <Edit />

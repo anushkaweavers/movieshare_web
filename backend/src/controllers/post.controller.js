@@ -10,17 +10,14 @@ exports.getAllPosts = async (req, res) => {
     res.status(500).json({ message: 'Error fetching posts', error: error.message });
   }
 };
-
-// Create a post (with file upload support)
+// Post create
 exports.createPost = async (req, res) => {
   try {
     const { movieTitle, title, content, rating, tags, userId } = req.body;
     let mediaFile = null;
-
     if (req.file) {
-      mediaFile = req.file.filename; // Save only the filename (not full path)
+      mediaFile = req.file.filename; 
     }
-
     const post = await postService.createPost({
       movieTitle,
       title,
@@ -30,14 +27,12 @@ exports.createPost = async (req, res) => {
       mediaFile,
       userId,
     });
-
     res.status(201).json(post);
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ message: 'Error creating post', error: error.message });
   }
 };
-
 // Delete a post
 exports.deletePost = async (req, res) => {
   try {
@@ -48,34 +43,30 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ message: 'Error deleting post', error: error.message });
   }
 };
-
 // Edit a post
 exports.editPost = async (req, res) => {
   try {
     const { movieTitle, title, content, rating, tags } = req.body;
-    let mediaFile = req.file ? req.file.filename : null; // Store only filename if media is uploaded
-
+    let mediaFile = req.file ? req.file.filename : null; 
     const updatedData = {
       movieTitle,
       title,
       content,
       rating,
-      tags: tags ? JSON.parse(tags) : [],
+      tags: tags ? JSON.parse(tags) :[],
     };
-
     if (mediaFile) {
-      updatedData.mediaFile = mediaFile; // Update media file if a new one is uploaded
+      updatedData.mediaFile = mediaFile; 
     }
-
     const updatedPost = await postService.editPost(req.params.postId, updatedData);
-
     if (!updatedPost) {
       return res.status(404).json({ message: 'Post not found' });
     }
-
     res.json(updatedPost);
   } catch (error) {
     console.error('Error editing post:', error);
     res.status(500).json({ message: 'Error editing post', error: error.message });
   }
 };
+
+
