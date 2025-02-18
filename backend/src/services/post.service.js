@@ -15,3 +15,8 @@ exports.createPost = async (postData) => {
 exports.deletePost = async (postId) => {
   return await Post.findByIdAndDelete(postId);
 };
+
+// Edit a post by ID
+exports.editPost = async (postId, updatedData) => {
+  return await Post.findByIdAndUpdate(postId, updatedData, { new: true, runValidators: true });
+};

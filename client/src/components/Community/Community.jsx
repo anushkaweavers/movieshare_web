@@ -43,6 +43,8 @@ const Community = () => {
   const [mediaFile, setMediaFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
+  const [showForm, setShowForm] = useState(false);
+  const [editingPost, setEditingPost] = useState(null); 
 
   useEffect(() => {
     fetchPosts();
@@ -64,8 +66,7 @@ const Community = () => {
       console.error('Error fetching posts:', error);
     }
   };
-  
-  
+
   const handleMovieSearch = async (term) => {
     try {
       const response = await apiClient.get('/search/movie', { params: { query: term } });
@@ -83,11 +84,17 @@ const Community = () => {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(false); 
+
   const handleCreatePost = async (e) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim() || !content.trim()) {
+      alert('Title and content are required.');
+      return;
+    }
   
-    const userId = localStorage.getItem('userId'); // Retrieve the userId (adjust based on your auth logic)
+    setIsLoading(true); // Start loading
+    const userId = localStorage.getItem('userId');
   
     const formData = new FormData();
     formData.append('movieTitle', selectedMovieTitle);
@@ -95,20 +102,64 @@ const Community = () => {
     formData.append('title', title);
     formData.append('content', content);
     formData.append('rating', rating);
-    formData.append('userId', userId); // Add userId to the request
+    formData.append('userId', userId);
     if (mediaFile) formData.append('mediaFile', mediaFile);
   
     try {
-      const response = await axiosCustom.post('/posts', formData);
+      const response = await axiosCustom.post('/posts', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       if (response.status === 201) {
-        fetchPosts(); 
+        fetchPosts();
+        setShowForm(false);
+        resetForm();
       }
     } catch (error) {
       console.error('Error creating post:', error);
+      alert('Failed to create post. Please try again.'); 
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  
+
+  const handleEditPost = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
+
+    const formData = new FormData();
+    formData.append('movieTitle', selectedMovieTitle);
+    formData.append('tags', JSON.stringify(tags));
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('rating', rating);
+    if (mediaFile) formData.append('mediaFile', mediaFile);
+
+    try {
+      const response = await axiosCustom.put(`/posts/${editingPost._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status === 200) {
+        fetchPosts(); 
+        setShowForm(false); 
+        resetForm();
+      }
+    } catch (error) {
+      console.error('Error editing post:', error);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setContent('');
+    setRating(0);
+    setTags([]);
+    setMediaFile(null);
+    setPreviewUrl(null);
+    setSelectedMovieTitle('');
+    setEditingPost(null);
+  };
 
   const handleTagKeyPress = (e) => {
     if (e.key === 'Enter' && e.target.value.trim()) {
@@ -120,6 +171,7 @@ const Community = () => {
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
+
   const handleDeletePost = async (postId) => {
     try {
       await axiosCustom.delete(`/posts/${postId}`);
@@ -128,7 +180,18 @@ const Community = () => {
       console.error('Error deleting post:', error);
     }
   };
-  
+
+  const handleEditButtonClick = (post) => {
+    setEditingPost(post);
+    setTitle(post.title);
+    setContent(post.content);
+    setRating(post.rating);
+    setTags(post.tags);
+    setSelectedMovieTitle(post.movieTitle);
+    setPreviewUrl(post.mediaFile ? `http://localhost:3000/uploads/${post.mediaFile.split('/').pop()}` : null);
+    setShowForm(true);
+  };
+
   const sortedPosts = [...posts].sort((a, b) => {
     switch (sortBy) {
       case 'title':
@@ -136,7 +199,7 @@ const Community = () => {
       case 'rating':
         return b.rating - a.rating;
       default:
-        return new Date(b.date) - new Date(a.date);
+        return new Date(b.createdAt) - new Date(a.createdAt);
     }
   });
 
@@ -156,82 +219,98 @@ const Community = () => {
           </Select>
         </FormControl>
 
-        <form onSubmit={handleCreatePost} className="community-form">
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="media-upload" />
-              <label htmlFor="media-upload" className="upload-label">
-                <IconButton component="span">
-                  <AddPhotoAlternate />
-                </IconButton>
-                Upload Media
-              </label>
-              {previewUrl && (
-                <CardMedia component="img" height="200" image={previewUrl} alt="Preview" className="upload-preview" />
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Autocomplete
-                className="movie-autocomplete"
-                freeSolo
-                options={movieResults}
-                getOptionLabel={(option) => option.title || ''}
-                onInputChange={(event, newInputValue) => setMovieSearchTerm(newInputValue)}
-                onChange={(event, newValue) => setSelectedMovieTitle(newValue ? newValue.title : '')}
-                renderInput={(params) => (
-                  <TextField {...params} label="Search for a movie (TMDB)" variant="outlined" fullWidth margin="normal" />
+        {/* Button to toggle form visibility */}
+        <Button variant="contained" onClick={() => setShowForm(!showForm)} sx={{ mb: 2 }}>
+          {showForm ? 'Cancel' : 'Write a Post'}
+        </Button>
+
+        {/* Form for creating/editing a post */}
+        {showForm && (
+          <form onSubmit={editingPost ? handleEditPost : handleCreatePost} className="community-form">
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="media-upload" />
+                <label htmlFor="media-upload" className="upload-label">
+                  <IconButton component="span">
+                    <AddPhotoAlternate />
+                  </IconButton>
+                  Upload Media
+                </label>
+                {previewUrl && (
+                  <CardMedia component="img" height="200" image={previewUrl} alt="Preview" className="upload-preview" />
                 )}
-              />
-              <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
-              <TextField label="Details" variant="outlined" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Autocomplete
+                  className="movie-autocomplete"
+                  freeSolo
+                  options={movieResults}
+                  getOptionLabel={(option) => option.title || ''}
+                  onInputChange={(event, newInputValue) => setMovieSearchTerm(newInputValue)}
+                  onChange={(event, newValue) => {
+                    if (newValue) {
+                      setSelectedMovieTitle(newValue.title);
+                    }
+                  }}
+                  
+                  renderInput={(params) => (
+                    <TextField {...params} label="Search for a movie (TMDB)" variant="outlined" fullWidth margin="normal" />
+                  )}
+                />
+                <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
+                <TextField label="Details" variant="outlined" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
 
-              <Typography variant="body2" sx={{ mt: 2 }}>Rate the Movie:</Typography>
-              <Rating
-                name="post-rating"
-                value={rating}
-                onChange={(event, newValue) => setRating(newValue)}
-                precision={0.5}
-                max={10}
-              />
+                <Typography variant="body2" sx={{ mt: 2 }}>Rate the Movie:</Typography>
+                <Rating
+                  name="post-rating"
+                  value={rating}
+                  onChange={(event, newValue) => setRating(newValue)}
+                  precision={0.5}
+                  max={10}
+                />
 
-              <TextField label="Add Tag" variant="outlined" fullWidth margin="normal" onKeyPress={handleTagKeyPress} />
-              <div className="tags-container">
-                {tags.map((tag, index) => (
-                  <Chip key={index} label={tag} onDelete={() => handleRemoveTag(tag)} sx={{ margin: 0.5 }} />
-                ))}
-              </div>
-              <Button type="submit" variant="contained" sx={{ mt: 2 }}>Create Post</Button>
+                <TextField label="Add Tag" variant="outlined" fullWidth margin="normal" onKeyPress={handleTagKeyPress} />
+                <div className="tags-container">
+                  {tags.map((tag, index) => (
+                    <Chip key={index} label={tag} onDelete={() => handleRemoveTag(tag)} sx={{ margin: 0.5 }} />
+                  ))}
+                </div>
+                <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+                  {editingPost ? 'Update Post' : 'Create Post'}
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
+          </form>
+        )}
 
+        {/* Display posts */}
         {sortedPosts.map((post) => (
-  <Card key={post._id} className="post-card">
-    <Grid container spacing={2}>
-      <Grid item xs={4}>
-        {post.mediaFile && <CardMedia component="img" height="200" image={`http://localhost:3000/${post.mediaFile}`} alt={post.title} className="post-image" />}
-      </Grid>
-      <Grid item xs={8}>
-        <CardContent>
-          <Typography variant="h6">{post.title}</Typography>
-          <Typography variant="body2">{post.content}</Typography>
-          <Typography variant="body2">
-            Rating: {post.rating}/10 <Star fontSize="small" />
-          </Typography>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-            <IconButton aria-label="edit" onClick={() => console.log('Edit post:', post._id)}>
-              <Edit />
-            </IconButton>
-            <IconButton aria-label="delete" onClick={() => handleDeletePost(post._id)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </CardContent>
-      </Grid>
-    </Grid>
-  </Card>
-))}
-
+          <Card key={post._id} className="post-card">
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                {post.mediaFile && <CardMedia component="img" height="200" image={`http://localhost:3000/uploads/${post.mediaFile}`} alt={post.title} />
+              }
+              </Grid>
+              <Grid item xs={8}>
+                <CardContent>
+                  <Typography variant="h6">{post.title}</Typography>
+                  <Typography variant="body2">{post.content}</Typography>
+                  <Typography variant="body2">
+                    Rating: {post.rating}/10 <Star fontSize="small" />
+                  </Typography>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                    <IconButton aria-label="edit" onClick={() => handleEditButtonClick(post)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton aria-label="delete" onClick={() => handleDeletePost(post._id)}>
+                      <Delete />
+                    </IconButton>
+                  </div>
+                </CardContent>
+              </Grid>
+            </Grid>
+          </Card>
+        ))}
       </Container>
     </>
   );

@@ -13,6 +13,7 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const path = require('path'); 
 
 const app = express();
 
@@ -20,6 +21,7 @@ if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+
 app.get('/', (req, res) => {
   res.send({ message: 'Welcome to Movie Share API' });
 });
@@ -27,6 +29,9 @@ app.get('/', (req, res) => {
 app.get('/ws', (req, res) => {
   res.send('WebSocket or relevant data');
 });
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+console.log('Serving uploads from:', path.join(__dirname, '../uploads'));
 
 // set security HTTP headers
 app.use(helmet());

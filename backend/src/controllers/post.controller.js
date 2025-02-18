@@ -18,7 +18,7 @@ exports.createPost = async (req, res) => {
     let mediaFile = null;
 
     if (req.file) {
-      mediaFile = req.file.path; // Save the file path
+      mediaFile = req.file.filename; // Save only the filename (not full path)
     }
 
     const post = await postService.createPost({
@@ -46,5 +46,36 @@ exports.deletePost = async (req, res) => {
   } catch (error) {
     console.error('Error deleting post:', error);
     res.status(500).json({ message: 'Error deleting post', error: error.message });
+  }
+};
+
+// Edit a post
+exports.editPost = async (req, res) => {
+  try {
+    const { movieTitle, title, content, rating, tags } = req.body;
+    let mediaFile = req.file ? req.file.filename : null; // Store only filename if media is uploaded
+
+    const updatedData = {
+      movieTitle,
+      title,
+      content,
+      rating,
+      tags: tags ? JSON.parse(tags) : [],
+    };
+
+    if (mediaFile) {
+      updatedData.mediaFile = mediaFile; // Update media file if a new one is uploaded
+    }
+
+    const updatedPost = await postService.editPost(req.params.postId, updatedData);
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    res.json(updatedPost);
+  } catch (error) {
+    console.error('Error editing post:', error);
+    res.status(500).json({ message: 'Error editing post', error: error.message });
   }
 };
