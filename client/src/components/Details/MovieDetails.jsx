@@ -262,22 +262,30 @@ const fetchReviews = async () => {
       <div className="movie-details">
         {/* Banner */}
         <div
-          className="movie-details__banner"
-          style={{
-            backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center center",
-          }}
-        ></div>
+  className="movie-details__banner"
+  style={{
+    backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+  }}
+></div>
 
-        {/* Content Section */}
-        <div className="movie-details__content">
-          {/* Poster */}
-          <img
-            className="movie-details__poster"
-            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-            alt={movie.title}
-          />
+{/* Log backdrop path */}
+{console.log("Backdrop URL:", `${IMAGE_BASE_URL}${movie.backdrop_path}`)}
+
+{/* Content Section */}
+<div className="movie-details__content">
+  {/* Poster */}
+  <img
+    className="movie-details__poster"
+    src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+    alt={movie.title}
+  />
+
+  {/* Log poster path */}
+  {console.log("Poster URL:", `${IMAGE_BASE_URL}${movie.poster_path}`)}
+
+
 
           {/* Movie Info */}
           <div className="movie-details__info">
