@@ -125,7 +125,7 @@ const WriteReviewPage = () => {
         const posterBlob = await fetchImageAsBlob(movie.poster_path);
 
         // Resize the image before uploading
-        const resizedImageBlob = await resizeImage(posterBlob, 150); // Set smaller height
+        const resizedImageBlob = await resizeImage(posterBlob, 200); 
         const posterFile = new File([resizedImageBlob], "poster.jpg", { type: "image/jpeg" });
 
         const formData = new FormData();

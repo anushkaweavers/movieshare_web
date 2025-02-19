@@ -243,8 +243,6 @@
   .sidebar-create-btn:hover {
     background-color: #5a21b6;
   }
-
-  /* Hide create button in navbar for small screens */
   .nav-icons .create-btn {
     display: none;
   }
