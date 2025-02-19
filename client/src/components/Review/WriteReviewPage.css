@@ -172,3 +172,9 @@
 .review-page .MuiChip-deleteIcon {
   color: #fff;
 }
+.post-image {
+  width: 100%; /* Ensure the image takes full width */
+  height: 200px; /* Fixed height for consistency */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  border-radius: 8px;
+}

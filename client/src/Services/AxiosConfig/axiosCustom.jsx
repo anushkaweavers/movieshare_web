@@ -1,10 +1,11 @@
-import axios from "axios";
+import axios from "axios";  
+
+export const SERVER_URL = "http://localhost:3000";
 
 const axiosCustom = axios.create({
-  baseURL: "http://localhost:3000/v1/",
+  baseURL: `${SERVER_URL}/v1/`,
   headers: { "Content-Type": "application/json" },
 });
-
 
 axiosCustom.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
@@ -13,7 +14,6 @@ axiosCustom.interceptors.request.use((config) => {
   }
   return config;
 }, (error) => Promise.reject(error));
-
 
 axiosCustom.interceptors.response.use(
   (response) => response,
@@ -27,4 +27,4 @@ axiosCustom.interceptors.response.use(
   }
 );
 
-export default axiosCustom;
+export default axiosCustom; // Correct default export

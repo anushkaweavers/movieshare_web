@@ -24,8 +24,6 @@ const WriteReviewPage = () => {
   const navigate = useNavigate();
   const movie = state?.movie || { title: "Unknown", poster_path: "" };
   const user = useSelector((state) => state.user.user);
-
-  // Initial state for a new review
   const initialReviewState = {
     title: "",
     content: "",
@@ -37,12 +35,12 @@ const WriteReviewPage = () => {
     cinematographyScore: 0,
     rateScore: 0,
   };
-
   const [review, setReview] = useState(initialReviewState);
   const [tagInput, setTagInput] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [shareAsPost, setShareAsPost] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false); 
 
-  // Pre-populate form state if editing an existing review
   useEffect(() => {
     if (state?.review) {
       setReview({
@@ -83,6 +81,19 @@ const WriteReviewPage = () => {
     }));
   };
 
+  const fetchImageAsBlob = async (imagePath) => {
+    try {
+      const response = await axiosCustom.get(`/proxy/image`, {
+        params: { url: `https://image.tmdb.org/t/p/w500${imagePath}` },
+        responseType: "blob",
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      return null;
+    }
+  };
+
   const handlePostReview = async () => {
     try {
       if (!user || !user._id) {
@@ -104,52 +115,70 @@ const WriteReviewPage = () => {
         rateScore: review.rateScore,
       };
 
-      // Use PUT for updating an existing review, otherwise POST to create
       if (state?.review) {
         await axiosCustom.put(`/reviews/${state.review._id}`, reviewData);
       } else {
         await axiosCustom.post("/reviews/create", reviewData);
       }
 
+      if (shareAsPost) {
+        const posterBlob = await fetchImageAsBlob(movie.poster_path);
+
+        // Resize the image before uploading
+        const resizedImageBlob = await resizeImage(posterBlob, 150); // Set smaller height
+        const posterFile = new File([resizedImageBlob], "poster.jpg", { type: "image/jpeg" });
+
+        const formData = new FormData();
+        formData.append("movieTitle", movie.title);
+        formData.append("tags", JSON.stringify(review.tags));
+        formData.append("title", review.title);
+        formData.append("content", review.content);
+        formData.append("rating", review.generalScore);
+        formData.append("userId", user._id);
+        formData.append("mediaFile", posterFile);
+
+        const response = await axiosCustom.post("/posts", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (response.status === 201) {
+          setSuccessDialogOpen(true); // Show success dialog
+          return;
+        }
+      }
+
       setDialogOpen(true);
     } catch (error) {
+      console.error("Error posting review:", error);
       setDialogOpen(true);
     }
   };
 
-  const handleSaveAsPost = async () => {
-    try {
-      if (!user || !user._id) {
-        setDialogOpen(true);
-        return;
-      }
+  const resizeImage = (blob, targetHeight) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
   
-      const formData = new FormData();
-      formData.append("movieTitle", movie.title);
-      formData.append("tags", JSON.stringify(review.tags));
-      formData.append("title", review.title);
-      formData.append("content", review.content);
-      formData.append("rating", review.generalScore);
-      formData.append("userId", user._id);
-      // If media is included, add it
-      if (movie.poster_path) {
-        formData.append("mediaFile", `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
-      }
+      img.onload = () => {
+        const aspectRatio = img.width / img.height;
+        const newHeight = targetHeight;
+        const newWidth = newHeight * aspectRatio;
   
-      const response = await axiosCustom.post("/posts", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
   
-      if (response.status === 201) {
-        alert("Review posted successfully as a community post!");
-        navigate("/community"); // Redirect to the community page
-      }
-    } catch (error) {
-      console.error("Error creating post:", error);
-      alert("Failed to create post. Please try again.");
-    }
+        canvas.toBlob((resizedBlob) => {
+          resolve(resizedBlob);
+        }, "image/jpeg", 0.8);
+      };
+  
+      img.src = URL.createObjectURL(blob);
+    });
   };
   
+
   return (
     <>
       <Navbar />
@@ -254,13 +283,20 @@ const WriteReviewPage = () => {
               <Button variant="contained" onClick={handlePostReview}>
                 {state?.review ? "Update" : "Post"}
               </Button>
-              <Button variant="contained" onClick={handleSaveAsPost}>
-                Save it as a Post
-              </Button>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={shareAsPost}
+                  onChange={(e) => setShareAsPost(e.target.checked)}
+                />
+                Share as a community post
+              </label>
             </Box>
           </div>
         </div>
       </div>
+
+      {/* Dialog for User Not Found */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Review Submission</DialogTitle>
         <DialogContent>
@@ -268,6 +304,19 @@ const WriteReviewPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => { setDialogOpen(false); if (user) navigate(-1); }}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for Success Message */}
+      <Dialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}>
+        <DialogTitle>Success</DialogTitle>
+        <DialogContent>
+          Review posted successfully as a community post!
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setSuccessDialogOpen(false); navigate(-1); }}>
             OK
           </Button>
         </DialogActions>

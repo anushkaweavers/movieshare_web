@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
-import axios from 'axios';
-import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+import axiosCustom, { SERVER_URL } from "../../Services/AxiosConfig/axiosCustom";
+
 import {
   Container,
   Typography,
@@ -10,36 +10,22 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Autocomplete,
   Chip,
   IconButton,
   Grid,
   MenuItem,
   Select,
   FormControl,
-  InputLabel,
-  Rating
+  InputLabel
 } from '@mui/material';
-import { AddPhotoAlternate, Star, Edit, Delete } from '@mui/icons-material';
+import { AddPhotoAlternate, Edit, Delete } from '@mui/icons-material';
 import './Community.css';
-
-const API_KEY = import.meta.env.VITE_API_KEY;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-const apiClient = axios.create({
-  baseURL: BASE_URL,
-  params: { api_key: API_KEY },
-});
 
 const Community = () => {
   const [posts, setPosts] = useState([]);
-  const [movieSearchTerm, setMovieSearchTerm] = useState('');
-  const [movieResults, setMovieResults] = useState([]);
-  const [selectedMovieTitle, setSelectedMovieTitle] = useState('');
   const [tags, setTags] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [rating, setRating] = useState(0);
   const [mediaFile, setMediaFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
@@ -51,29 +37,12 @@ const Community = () => {
     fetchPosts();
   }, []);
 
-  useEffect(() => {
-    if (movieSearchTerm.trim()) {
-      handleMovieSearch(movieSearchTerm);
-    } else {
-      setMovieResults([]);
-    }
-  }, [movieSearchTerm]);
-
   const fetchPosts = async () => {
     try {
       const response = await axiosCustom.get('/posts');
       setPosts(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
-    }
-  };
-
-  const handleMovieSearch = async (term) => {
-    try {
-      const response = await apiClient.get('/search/movie', { params: { query: term } });
-      setMovieResults(response.data.results || []);
-    } catch (error) {
-      console.error('Error searching movies:', error);
     }
   };
 
@@ -84,6 +53,7 @@ const Community = () => {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
+
   const handleCreatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -93,11 +63,9 @@ const Community = () => {
     setIsLoading(true);
     const userId = localStorage.getItem('userId');
     const formData = new FormData();
-    formData.append('movieTitle', selectedMovieTitle);
     formData.append('tags', JSON.stringify(tags));
     formData.append('title', title);
     formData.append('content', content);
-    formData.append('rating', rating);
     formData.append('userId', userId);
     if (mediaFile) formData.append('mediaFile', mediaFile);
 
@@ -123,11 +91,9 @@ const Community = () => {
     if (!title.trim() || !content.trim()) return;
 
     const formData = new FormData();
-    formData.append('movieTitle', selectedMovieTitle);
     formData.append('tags', JSON.stringify(tags));
     formData.append('title', title);
     formData.append('content', content);
-    formData.append('rating', rating);
     if (mediaFile) formData.append('mediaFile', mediaFile);
 
     try {
@@ -149,11 +115,9 @@ const Community = () => {
   const resetForm = () => {
     setTitle('');
     setContent('');
-    setRating(0);
     setTags([]);
     setMediaFile(null);
     setPreviewUrl(null);
-    setSelectedMovieTitle('');
     setEditingPost(null);
   };
 
@@ -182,10 +146,8 @@ const Community = () => {
     setEditingPost(post);
     setTitle(post.title);
     setContent(post.content);
-    setRating(post.rating);
     setTags(post.tags);
-    setSelectedMovieTitle(post.movieTitle);
-    setPreviewUrl(post.mediaFile ? `http://localhost:3000/uploads/${post.mediaFile.split('/').pop()}` : null);
+    setPreviewUrl(post.mediaFile ? `${SERVER_URL}/uploads/${post.mediaFile.split('/').pop()}` : null);
     setShowForm(true);
   };
 
@@ -193,8 +155,7 @@ const Community = () => {
     switch (sortBy) {
       case 'title':
         return a.title.localeCompare(b.title);
-      case 'rating':
-        return b.rating - a.rating;
+      case 'date':
       default:
         return new Date(b.createdAt) - new Date(a.createdAt);
     }
@@ -211,7 +172,6 @@ const Community = () => {
           <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} label="Sort By">
             <MenuItem value="date">Date</MenuItem>
             <MenuItem value="title">Title</MenuItem>
-            <MenuItem value="rating">Rating</MenuItem>
           </Select>
         </FormControl>
 
@@ -235,43 +195,8 @@ const Community = () => {
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
-                {editingPost ? (
-                  <TextField
-                    label="Movie Title"
-                    variant="outlined"
-                    fullWidth
-                    value={selectedMovieTitle}
-                    disabled
-                    margin="normal"
-                  />
-                ) : (
-                  <Autocomplete
-                    className="movie-autocomplete"
-                    freeSolo
-                    options={movieResults}
-                    getOptionLabel={(option) => option.title || ''}
-                    onInputChange={(event, newInputValue) => setMovieSearchTerm(newInputValue)}
-                    onChange={(event, newValue) => {
-                      if (newValue) {
-                        setSelectedMovieTitle(newValue.title);
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Search for a movie (TMDB)" variant="outlined" fullWidth margin="normal" />
-                    )}
-                  />
-                )}
                 <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
                 <TextField label="Details" variant="outlined" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
-
-                <Typography variant="body2" sx={{ mt: 2 }}>Rate the Movie:</Typography>
-                <Rating
-                  name="post-rating"
-                  value={rating}
-                  onChange={(event, newValue) => setRating(newValue)}
-                  precision={0.5}
-                  max={10}
-                />
 
                 <TextField label="Add Tag" variant="outlined" fullWidth margin="normal" onKeyPress={handleTagKeyPress} />
                 <div className="tags-container">
@@ -292,19 +217,26 @@ const Community = () => {
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 {post.mediaFile && (
-                  <CardMedia component="img" height="200" image={`http://localhost:3000/uploads/${post.mediaFile}`} alt={post.title} />
+                 <CardMedia
+                 component="img"
+                 height="100"
+                 image={`${SERVER_URL}/uploads/${post.mediaFile}`}
+                 alt={post.title}
+
+
+                 
+                 sx={{
+                   width: "55%",
+                   objectFit: "cover"
+                 }}
+               />
+               
                 )}
               </Grid>
               <Grid item xs={8}>
                 <CardContent>
                   <Typography variant="h6">{post.title}</Typography>
                   <Typography variant="body2">{post.content}</Typography>
-                  <Typography variant="body2">
-                    Rating: {post.rating}/10 <Star fontSize="small" />
-                  </Typography>
-                  <Typography variant="body2">
-                    Movie: {post.movieTitle}
-                  </Typography>
                   <div className="tags-container">
                     {post.tags.map((tag, index) => (
                       <Chip key={index} label={tag} sx={{ margin: 0.5, backgroundColor: 'red', color: 'white' }} />
