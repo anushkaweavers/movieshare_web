@@ -69,4 +69,3 @@ exports.editPost = async (req, res) => {
   }
 };
 
-

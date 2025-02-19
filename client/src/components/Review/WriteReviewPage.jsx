@@ -117,6 +117,39 @@ const WriteReviewPage = () => {
     }
   };
 
+  const handleSaveAsPost = async () => {
+    try {
+      if (!user || !user._id) {
+        setDialogOpen(true);
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append("movieTitle", movie.title);
+      formData.append("tags", JSON.stringify(review.tags));
+      formData.append("title", review.title);
+      formData.append("content", review.content);
+      formData.append("rating", review.generalScore);
+      formData.append("userId", user._id);
+      // If media is included, add it
+      if (movie.poster_path) {
+        formData.append("mediaFile", `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
+      }
+  
+      const response = await axiosCustom.post("/posts", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      if (response.status === 201) {
+        alert("Review posted successfully as a community post!");
+        navigate("/community"); // Redirect to the community page
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("Failed to create post. Please try again.");
+    }
+  };
+  
   return (
     <>
       <Navbar />
@@ -220,6 +253,9 @@ const WriteReviewPage = () => {
               </Button>
               <Button variant="contained" onClick={handlePostReview}>
                 {state?.review ? "Update" : "Post"}
+              </Button>
+              <Button variant="contained" onClick={handleSaveAsPost}>
+                Save it as a Post
               </Button>
             </Box>
           </div>

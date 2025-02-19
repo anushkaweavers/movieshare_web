@@ -84,17 +84,14 @@ const Community = () => {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
-
   const handleCreatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
       alert('Title and content are required.');
       return;
-    }
-
+    } 
     setIsLoading(true);
     const userId = localStorage.getItem('userId');
-
     const formData = new FormData();
     formData.append('movieTitle', selectedMovieTitle);
     formData.append('tags', JSON.stringify(tags));
