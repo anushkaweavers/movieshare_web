@@ -7,7 +7,7 @@ const postSchema = new mongoose.Schema(
     content: { type: String, required: true },
     rating: { type: Number, min: 0, max: 10 },
     tags: { type: [String], default: [] },
-    mediaFile: { type: String }, // Store file path (not URL)
+    mediaFile: { type: String },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true }

@@ -1,12 +1,11 @@
-const express = require('express');
-const postController = require('../../controllers/post.controller');
-const upload = require('../../config/multerConfig');
+const express = require("express");
+const postController = require("../../controllers/post.controller");
 
 const router = express.Router();
 
-router.get('/', postController.getAllPosts);
-router.post('/', upload.single('mediaFile'), postController.createPost);
-router.delete('/:postId', postController.deletePost);
-router.put('/:postId', upload.single('mediaFile'), postController.editPost);
+router.get("/",postController.getAllPosts);
+router.post("/",postController.createPost);
+router.put("/:postId", postController.editPost);
+router.delete("/:postId", postController.deletePost);
 
 module.exports = router;

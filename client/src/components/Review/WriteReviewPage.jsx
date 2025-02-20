@@ -39,7 +39,7 @@ const WriteReviewPage = () => {
   const [tagInput, setTagInput] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [shareAsPost, setShareAsPost] = useState(false);
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false); 
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 
   useEffect(() => {
     if (state?.review) {
@@ -94,13 +94,33 @@ const WriteReviewPage = () => {
     }
   };
 
+  const uploadToCloudinary = async (imageBlob) => {
+    try {
+      const formData = new FormData();
+      const imageFile = new File([imageBlob], "poster.jpg", { type: "image/jpeg" });
+
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "anushka"); // Replace with Cloudinary preset
+
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dqwb01qwt/image/upload",
+        formData
+      );
+      return response.data.secure_url; // Get Cloudinary URL
+    } catch (error) {
+      console.error("Cloudinary upload failed:", error);
+      return null;
+    }
+  };
+
   const handlePostReview = async () => {
     try {
       if (!user || !user._id) {
         setDialogOpen(true);
         return;
       }
-
+  
+      // 1️⃣ Submit the review to the database
       const reviewData = {
         userId: user._id,
         movieId,
@@ -114,70 +134,61 @@ const WriteReviewPage = () => {
         cinematographyScore: review.cinematographyScore,
         rateScore: review.rateScore,
       };
-
+  
       if (state?.review) {
         await axiosCustom.put(`/reviews/${state.review._id}`, reviewData);
       } else {
         await axiosCustom.post("/reviews/create", reviewData);
       }
-
-      if (shareAsPost) {
-        const posterBlob = await fetchImageAsBlob(movie.poster_path);
-
-        // Resize the image before uploading
-        const resizedImageBlob = await resizeImage(posterBlob, 200); 
-        const posterFile = new File([resizedImageBlob], "poster.jpg", { type: "image/jpeg" });
-
-        const formData = new FormData();
-        formData.append("movieTitle", movie.title);
-        formData.append("tags", JSON.stringify(review.tags));
-        formData.append("title", review.title);
-        formData.append("content", review.content);
-        formData.append("rating", review.generalScore);
-        formData.append("userId", user._id);
-        formData.append("mediaFile", posterFile);
-
-        const response = await axiosCustom.post("/posts", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        if (response.status === 201) {
-          setSuccessDialogOpen(true); // Show success dialog
-          return;
+  
+      // 2️⃣ If "Share as a community post" is checked, upload TMDB poster to Cloudinary
+      let cloudinaryUrl = null;
+  
+      if (shareAsPost && movie.poster_path && movie.poster_path !== "null") {
+        try {
+          const tmdbImageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+      
+          const response = await axiosCustom.post("/upload/image", {
+            imageUrl: tmdbImageUrl, // Send full TMDB image URL to backend
+          });
+      
+          if (response.data?.secure_url) {
+            cloudinaryUrl = response.data.secure_url;
+          } else {
+            console.error("Cloudinary upload failed:", response.data);
+            cloudinaryUrl = null;
+          }
+        } catch (error) {
+          console.error("Error uploading poster to Cloudinary:", error);
+          cloudinaryUrl = null;
         }
       }
-
+      
+  
+      // 3️⃣ Create the post with the Cloudinary URL
+      const postData = {
+        movieTitle: movie.title,
+        tags: review.tags,
+        title: review.title,
+        content: review.content,
+        rating: review.generalScore,
+        userId: user._id,
+        mediaFile: cloudinaryUrl, // Cloudinary URL received from backend
+      };
+  
+      const postResponse = await axiosCustom.post("/posts", postData);
+  
+      if (postResponse.status === 201) {
+        setSuccessDialogOpen(true);
+        return;
+      }
+  
       setDialogOpen(true);
     } catch (error) {
       console.error("Error posting review:", error);
       setDialogOpen(true);
     }
   };
-
-  const resizeImage = (blob, targetHeight) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-  
-      img.onload = () => {
-        const aspectRatio = img.width / img.height;
-        const newHeight = targetHeight;
-        const newWidth = newHeight * aspectRatio;
-  
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-  
-        canvas.toBlob((resizedBlob) => {
-          resolve(resizedBlob);
-        }, "image/jpeg", 0.8);
-      };
-  
-      img.src = URL.createObjectURL(blob);
-    });
-  };
-  
 
   return (
     <>
@@ -324,5 +335,4 @@ const WriteReviewPage = () => {
     </>
   );
 };
-
 export default WriteReviewPage;
