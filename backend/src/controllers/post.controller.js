@@ -68,4 +68,3 @@ exports.editPost = async (req, res) => {
     res.status(500).json({ message: 'Error editing post', error: error.message });
   }
 };
-

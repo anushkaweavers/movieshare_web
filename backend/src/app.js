@@ -37,7 +37,7 @@ console.log('Serving uploads from:', path.join(__dirname, '../uploads'));
 app.use(helmet());
 
 // parse json request body
-app.use(express.json());
+app.use(express.json()); // ✅ Enables JSON parsing in Express
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));

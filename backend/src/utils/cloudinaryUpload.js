@@ -1,4 +1,4 @@
-const cloudinary = require('../config/cloudinary'); // ✅ Ensure Cloudinary is properly configured
+const cloudinary = require('../config/cloudinaryConfig'); // ✅ Ensure Cloudinary is properly configured
 const multer = require('multer');
 
 const storage = multer.memoryStorage(); // Store file in memory before uploading
