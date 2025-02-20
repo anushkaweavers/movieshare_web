@@ -81,37 +81,6 @@ const WriteReviewPage = () => {
     }));
   };
 
-  const fetchImageAsBlob = async (imagePath) => {
-    try {
-      const response = await axiosCustom.get(`/proxy/image`, {
-        params: { url: `https://image.tmdb.org/t/p/w500${imagePath}` },
-        responseType: "blob",
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      return null;
-    }
-  };
-
-  const uploadToCloudinary = async (imageBlob) => {
-    try {
-      const formData = new FormData();
-      const imageFile = new File([imageBlob], "poster.jpg", { type: "image/jpeg" });
-
-      formData.append("file", imageFile);
-      formData.append("upload_preset", "anushka"); // Replace with Cloudinary preset
-
-      const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dqwb01qwt/image/upload",
-        formData
-      );
-      return response.data.secure_url; // Get Cloudinary URL
-    } catch (error) {
-      console.error("Cloudinary upload failed:", error);
-      return null;
-    }
-  };
 
   const handlePostReview = async () => {
     try {
@@ -140,8 +109,7 @@ const WriteReviewPage = () => {
       } else {
         await axiosCustom.post("/reviews/create", reviewData);
       }
-  
-      // 2️⃣ If "Share as a community post" is checked, upload TMDB poster to Cloudinary
+
       let cloudinaryUrl = null;
   
       if (shareAsPost && movie.poster_path && movie.poster_path !== "null") {
@@ -173,7 +141,7 @@ const WriteReviewPage = () => {
         content: review.content,
         rating: review.generalScore,
         userId: user._id,
-        mediaFile: cloudinaryUrl, // Cloudinary URL received from backend
+        mediaFile: cloudinaryUrl, 
       };
   
       const postResponse = await axiosCustom.post("/posts", postData);

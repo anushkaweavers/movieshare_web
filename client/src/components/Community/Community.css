@@ -1,184 +1,85 @@
-/* Community Page Styling */
+/* Community.css */
 
 .community-container {
-    background-color: white;
-    color:black;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 800px;
-  }
-  
-  .community-form {
-    background:white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .movie-autocomplete .MuiInputBase-input {
-    color:black;
-  }
-  
-  .MuiOutlinedInput-root {
-    color:black;
-  }
-  
-  .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.5) !important;
-  }
-  
-  .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color:black!important;
-  }
-  
-  .post-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    background:whitesmoke;
-    color:black;
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-  }
-  
-  .post-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .post-content {
-    flex: 1;
-    padding-left: 20px;
-  }
-  
-  
-  button {
-    background-color: #a768ff;
-    color: white;
-    border-radius: 4px;
-  }
-  
-  button:hover {
-    background-color: #5828c7;
-  }
-  
-  /* Media Upload Styling */
-  .upload-container {
-    background: #2a2733;
-    padding: 10px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px dashed #ffffff50;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .upload-container input {
-    display: none;
-  }
-  
-  .upload-label {
-    cursor: pointer;
-    padding: 10px 20px;
-    background: #6200ea;
-    border-radius: 4px;
-    text-align: center;
-    margin-top: 10px;
-    color: white;
-  }
-  
-  .upload-preview {
-    margin-top: 10px;
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .upload-preview img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  /* Community Page Styling */
-
-.community-container {
-  background-color: white;
-  color: black;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
-  max-width: 800px;
-  margin: 0 auto; /* Center the container */
-}
-
-.community-form {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .post-card {
-  display: flex;
-  flex-direction: column; /* Stack content vertically on smaller screens */
-  background: whitesmoke;
-  color: black;
-  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px;
+  overflow: hidden;
+  display: flex;
+  background-color: #fff;
 }
 
-.post-image {
-  width: 100%; /* Ensure the image takes full width */
-  height: 200px; /* Fixed height for consistency */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
-  border-radius: 8px;
+.post-media {
+  width: 250px; /* Fixed width for images */
+  height: 350px; /* Fixed height for images */
+  object-fit: cover; /* Ensure images maintain aspect ratio */
+  flex-shrink: 0; /* Prevent image from shrinking */
 }
 
 .post-content {
-  flex: 1;
-  padding: 20px 0; /* Add padding for better spacing */
+  flex-grow: 1;
+  padding: 16px;
 }
 
-.tags-container {
+.post-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.post-details {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.post-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Add gap between tags */
-  margin-top: 10px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-button {
-  background-color: #a768ff;
-  color: white;
-  border-radius: 4px;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.post-tags .MuiChip-root {
+  background-color: #c52b2b; /* Red background */
+  color: #ffd8d8; /* Pink text */
+  font-weight: bold;
 }
 
-button:hover {
-  background-color: #5828c7;
+.post-actions {
+  display: flex;
+  gap: 8px;
 }
 
-/* Responsive Adjustments */
-@media (min-width: 768px) {
-  .post-card {
-    flex-direction: row; 
-  }
+.form-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
 
-  .post-image {
-    width: 200px; 
-    height: 200px; 
-    margin-right: 20px; 
-  }
+.form-media-preview {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
-  .post-content {
-    padding-left: 20px;
-  }
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* Add more spacing to form fields */
+.form-field {
+  margin-bottom: 16px; /* Add distance between form fields */
 }
