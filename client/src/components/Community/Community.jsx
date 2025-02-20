@@ -67,7 +67,6 @@ const Community = () => {
       return null;
     }
   };
-
   const handleMediaChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -144,7 +143,6 @@ const Community = () => {
     setEditingPostId(null);
     setMediaUrl(null);
   };
-
   return (
     <>
       <Navbar />
@@ -238,7 +236,7 @@ const Community = () => {
               <Grid item xs={12} sm={post.mediaFile ? 8 : 12}>
                 <CardContent className="post-content">
                   {editingPostId === post._id ? (
-                    // Edit form within the post card
+                    
                     <>
                       <TextField
                         label="Title"
