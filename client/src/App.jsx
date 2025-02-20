@@ -27,13 +27,14 @@ const App = () => {
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
+      <Route path="/community" element={<Community />} />
         <Route path="/list" element={<MovieList />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/write-review/:movieId" element={<WriteReviewPage />} />
         <Route path="/edit-review/:reviewId" element={<EditReviewPage />} />
         <Route path="/person/:personId" element={<Person />} />
         <Route path="/navbar" element={<Navbar />} />
-        <Route path="/community" element={<Community />} />
+     
       </Route>
     </Routes>
   );

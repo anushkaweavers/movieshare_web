@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -27,7 +27,8 @@ import { useLogin } from "./useLogin";
 const LoginIndex = () => {
   const { loginFormik, googleLogin, isPending, loginMessage, isError } = useLogin();
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
- 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (isError && loginMessage) {
       setOpenErrorDialog(true);
@@ -114,7 +115,7 @@ const LoginIndex = () => {
             </form>
 
             <p className="text-center auth-btm-info">
-              Don't have an account? <Link to="/signup">Sign Up for Free</Link>
+              Don't have an account? <Link to="/">Sign Up for Free</Link>
             </p>
           </Box>
         </Grid>
@@ -124,18 +125,18 @@ const LoginIndex = () => {
 
       {/* Error Dialog */}
       <Dialog open={openErrorDialog} onClose={handleCloseErrorDialog}>
-  <DialogTitle>Error</DialogTitle>
-  <DialogContent>
-    <p>{loginMessage || "An error occurred. Please try again."}</p>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseErrorDialog} color="primary" autoFocus>
-      OK
-    </Button>
-  </DialogActions>
-</Dialog>
-
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <p>{loginMessage || "An error occurred. Please try again."}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseErrorDialog} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
+
 export default LoginIndex;
