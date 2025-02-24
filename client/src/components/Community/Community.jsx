@@ -33,7 +33,6 @@ const Community = () => {
       console.error('Error fetching posts:', error);
     }
   };
-
   const sortPosts = (posts, sortBy) => {
     return posts.sort((a, b) => {
       if (sortBy === 'date') {
@@ -44,24 +43,19 @@ const Community = () => {
       return 0;
     });
   };
-
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
-
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-    
+    formData.append('upload_preset',import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
     try {
       const response = await fetch(import.meta.env.VITE_CLOUDINARY_URL, {
         method: 'POST',
         body: formData,
       });
-  
-      if (!response.ok) throw new Error("Cloudinary upload failed");
-  
+        if (!response.ok) throw new Error("Cloudinary upload failed");  
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
@@ -69,7 +63,6 @@ const Community = () => {
       return null;
     }
   }; 
-
   const handleMediaChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -86,7 +79,6 @@ const Community = () => {
       }
     }
   };
-
   const handleCreateOrUpdatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -118,7 +110,6 @@ const Community = () => {
       setIsLoading(false);
     }
   };
-
   const handleEditPost = (post) => {
     setEditingPostId(post._id);
     setTitle(post.title);
@@ -128,12 +119,10 @@ const Community = () => {
     setPreviewUrl(post.mediaFile);
     setShowForm(true);
   };
-
   const handleCancelEdit = () => {
     setEditingPostId(null);
     resetForm();
   };
-
   const handleDeletePost = async (postId) => {
     try {
       await axiosCustom.delete(`/posts/${postId}`);
@@ -142,7 +131,6 @@ const Community = () => {
       console.error('Error deleting post:', error);
     }
   };
-
   const resetForm = () => {
     setTitle('');
     setContent('');
@@ -152,7 +140,6 @@ const Community = () => {
     setEditingPostId(null);
     setMediaUrl(null);
   };
-
   return (
     <>
       <Navbar />
@@ -210,7 +197,6 @@ const Community = () => {
                     <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} />
                   ))}
                 </div>
-
                 <div className="form-actions">
                   <Button 
                     type="submit" 
@@ -327,5 +313,4 @@ const Community = () => {
     </>
   );
 };
-
 export default Community;

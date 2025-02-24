@@ -109,55 +109,58 @@ const WriteReviewPage = () => {
       } else {
         await axiosCustom.post("/reviews/create", reviewData);
       }
-
-      let cloudinaryUrl = null;
   
-      if (shareAsPost && movie.poster_path && movie.poster_path !== "null") {
-        try {
-          const tmdbImageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-      
-          const response = await axiosCustom.post("/upload/image", {
-            imageUrl: tmdbImageUrl, //full TMDB image URL to backend
-          });
-      
-          if (response.data?.secure_url) {
-            cloudinaryUrl = response.data.secure_url;
-          } else {
-            console.error("Cloudinary upload failed:", response.data);
+      // 2️⃣ Handle community post creation only if the checkbox is checked
+      if (shareAsPost) {
+        let cloudinaryUrl = null;
+  
+        if (movie.poster_path && movie.poster_path !== "null") {
+          try {
+            const tmdbImageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+  
+            const response = await axiosCustom.post("/upload/image", {
+              imageUrl: tmdbImageUrl, // Full TMDB image URL to backend
+            });
+  
+            if (response.data?.secure_url) {
+              cloudinaryUrl = response.data.secure_url;
+            } else {
+              console.error("Cloudinary upload failed:", response.data);
+              cloudinaryUrl = null;
+            }
+          } catch (error) {
+            console.error("Error uploading poster to Cloudinary:", error);
             cloudinaryUrl = null;
           }
-        } catch (error) {
-          console.error("Error uploading poster to Cloudinary:", error);
-          cloudinaryUrl = null;
+        }
+  
+        // 3️⃣ Create the post with the Cloudinary URL
+        const postData = {
+          movieTitle: movie.title,
+          tags: review.tags,
+          title: review.title,
+          content: review.content,
+          rating: review.generalScore,
+          userId: user._id,
+          mediaFile: cloudinaryUrl,
+        };
+  
+        const postResponse = await axiosCustom.post("/posts", postData);
+  
+        if (postResponse.status === 201) {
+          // Show success dialog for both review and community post
+          setSuccessDialogOpen(true);
+          return;
         }
       }
-      
   
-     // 3️⃣ Create the post with the Cloudinary URL
-      const postData = {
-        movieTitle: movie.title,
-        tags: review.tags,
-        title: review.title,
-        content: review.content,
-        rating: review.generalScore,
-        userId: user._id,
-        mediaFile: cloudinaryUrl, 
-      };
-  
-      const postResponse = await axiosCustom.post("/posts", postData);
-  
-      if (postResponse.status === 201) {
-        setSuccessDialogOpen(true);
-        return;
-      }
-  
-      setDialogOpen(true);
+      // If not sharing as a post, show success dialog for review only
+      setSuccessDialogOpen(true);
     } catch (error) {
       console.error("Error posting review:", error);
       setDialogOpen(true);
     }
   };
-
   return (
     <>
       <Navbar />
@@ -256,50 +259,63 @@ const WriteReviewPage = () => {
               ))}
             </Box>
             <Box className="button-container">
-              <Button variant="contained" onClick={() => navigate(-1)}>
-                Cancel
-              </Button>
-              <Button variant="contained" onClick={handlePostReview}>
-                {state?.review ? "Update" : "Post"}
-              </Button>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={shareAsPost}
-                  onChange={(e) => setShareAsPost(e.target.checked)}
-                />
-                Share as a community post
-              </label>
-            </Box>
+  <Button variant="contained" onClick={() => navigate(-1)}>
+    Cancel
+  </Button>
+  <Button variant="contained" onClick={handlePostReview}>
+    {state?.review ? "Update" : "Post"}
+  </Button>
+  <label>
+    <input
+      type="checkbox"
+      checked={shareAsPost}
+      onChange={(e) => setShareAsPost(e.target.checked)}
+    />
+    Share as a community post
+  </label>
+</Box>
           </div>
         </div>
       </div>
 
       {/* Dialog for User Not Found */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Review Submission</DialogTitle>
-        <DialogContent>
-          {user ? "Review posted successfully!" : "User not found! Please log in."}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => { setDialogOpen(false); if (user) navigate(-1); }}>
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Dialog for User Not Found */}
+<Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+  <DialogTitle>Review Submission</DialogTitle>
+  <DialogContent>
+    {user ? "Review posted successfully!" : "User not found! Please log in."}
+  </DialogContent>
+  <DialogActions>
+    <Button
+      onClick={() => {
+        setDialogOpen(false);
+        if (user) navigate(-1);
+      }}
+    >
+      OK
+    </Button>
+  </DialogActions>
+</Dialog>
 
-      {/* Dialog for Success Message */}
-      <Dialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}>
-        <DialogTitle>Success</DialogTitle>
-        <DialogContent>
-          Review posted successfully as a community post!
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => { setSuccessDialogOpen(false); navigate(-1); }}>
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
+{/* Dialog for Success Message */}
+<Dialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}>
+  <DialogTitle>Success</DialogTitle>
+  <DialogContent>
+    {shareAsPost
+      ? "Review posted successfully as a community post!"
+      : "Review posted successfully!"}
+  </DialogContent>
+  <DialogActions>
+    <Button
+      onClick={() => {
+        setSuccessDialogOpen(false);
+        navigate(-1);
+      }}
+    >
+      OK
+    </Button>
+  </DialogActions>
+</Dialog>
     </>
   );
 };

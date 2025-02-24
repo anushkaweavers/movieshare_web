@@ -23,7 +23,6 @@ import "../../dark.css";
 import "../../developer.css";
 import "../../global.css";
 import { useLogin } from "./useLogin";
-
 const LoginIndex = () => {
   const { loginFormik, googleLogin, isPending, loginMessage, isError } = useLogin();
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
@@ -38,8 +37,7 @@ const LoginIndex = () => {
   const handleCloseErrorDialog = () => {
     setOpenErrorDialog(false);
   };
-
-  return (
+ return (
     <Container maxWidth={false} className="auth-wrapper">
       <Grid container spacing={0} className="auth-wrapper-inn">
         <Grid item lg={7} md={7} sm={12} xs={12} className="auth-wrapper-left">
