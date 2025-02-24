@@ -50,16 +50,16 @@ const Community = () => {
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'anushka');
-
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+  
     try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dqwb01qwt/image/upload', {
+      const response = await fetch(import.meta.env.VITE_CLOUDINARY_URL, {
         method: 'POST',
         body: formData,
       });
-
+  
       if (!response.ok) throw new Error("Cloudinary upload failed");
-
+  
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
@@ -67,6 +67,7 @@ const Community = () => {
       return null;
     }
   };
+  
   const handleMediaChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -281,7 +282,7 @@ const Community = () => {
                       </div>
                     </>
                   ) : (
-                    // Display post content
+            
                     <>
                       <Typography variant="h6" className="post-title">{post.title}</Typography>
                       <Typography className="post-details">{post.content}</Typography>
