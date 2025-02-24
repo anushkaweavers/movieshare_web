@@ -53,7 +53,7 @@ const Community = () => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-  
+    
     try {
       const response = await fetch(import.meta.env.VITE_CLOUDINARY_URL, {
         method: 'POST',
@@ -68,11 +68,12 @@ const Community = () => {
       console.error("Error uploading to Cloudinary:", error);
       return null;
     }
-  };
-  
+  }; 
+
   const handleMediaChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      setMediaFile(file);
       setPreviewUrl(URL.createObjectURL(file));
       setIsLoading(true);
       try {
@@ -85,6 +86,7 @@ const Community = () => {
       }
     }
   };
+
   const handleCreateOrUpdatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -100,7 +102,6 @@ const Community = () => {
       mediaFile: mediaUrl,
       userId,
     };
-
     try {
       if (editingPostId) {
         await axiosCustom.put(`/posts/${editingPostId}`, postData);
@@ -117,6 +118,7 @@ const Community = () => {
       setIsLoading(false);
     }
   };
+
   const handleEditPost = (post) => {
     setEditingPostId(post._id);
     setTitle(post.title);
@@ -124,11 +126,14 @@ const Community = () => {
     setTags(post.tags);
     setMediaUrl(post.mediaFile);
     setPreviewUrl(post.mediaFile);
+    setShowForm(true);
   };
+
   const handleCancelEdit = () => {
     setEditingPostId(null);
     resetForm();
   };
+
   const handleDeletePost = async (postId) => {
     try {
       await axiosCustom.delete(`/posts/${postId}`);
@@ -137,6 +142,7 @@ const Community = () => {
       console.error('Error deleting post:', error);
     }
   };
+
   const resetForm = () => {
     setTitle('');
     setContent('');
@@ -146,6 +152,7 @@ const Community = () => {
     setEditingPostId(null);
     setMediaUrl(null);
   };
+
   return (
     <>
       <Navbar />
@@ -160,7 +167,6 @@ const Community = () => {
             </Select>
           </FormControl>
         </div>
-
         <Button 
           variant="contained" 
           onClick={() => setShowForm(!showForm)} 
@@ -168,7 +174,6 @@ const Community = () => {
         >
           {showForm ? 'Cancel' : 'Write a Post'}
         </Button>
-
         {showForm && (
           <form onSubmit={handleCreateOrUpdatePost} className="form-container">
             <Grid container spacing={2}>
@@ -190,11 +195,9 @@ const Community = () => {
                 )}
                 {isLoading && <CircularProgress />}
               </Grid>
-
               <Grid item xs={12} sm={8}>
                 <TextField label="Title" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
                 <TextField label="Details" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
-
                 <TextField label="Add Tag" fullWidth margin="normal" onKeyPress={(e) => {
                   if (e.key === 'Enter' && e.target.value.trim()) {
                     e.preventDefault();
@@ -202,7 +205,6 @@ const Community = () => {
                     e.target.value = '';
                   }
                 }} />
-
                 <div className="post-tags">
                   {tags.map((tag, index) => (
                     <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} />
@@ -238,8 +240,7 @@ const Community = () => {
               )}
               <Grid item xs={12} sm={post.mediaFile ? 8 : 12}>
                 <CardContent className="post-content">
-                  {editingPostId === post._id ? (
-                    
+                  {editingPostId === post._id ? (                    
                     <>
                       <TextField
                         label="Title"
@@ -274,6 +275,21 @@ const Community = () => {
                           <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} />
                         ))}
                       </div>
+                      <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="edit-media-upload" />
+                      <label htmlFor="edit-media-upload">
+                        <IconButton component="span">
+                          <AddPhotoAlternate />
+                        </IconButton>
+                        Change Media
+                      </label>
+                      {previewUrl && (
+                        <CardMedia
+                          component="img"
+                          className="form-media-preview"
+                          image={previewUrl}
+                          alt="Preview"
+                        />
+                      )}
                       <div className="post-actions">
                         <IconButton onClick={handleCreateOrUpdatePost}>
                           <Save />
@@ -283,8 +299,7 @@ const Community = () => {
                         </IconButton>
                       </div>
                     </>
-                  ) : (
-            
+                  ) : (            
                     <>
                       <Typography variant="h6" className="post-title">{post.title}</Typography>
                       <Typography className="post-details">{post.content}</Typography>
