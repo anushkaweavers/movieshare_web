@@ -65,7 +65,7 @@ const WriteReviewPage = () => {
       setReview((prev) => ({ ...prev, [field]: value }));
     }
   };
-
+ 
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim();
     if (trimmedTag && !review.tags.includes(trimmedTag)) {
@@ -117,7 +117,7 @@ const WriteReviewPage = () => {
           const tmdbImageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
       
           const response = await axiosCustom.post("/upload/image", {
-            imageUrl: tmdbImageUrl, // Send full TMDB image URL to backend
+            imageUrl: tmdbImageUrl, //full TMDB image URL to backend
           });
       
           if (response.data?.secure_url) {
@@ -133,7 +133,7 @@ const WriteReviewPage = () => {
       }
       
   
-      // 3️⃣ Create the post with the Cloudinary URL
+     // 3️⃣ Create the post with the Cloudinary URL
       const postData = {
         movieTitle: movie.title,
         tags: review.tags,

@@ -6,7 +6,7 @@ const PublicRoute = () => {
 
   console.log("Checking PublicRoute:", user); // Debugging state
 
-  return user && user._id ? <Navigate to="/list" replace /> : <Outlet />;
+  return user && user._id ? <Navigate to="/community" replace /> : <Outlet />;
 };
 
 export default PublicRoute;
