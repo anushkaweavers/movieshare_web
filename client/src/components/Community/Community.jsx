@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, Grid, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
+import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
 import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
+import { Grid } from "@mui/material";
+
 import './Community.css';
 
 const Community = () => {
