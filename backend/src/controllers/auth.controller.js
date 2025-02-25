@@ -26,22 +26,21 @@ const register = catchAsync(async (req, res) => {
 const login = catchAsync(async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res
         .status(httpStatus.BAD_REQUEST)
         .json({ message: "Email and password are required" });
     }
 
-    const user = await authService.loginUserWithEmailAndPassword(email, password);
+const user = await authService.loginUserWithEmailAndPassword(email, password);
 
     if (!user) {
       return res
         .status(httpStatus.UNAUTHORIZED)
         .json({ message: "Incorrect email or password" });
     }
-
-    const tokens = await tokenService.generateAuthTokens(user);
+  const tokens = await tokenService.generateAuthTokens(user);
     return res.status(httpStatus.OK).json({ user, tokens });
   } catch (error) {
     console.error("❌ Login Error:", error.message);
@@ -51,12 +50,9 @@ const login = catchAsync(async (req, res, next) => {
     });
   }
 });
-
-
-
 const logout = async (req, res) => {
   try {
-    const { refreshToken } = req.body; // Make sure it's coming from request body
+    const { refreshToken } = req.body; 
 
     if (!refreshToken) {
       return res.status(400).json({ message: "Token is required" });

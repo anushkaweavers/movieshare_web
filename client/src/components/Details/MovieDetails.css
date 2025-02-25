@@ -6,6 +6,7 @@ html {
   margin: 0 auto;
   background-color: white;
   max-width: 1200px;
+  width: 100%; /* Ensure it doesn't overflow */
   padding: 0 20px;
 }
 
@@ -13,6 +14,7 @@ html {
   background-color: white;
   margin: 0 auto;
   max-width: 900px;
+  width: 100%; /* Ensure it doesn't overflow */
 }
 
 .movie-details {
@@ -35,8 +37,6 @@ html {
   padding: 20px;
   text-align: center; /* Default to center text */
 }
-
-
 
 /* Title Styling */
 .movie-details__title {
@@ -210,17 +210,18 @@ html {
     font-size: 0.85rem;
   }
 }
+
 /* Poster Styling */
 .movie-details__poster {
-  width: 180px;  /* Default size */
+  width: 180px; /* Default size */
   max-width: 100%; /* Ensures it doesn't overflow */
-  height: auto;   /* Maintain aspect ratio */
+  height: auto; /* Maintain aspect ratio */
 }
 
 /* Small Screens (Mobile Phones) */
 @media (max-width: 767px) {
   .movie-details__poster {
-    width: 80%;   /* Make image width responsive */
+    width: 80%; /* Make image width responsive */
     max-width: 200px; /* Limit max size for very small screens */
   }
 }
@@ -228,7 +229,7 @@ html {
 /* Extra Small Screens (Very Small Mobile Phones) */
 @media (max-width: 480px) {
   .movie-details__poster {
-    width: 90%;  /* Further scale for smaller screens */
+    width: 90%; /* Further scale for smaller screens */
     max-width: 150px; /* Smaller max-width for tiny screens */
   }
 }
@@ -255,394 +256,402 @@ html {
   }
 }
 
- /* Sticky Tabs */
+/* Sticky Tabs */
 .movie-details__tabs {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    padding: 10px 0;
-    background-color: white;
-    margin-top: 10px;
-  }
-  
-  .movie-details__tabs ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .movie-details__tabs li {
-    margin: 0 20px;
-    cursor: pointer;
-    font-size: 16px;
-    position: relative;
-    padding-bottom: 10px;
-  }
-  
-  .movie-details__tabs li.active {
-    color: #685cf0;
-    font-weight: bold;
-  }
-  
-  .movie-details__tabs li.active::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background-color: #685cf0;
-    width: 100%;
-  }
-  /* Active Tab Highlight */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 10px 0;
+  background-color: white;
+  margin-top: 10px;
+}
+
+.movie-details__tabs ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.movie-details__tabs li {
+  margin: 0 10px; /* Reduced margin for smaller screens */
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.movie-details__tabs li.active {
+  color: #685cf0;
+  font-weight: bold;
+}
+
+.movie-details__tabs li.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #685cf0;
+  width: 100%;
+}
+
+/* Active Tab Highlight */
 .movie-details__tabs li.active {
   color: #1d0394; /* Highlighted color */
   font-weight: bold;
   border-bottom: 2px solid #007bff; /* Underline for active tab */
 }
 
-  /* Sections Styling */
+/* Sections Styling */
+.movie-details__section {
+  padding: 20px; /* Reduced padding for smaller screens */
+  margin: 20px 0;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.movie-details__section h2 {
+  margin-bottom: 20px;
+  font-size: 24px; /* Reduced font size for smaller screens */
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .movie-details__content {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .movie-details__poster {
+    width: 100px;
+  }
+
+  .movie-details__tabs li {
+    margin: 0 10px;
+    font-size: 14px; /* Reduced font size for smaller screens */
+  }
+
   .movie-details__section {
-    padding: 40px;
-    margin: 20px 0;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    padding: 20px;
+  }
+}
 
-  }
-  
-  .movie-details__section h2 {
-    margin-bottom: 20px;
-    font-size: 40px;
-    color: #333;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .movie-details__content {
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-  
-    .movie-details__poster {
-      width: 100px;
-    }
-  
-    .movie-details__tabs li {
-      margin: 0 10px;
-      font-size: 20px;
-    }
-  
-    .movie-details__section {
-      padding: 20px;
-    }
-  }
-  
 /* Updated Styling */
+.movie-details__section[data-section="DETAILS"] {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #ffffff;
+  color: #333;
+}
 
-  .movie-details__section[data-section="DETAILS"] {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
-    color: #333;
+.movie-details__section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #4a4a4a;
+  border-bottom: 2px solid #7c4dff;
+  padding-bottom: 10px;
+}
 
-  }
+.details-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px; /* Reduced gap for smaller screens */
+}
 
-  .movie-details__section h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #4a4a4a;
-    border-bottom: 2px solid #7c4dff;
-    padding-bottom: 10px;
-  }
+.details-left,
+.details-right {
+  flex: 1;
+  min-width: 100%; /* Full width on smaller screens */
+}
 
-  .details-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 40px;
-  }
+.details-left div,
+.details-right div {
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
 
-  .details-left,
-  .details-right {
-    flex: 1;
-    min-width: 300px;
-  }
+.details-left strong,
+.details-right strong {
+  font-weight: 600;
+  color: #4a4a4a;
+}
 
-  .details-left div,
-  .details-right div {
-    margin-bottom: 15px;
-    font-size: 1rem;
-  }
+.details-tag {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 5px 5px 0 0;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #0a0a0a;
+  background-color: rgb(172, 172, 172);
+}
 
-  .details-left strong,
-  .details-right strong {
-    font-weight: 600;
-    color: #4a4a4a;
-  }
+.details-tag:hover {
+  background-color: #c2c2c2;
+}
 
-  .details-tag {
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 5px 5px 0 0;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    color: #0a0a0a;
-    background-color: rgb(172, 172, 172);
-  }
+.review-section {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
 
-  .details-tag:hover {
-    background-color: #c2c2c2;
-  }
-
-  .review-section{
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-   }
 /* Score Row */
 .scores-row {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center the scores horizontally */
-    gap: 30px; /* Increased spacing between scores */
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    border: none; /* Ensure no borders around the scores row */
-  }
-  
-  .total-score {
-    font-size: 24px; /* Increased font size */
-    font-weight: bold;
-    color: #333;
-    margin-right: 30px; /* Adjusted spacing */
-    margin-left: 100px;
-  }
-  
-  .score-item {
-    font-size: 22px; /* Larger font for better readability */
-    font-weight: 500;
-    color: #555;
-    line-height: 1.2; /* Fixed height to remove any extra spacing */
-    border: none; /* Ensure no faint lines between scores */
-    background: none; /* Remove any background shadow */
-    padding: 0; /* Remove padding */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the scores horizontally */
+  gap: 15px; /* Reduced gap for smaller screens */
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  border: none; /* Ensure no borders around the scores row */
+}
+
+.total-score {
+  font-size: 20px; /* Reduced font size for smaller screens */
+  font-weight: bold;
+  color: #333;
+  margin-right: 15px; /* Reduced margin for smaller screens */
+  margin-left: 15px; /* Reduced margin for smaller screens */
+}
+
+.score-item {
+  font-size: 18px; /* Reduced font size for smaller screens */
+  font-weight: 500;
+  color: #555;
+  line-height: 1.2; /* Fixed height to remove any extra spacing */
+  border: none; /* Ensure no faint lines between scores */
+  background: none; /* Remove any background shadow */
+  padding: 0; /* Remove padding */
+}
+
+/* Write a Review Button */
+.write-review-button {
+  background-color: #3c386b;
+  color: #ffffff;
+  font-size: 16px; /* Reduced font size for smaller screens */
+  font-weight: bold;
+  padding: 10px 20px; /* Reduced padding for smaller screens */
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px; /* Reduced margin for smaller screens */
+  transition: background-color 0.3s ease;
+  justify-content: center; /* Center button text */
+  margin-left: auto; /* Centering trick */
+  margin-right: auto;
+  display: block; /* Ensures it's centered */
+}
+
+.write-review-button i {
+  font-size: 18px; /* Reduced icon size for smaller screens */
+}
+
+.write-review-button:hover {
+  background-color: #4438b8;
+}
+
+/* Review Cards */
+.reviews-list {
+  margin-top: 20px; /* Reduced margin for smaller screens */
+}
+
+.review-card {
+  display: flex;
+  border-radius: 4px;
+  padding: 15px; /* Reduced padding for smaller screens */
+  margin-bottom: 20px; /* Reduced margin for smaller screens */
+}
+
+.review-card-left {
+  flex: 0 0 80px; /* Reduced width for smaller screens */
+  margin-right: 10px; /* Reduced margin for smaller screens */
+}
+
+.review-poster {
+  width: 80px; /* Reduced width for smaller screens */
+  height: 120px; /* Reduced height for smaller screens */
+  border-radius: 5px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.review-card-right {
+  flex: 1;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-avatar {
+  width: 40px; /* Reduced width for smaller screens */
+  height: 40px; /* Reduced height for smaller screens */
+  border-radius: 50%;
+  margin-right: 10px; /* Reduced margin for smaller screens */
+  object-fit: cover;
+}
+
+.review-author {
+  font-size: 16px; /* Reduced font size for smaller screens */
+  font-weight: bold;
+}
+
+.review-date {
+  font-size: 12px; /* Reduced font size for smaller screens */
+  color: #777;
+}
+
+.review-score {
+  margin-left: auto;
+  font-size: 16px; /* Reduced font size for smaller screens */
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.review-body {
+  font-size: 14px; /* Reduced font size for smaller screens */
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.read-more {
+  font-size: 14px; /* Reduced font size for smaller screens */
+  color: #3c5edc;
+  cursor: pointer;
+  text-decoration: underline;
+  border: none;
+  background: none;
+}
+
+.read-more:hover {
+  color: #4438b8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scores-row {
+    flex-direction: column;
+    gap: 10px; /* Reduced gap for smaller screens */
+    justify-content: center; /* Center scores on smaller screens */
   }
 
-  /* Write a Review Button */
   .write-review-button {
-    background-color: #3c386b;
-    color: #ffffff;
-    font-size: 18px; /* Slightly larger font */
-    font-weight: bold;
-    padding: 12px 25px; /* Increased padding */
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 25px; /* Added spacing above */
-    transition: background-color 0.3s ease;
-    justify-content: center; /* Center button text */
-    margin-left: auto; /* Centering trick */
-    margin-right: auto;
-    display: block; /* Ensures it's centered */
+    width: 100%; /* Full width for smaller screens */
   }
-  
-  .write-review-button i {
-    font-size: 20px; /* Adjust the icon size */
-  }
-  
-  .write-review-button:hover {
-    background-color: #4438b8;
-  }
-  
-  /* Review Cards */
-  .reviews-list {
-    margin-top: 30px;
-  }
-  
+
   .review-card {
-    display: flex;
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 25px;
-   
-  }
-  
-  .review-card-left {
-    flex: 0 0 100px;
-    margin-right: 15px;
-  }
-  
-  .review-poster {
-    width: 100px;
-    height: 150px;
-    border-radius: 5px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-  }
-  
-  .review-card-right {
-    flex: 1;
-  }
-  
-  .review-header {
-    display: flex;
+    flex-direction: column;
     align-items: center;
+  }
+
+  .review-card-left {
+    margin-right: 0;
     margin-bottom: 10px;
   }
-  
-  .review-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-    object-fit: cover;
-    
-  }
-  
-  .review-author {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .review-date {
-    font-size: 14px;
-    color: #777;
-  }
-  
-  .review-score {
-    margin-left: auto;
-    font-size: 18px;
-    color: #ff9800;
-    font-weight: bold;
-  }
-  
-  .review-body {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 10px;
-  }
-  
-  .read-more {
-    font-size: 16px;
-    color: #3c5edc;
-    cursor: pointer;
-    text-decoration: underline;
-    border: none;
-    background: none;
-  }
-  
-  .read-more:hover {
-    color: #4438b8;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .scores-row {
-      flex-direction: column;
-      gap: 15px;
-      justify-content: center; /* Center scores on smaller screens */
-    }
-  
-    .write-review-button {
-      width: 90%; /* Ensure the button stays centered */
-    }
-  
-    .review-card {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .review-card-left {
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
-  }
-  .trailers-section {
-    padding: 0; /* Remove all padding */
-    background: none; /* No background color */
-  }
-  
-  .trailers-title {
-    font-size: 20px; /* Match the size in the screenshot */
-    font-weight: bold;
-    color: #000;
-    text-align: left; /* Align the title to the left */
-    margin: 0 0 2px 0;
-    padding-left: 20px; /* Slight padding for alignment */
-  }
-  
-  
-  .trailers-highlight {
-    margin: 0 auto; /* Center the highlighted trailer */
-    width: calc(100% - 40px); /* Add space on the sides */
-  }
-  
-  .highlighted-trailer {
-    width: 100%;
-    height: 450px; /* Match the proportions */
-    border: none; /* Remove any unnecessary borders */
-  }
-  
-  
-  .trailers-swiper {
-    width: calc(100% - 40px); /* Add space on the sides */
-    margin: 20px auto; /* Center the Swiper */
-  }
-  
-  .trailer-slide {
-    text-align: center;
-  }
-  
-  .swiper-trailer {
-    width: 100%;
-    height: 220px; /* Smaller height for Swiper trailers */
-    border-radius: 8px;
-    border: none; /* No border */
-  }
-  
-  .trailer-name {
-    font-size: 14px;
-    color: #333;
-    margin-top: 10px;
-  }
-  
-  .no-trailers {
-    font-size: 16px;
-    color: #999;
-    text-align: center;
-  }
- 
+}
+
+.trailers-section {
+  padding: 0; /* Remove all padding */
+  background: none; /* No background color */
+}
+
+.trailers-title {
+  font-size: 18px; /* Reduced font size for smaller screens */
+  font-weight: bold;
+  color: #000;
+  text-align: left; /* Align the title to the left */
+  margin: 0 0 2px 0;
+  padding-left: 20px; /* Slight padding for alignment */
+}
+
+.trailers-highlight {
+  margin: 0 auto; /* Center the highlighted trailer */
+  width: calc(100% - 40px); /* Add space on the sides */
+}
+
+.highlighted-trailer {
+  width: 100%;
+  height: 300px; /* Reduced height for smaller screens */
+  border: none; /* Remove any unnecessary borders */
+}
+
+.trailers-swiper {
+  width: calc(100% - 40px); /* Add space on the sides */
+  margin: 20px auto; /* Center the Swiper */
+}
+
+.trailer-slide {
+  text-align: center;
+}
+
+.swiper-trailer {
+  width: 100%;
+  height: 150px; /* Reduced height for smaller screens */
+  border-radius: 8px;
+  border: none; /* No border */
+}
+
+.trailer-name {
+  font-size: 12px; /* Reduced font size for smaller screens */
+  color: #333;
+  margin-top: 10px;
+}
+
+.no-trailers {
+  font-size: 14px; /* Reduced font size for smaller screens */
+  color: #999;
+  text-align: center;
+}
+
 .section-title {
-  font-size: 20px;
+  font-size: 18px; /* Reduced font size for smaller screens */
   font-weight: bold;
   color: #000;
   text-align: left;
 }
 
-
 .movie-details__section {
-  margin-bottom: 30px;
+  margin-bottom: 20px; /* Reduced margin for smaller screens */
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 20px; /* Reduced font size for smaller screens */
   font-weight: bold;
   margin-bottom: 10px;
   color: #4e4cfc;
   text-transform: uppercase;
+}
+
+.cast-swiper {
+  display: flex;
+  align-items: center;
+}
+
+.cast-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 0px; /* Minimized horizontal spacing between slides */
 }
 
 .cast-swiper {

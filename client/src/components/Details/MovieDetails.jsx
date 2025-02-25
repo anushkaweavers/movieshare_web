@@ -669,7 +669,7 @@ const fetchReviews = async () => {
               <img
                 src={movie.poster_path 
                   ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
-                  : "/images/movie-default.png"} // Fallback image URL
+                  : "/images/movie-default.png"} 
                 alt={`${movie.title} Poster`}
                 className="movie-poster" />
               <div className="movie-info">

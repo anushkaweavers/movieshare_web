@@ -21,18 +21,13 @@ const loginUserWithEmailAndPassword = async (email, password) => {
     console.log("Login failed: Email not found");
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
-
   const match = await bcrypt.compare(password, user.passwordHash);
-
   if (!match) {
     console.log(" Login failed: Incorrect password for", email);
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
-
   return user;
 };
-
-
 /**
  * Log out a user by invalidating their refresh token.
  * @param {string} refreshToken - The refresh token to invalidate.
@@ -44,7 +39,6 @@ const logout = async (refreshToken) => {
   }
   await tokenService.invalidateToken(refreshToken);
 };
-
 /**
  * Refresh authentication tokens using a valid refresh token.
  * @param {string} refreshToken - The refresh token to use.
@@ -62,13 +56,12 @@ const verifyResetPasswordToken = async (token) => {
   if (!token) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Token must be provided");
   }
-
   try {
     const payload = jwt.verify(token, config.jwt.secret);
     if (payload.type !== tokenTypes.RESET_PASSWORD) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid token type");
     }
-    return payload; // Return payload for userId extraction
+    return payload; 
   } catch (error) {
     if (error.name === "TokenExpiredError") {
       throw new ApiError(httpStatus.UNAUTHORIZED, "Reset password token has expired");
@@ -82,11 +75,9 @@ const resetPassword = async (userId, hashedPassword) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-
   user.passwordHash = hashedPassword; // Update passwordHash
   await user.save();
 };
-
 
 /**                                                   
  * Verify a user's email using a valid verification token.
@@ -104,7 +95,6 @@ const verifyEmail = async (verifyEmailToken) => {
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
-  
   refreshAuth,
   resetPassword,
   verifyEmail,
