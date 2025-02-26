@@ -15,7 +15,7 @@ cloudinary.config({
 const uploadMedia = async (filePath) => {
   try {
     const response = await cloudinary.uploader.upload(filePath, {
-      resource_type: "auto", // Allows both images & videos
+      resource_type: "auto",
       folder: "community_posts",
     });
     return response.secure_url;
@@ -31,11 +31,10 @@ const uploadMedia = async (filePath) => {
  */
 const deleteMedia = async (fileUrl) => {
   try {
-    const publicId = fileUrl.split('/').pop().split('.')[0]; // Extract public_id from URL
-    await cloudinary.uploader.destroy(`community_posts/${publicId}`);
-  } catch (error) {
+    const publicId = fileUrl.split('/').slice(-2).join('/').split('.')[0]; 
+    await cloudinary.uploader.destroy(publicId);
+} catch (error) {
     console.error("Cloudinary delete error:", error);
   }
 };
-
 module.exports = { uploadMedia, deleteMedia };

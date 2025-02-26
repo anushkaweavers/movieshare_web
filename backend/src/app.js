@@ -54,6 +54,7 @@ app.options('*', cors());
 
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
+passport.use(jwtStrategy);
 
 // Health Check Endpoint
 app.get('/health', (req, res) => {

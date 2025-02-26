@@ -14,10 +14,10 @@ exports.getAllPosts = async (req, res) => {
 // Create a post
 exports.createPost = async (req, res) => {
   try {
-    console.log("Request Body:", req.body); // Debugging Log
+    console.log("Request Body:", req.body); 
 
     const { title, content, tags, userId, mediaFile } = req.body;
-    let mediaFileUrl = mediaFile || null; // Use mediaFile directly from frontend
+    let mediaFileUrl = mediaFile || null; 
 
     // Ensure tags is an array
     let parsedTags = [];
@@ -62,7 +62,7 @@ exports.editPost = async (req, res) => {
       { 
         title, 
         content, 
-        tags: Array.isArray(tags) ? tags : tags ? JSON.parse(tags) : [], // Fix JSON parse error
+        tags: Array.isArray(tags) ? tags : tags ? JSON.parse(tags) : [], 
         mediaFile: mediaFileUrl 
       },
       { new: true }

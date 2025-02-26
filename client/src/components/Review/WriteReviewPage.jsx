@@ -89,7 +89,6 @@ const WriteReviewPage = () => {
         return;
       }
   
-      // 1️⃣ Submit the review to the database
       const reviewData = {
         userId: user._id,
         movieId,
@@ -110,31 +109,25 @@ const WriteReviewPage = () => {
         await axiosCustom.post("/reviews/create", reviewData);
       }
   
-      // 2️⃣ Handle community post creation only if the checkbox is checked
+      // Handle community post creation
       if (shareAsPost) {
         let cloudinaryUrl = null;
   
         if (movie.poster_path && movie.poster_path !== "null") {
           try {
             const tmdbImageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-  
             const response = await axiosCustom.post("/upload/image", {
-              imageUrl: tmdbImageUrl, // Full TMDB image URL to backend
+              imageUrl: tmdbImageUrl,
             });
   
             if (response.data?.secure_url) {
               cloudinaryUrl = response.data.secure_url;
-            } else {
-              console.error("Cloudinary upload failed:", response.data);
-              cloudinaryUrl = null;
             }
           } catch (error) {
             console.error("Error uploading poster to Cloudinary:", error);
-            cloudinaryUrl = null;
           }
         }
   
-        // 3️⃣ Create the post with the Cloudinary URL
         const postData = {
           movieTitle: movie.title,
           tags: review.tags,
@@ -145,22 +138,16 @@ const WriteReviewPage = () => {
           mediaFile: cloudinaryUrl,
         };
   
-        const postResponse = await axiosCustom.post("/posts", postData);
-  
-        if (postResponse.status === 201) {
-          // Show success dialog for both review and community post
-          setSuccessDialogOpen(true);
-          return;
-        }
+        await axiosCustom.post("/posts", postData);
       }
   
-      // If not sharing as a post, show success dialog for review only
       setSuccessDialogOpen(true);
     } catch (error) {
       console.error("Error posting review:", error);
       setDialogOpen(true);
     }
   };
+   
   return (
     <>
       <Navbar />

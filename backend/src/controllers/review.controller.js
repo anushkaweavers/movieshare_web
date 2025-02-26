@@ -2,31 +2,45 @@ const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
 const reviewService = require("../services/review.service");
 const Review = require("../models/review.model"); // Ensure correct path
+const ApiError = require("../utils/ApiError");
 
-
-// Controller for creating a review
+// Controller for creating a review (Protected)
 const createReview = catchAsync(async (req, res) => {
   try {
-    const {
-      userId, movieId, review_title, review_details, tags = [],
-      generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore
-    } = req.body;
+    const { movieId, review_title, review_details, tags = [], generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore } = req.body;
 
-    if (!userId || !movieId || !review_title || !review_details) {
+    // Ensure user is authenticated
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Authentication required");
+    }
+
+    if (!movieId || !review_title || !review_details) {
       return res.status(httpStatus.BAD_REQUEST).json({ message: "Missing required fields" });
     }
 
-    const reviewData = { userId, movieId, review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore };
+    const reviewData = {
+      userId: req.user._id, 
+      movieId,
+      review_title,
+      review_details,
+      tags,
+      generalScore,
+      plotScore,
+      storyScore,
+      characterScore,
+      cinematographyScore,
+      rateScore,
+    };
+
     const review = await reviewService.createReview(reviewData);
-    
     return res.status(httpStatus.CREATED).json(review);
   } catch (error) {
-    console.error("Error creating review:", error); 
+    console.error("Error creating review:", error);
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message || "Error creating review" });
   }
 });
 
-// Controller for getting reviews by movie ID
+// Controller for getting reviews by movie ID (Public)
 const getReviewsByMovieId = catchAsync(async (req, res) => {
   const { movieId } = req.params;
 
@@ -43,6 +57,7 @@ const getReviewsByMovieId = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json({ reviews });
 });
 
+// Controller for getting a single review by ID (Public)
 const getReviewById = catchAsync(async (req, res) => {
   const { reviewId } = req.params;
 
@@ -55,37 +70,68 @@ const getReviewById = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json(review);
 });
 
-// Controller for updating a review by reviewId
+// Controller for updating a review (Protected, Only Owner Can Edit)
 const updateReview = catchAsync(async (req, res) => {
   const { reviewId } = req.params;
   const { review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore } = req.body;
 
-  const review = await reviewService.updateReview(reviewId, {
-    review_title, review_details, tags, generalScore, plotScore, storyScore, characterScore, cinematographyScore, rateScore
-  });
-
-  if (!review) {
-    return res.status(httpStatus.NOT_FOUND).json({ message: "Review not found or unable to update" });
+  // Ensure user is authenticated
+  if (!req.user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Authentication required");
   }
 
-  res.status(httpStatus.OK).json({ message: "Review updated successfully", review });
+  // Fetch the review to check ownership
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return res.status(httpStatus.NOT_FOUND).json({ message: "Review not found" });
+  }
+
+  // Ensure only the review owner can update
+  if (String(review.userId) !== String(req.user._id)) {
+    throw new ApiError(httpStatus.FORBIDDEN, "You are not authorized to edit this review");
+  }
+
+  const updatedReview = await reviewService.updateReview(reviewId, {
+    review_title,
+    review_details,
+    tags,
+    generalScore,
+    plotScore,
+    storyScore,
+    characterScore,
+    cinematographyScore,
+    rateScore,
+  });
+
+  res.status(httpStatus.OK).json({ message: "Review updated successfully", review: updatedReview });
 });
 
-// Delete review by ID
-const deleteReview = async (req, res) => {
+// Controller for deleting a review (Protected, Only Owner Can Delete)
+const deleteReview = catchAsync(async (req, res) => {
   try {
     const { reviewId } = req.params;
 
-    const deletedReview = await Review.findByIdAndDelete(reviewId);
-    if (!deletedReview) {
-      return res.status(404).json({ message: "Review not found" });
+    // Ensure user is authenticated
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Authentication required");
     }
 
-    res.status(200).json({ message: "Review deleted successfully" });
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(httpStatus.NOT_FOUND).json({ message: "Review not found" });
+    }
+
+    // Ensure only the review owner can delete
+    if (String(review.userId) !== String(req.user._id)) {
+      throw new ApiError(httpStatus.FORBIDDEN, "You are not authorized to delete this review");
+    }
+
+    await review.deleteOne();
+    res.status(httpStatus.OK).json({ message: "Review deleted successfully" });
   } catch (error) {
     console.error("Error deleting review:", error);
-    res.status(500).json({ message: "Server error. Unable to delete review." });
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: "Server error. Unable to delete review." });
   }
-};
+});
 
-module.exports = { createReview, getReviewsByMovieId, getReviewById, updateReview ,deleteReview};
+module.exports = { createReview, getReviewsByMovieId, getReviewById, updateReview, deleteReview };
