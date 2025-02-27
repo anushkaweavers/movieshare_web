@@ -7,6 +7,7 @@ const authRoute = require("./auth.route");
 const userRoute = require("./user.route");
 const reviewRoute = require("./review.route");
 const postRoute = require("./post.route");
+const likeRoute=require("./like.route");
 
 dotenv.config();
 const router = express.Router();
@@ -19,6 +20,7 @@ const defaultRoutes = [
   { path: "/users", route: userRoute },
   { path: "/reviews", route: reviewRoute },
   { path: "/posts", route: postRoute },
+  {path:"/like",route: likeRoute}
 ];
 
 defaultRoutes.forEach((route) => {

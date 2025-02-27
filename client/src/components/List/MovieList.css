@@ -481,4 +481,63 @@ body {
         opacity: 1;
     }
 }
+.movie-row__poster-container {
+  position: relative;
+  display: inline-block;
+}
+
+.movie-row__actions {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.movie-row__actions .icon {
+  color: white; /* Default color */
+  transition: color 0.3s ease;
+}
+
+.movie-row__actions .save-icon:hover {
+  color: yellow; /* Turns yellow on hover */
+}
+
+.movie-row__actions .like-icon:hover {
+  color: red; /* Turns red on hover */
+}
+
+.movie-row__poster {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}
+.save-icon.saved {
+    color: yellow; /* Change to your preferred color */
+  }
+
+/* Ensure buttons are clickable */
+.banner__button {
+    cursor: pointer;
+    z-index: 10; /* Ensure it's above other elements */
+  }
   
+  /* Ensure movie posters are clickable */
+  .movie-row__poster {
+    cursor: pointer;
+    position: relative;
+  }
+  .movie-row__poster {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .movie-row__poster:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+  }
+  
+  .movie-row__posterLarge {
+    max-height: 250px; /* Adjust for larger posters */
+  }

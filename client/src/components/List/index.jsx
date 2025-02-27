@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
+import { useNavigate } from "react-router-dom";
 import "./MovieList.css";
 import { Navigation, Scrollbar } from "swiper/modules";
 import { FaStar } from "react-icons/fa";
@@ -15,6 +16,11 @@ import "../developer.css";
 import { Link } from "react-router-dom";
 import { Pagination } from "swiper/modules";
 import Navbar from "../Navbar/Navbar";
+import { IconButton } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -40,6 +46,7 @@ const fetchData = async (endpoint, params = {}) => {
 // Banner Component 
 const Banner = React.memo(() => {
   const [movies, setMovies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBannerMovies = async () => {
@@ -70,9 +77,12 @@ const Banner = React.memo(() => {
               <div className="banner__contents">
                 <h1 className="banner__title">{movie.title || movie.name || movie.original_name}</h1>
                 <div className="banner__buttons">
-                  <Link to={`/movie/${movie.id}`}>
-                    <button className="banner__button">Movie Details →</button>
-                  </Link>
+                  <button
+                    className="banner__button"
+                    onClick={() => navigate(`/movie/${movie.id}`)} // Navigate on click
+                  >
+                    Movie Details →
+                  </button>
                   <button className="banner__button">Add To Playlist</button>
                 </div>
                 <p className="banner__description">{movie.overview}</p>
@@ -86,42 +96,124 @@ const Banner = React.memo(() => {
   );
 });
 
-// Row Component
 const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) => {
   const [movies, setMovies] = useState([]);
+  const [likedMovies, setLikedMovies] = useState(new Set());
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
       const data = await fetchData(endpoint, params);
-      if (data && data.results) {
+      if (data?.results) {
         setMovies(data.results);
       }
     };
     fetchMovies();
   }, [endpoint, params]);
 
-  const DEFAULT_IMAGE = "../public/images/movie-default.png"
+  useEffect(() => {
+    const fetchLikedMovies = async () => {
+      try {
+        const response = await axiosCustom.get("/like/liked-movies");
+        if (response.status === 200) {
+          const likedMovieIds = response.data.map((movie) => movie.movieId);
+          setLikedMovies(new Set(likedMovieIds));
+        }
+      } catch (error) {
+        console.error("Error fetching liked movies:", error);
+      }
+    };
+    fetchLikedMovies();
+  }, []);
+
+  const handleLike = async (movieId) => {
+    try {
+      const endpoint = likedMovies.has(movieId) ? "/like/unlike" : "/like/like";
+      const response = await axiosCustom.post(endpoint, { movieId });
+
+      if (response.status === 200) {
+        setLikedMovies((prev) => {
+          const newLikedMovies = new Set(prev);
+          if (newLikedMovies.has(movieId)) {
+            newLikedMovies.delete(movieId);
+          } else {
+            newLikedMovies.add(movieId);
+          }
+          return newLikedMovies;
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+
+  const handleNavigate = (movieId) => {
+    navigate(`/movie/${movieId}`);
+  };
+
+  const DEFAULT_IMAGE = "/images/movie-default.png";
+
   return (
     <div className="movie-row">
       <h2 className="movie-row__title">{title}</h2>
-      <Swiper modules={[Navigation, Scrollbar]} navigation scrollbar={{ draggable: true }} spaceBetween={10} slidesPerView={isLargeRow ? 6 : 5}>
+      <Swiper
+        modules={[Navigation, Scrollbar]}
+        navigation
+        scrollbar={{ draggable: true }}
+        spaceBetween={10}
+        slidesPerView={isLargeRow ? 6 : 5}
+      >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
-            <Link to={`/movie/${movie.id}`}>
+            <div
+              style={{ position: "relative", cursor: "pointer" }}
+              onClick={() => handleNavigate(movie.id)} // Navigate on click
+            >
               <img
                 className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`}
-                src={movie.poster_path || movie.backdrop_path ? `${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}` : DEFAULT_IMAGE}
+                src={
+                  movie.poster_path || movie.backdrop_path
+                    ? `${IMAGE_BASE_URL}${isLargeRow ? movie.poster_path : movie.backdrop_path}`
+                    : DEFAULT_IMAGE
+                }
                 alt={movie.title || movie.name}
                 onError={(e) => (e.target.src = DEFAULT_IMAGE)}
               />
-            </Link>
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent navigation when clicking the like button
+                  handleLike(movie.id);
+                }}
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  color: likedMovies.has(movie.id) ? "red" : "white",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+                  borderRadius: "50%", // Circular button
+                  padding: "8px", // Padding for better touch area
+                  transition: "all 0.3s ease", // Smooth transition
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker on hover
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // Restore on hover out
+                }}
+              >
+                {likedMovies.has(movie.id) ? (
+                  <FavoriteIcon style={{ fontSize: "24px" }} /> // Larger icon when liked
+                ) : (
+                  <FavoriteBorderIcon style={{ fontSize: "24px" }} /> // Larger icon when unliked
+                )}
+              </IconButton>
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
     </div>
   );
 });
-
 // Filter Component
 const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   const [selectedDate, setSelectedDate] = useState(null);
