@@ -1,23 +1,31 @@
 const Post = require("../models/post.model");
-const { uploadToCloudinary } = require("../services/post.service"); // Service to handle Cloudinary uploads
+const { uploadToCloudinary } = require("../services/post.service");
 
-// Get all posts
-exports.getAllPosts = async (req, res) => {
+// Get all posts (Public)
+exports.getUserPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized: Please log in to view your posts" });
+    }
+
+    const posts = await Post.find({ userId: req.user._id }).sort({ createdAt: -1 });
+
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching posts" });
+    console.error("Error fetching user posts:", error);
+    res.status(500).json({ error: "Error fetching user posts" });
   }
 };
-
-// Create a post
+// Create a post (Only logged-in users)
 exports.createPost = async (req, res) => {
   try {
-    console.log("Request Body:", req.body); 
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized: Please log in to create a post" });
+    }
 
-    const { title, content, tags, userId, mediaFile } = req.body;
-    let mediaFileUrl = mediaFile || null; 
+    console.log("Request Body:", req.body);
+    const { title, content, tags, mediaFile } = req.body;
+    let mediaFileUrl = mediaFile || null;
 
     // Ensure tags is an array
     let parsedTags = [];
@@ -35,7 +43,7 @@ exports.createPost = async (req, res) => {
       content,
       tags: parsedTags,
       mediaFile: mediaFileUrl,
-      userId,
+      userId: req.user.id, // Use logged-in user's ID
     });
 
     await newPost.save();
@@ -46,9 +54,18 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Edit post
+// Edit post (Only post owner can edit)
 exports.editPost = async (req, res) => {
   try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    // Ensure only the post owner can edit
+    if (String(post.userId) !== String(req.user._id)) {
+      console.warn("⚠️ Unauthorized edit attempt:", { user: req.user._id, postOwner: post.userId });
+      return res.status(403).json({ error: "Unauthorized: You can only edit your own posts" });
+    }
+
     const { title, content, tags } = req.body;
     let mediaFileUrl = req.body.mediaFile;
 
@@ -68,8 +85,6 @@ exports.editPost = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedPost) return res.status(404).json({ error: "Post not found" });
-
     res.json(updatedPost);
   } catch (error) {
     console.error("Error updating post:", error);
@@ -77,14 +92,21 @@ exports.editPost = async (req, res) => {
   }
 };
 
-// Delete post
+// Delete post (Only post owner can delete)
 exports.deletePost = async (req, res) => {
   try {
-    const deletedPost = await Post.findByIdAndDelete(req.params.postId);
-    if (!deletedPost) return res.status(404).json({ error: "Post not found" });
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
 
+    // Ensure only the post owner can delete
+    if (String(post.userId) !== String(req.user.id)) {
+      return res.status(403).json({ error: "Unauthorized: You can only delete your own posts" });
+    }
+
+    await post.deleteOne();
     res.json({ message: "Post deleted successfully" });
   } catch (error) {
+    console.error("Error deleting post:", error);
     res.status(500).json({ error: "Error deleting post" });
   }
 };

@@ -1,6 +1,6 @@
 const roleRights = new Map([
-  ["user", ["createReview", "updateReview", "deleteReview"]],
-  ["admin", ["manageUsers", "manageReviews"]],
+  ["user", ["createPost", "editPost", "deletePost", "createReview", "updateReview", "deleteReview"]],
+  ["admin", ["manageUsers", "manageReviews", "managePosts"]],
 ]);
 
 module.exports = {
