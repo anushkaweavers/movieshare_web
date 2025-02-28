@@ -1,7 +1,8 @@
 const Post = require("../models/post.model");
 const { uploadToCloudinary } = require("../services/post.service");
 
-// Get all posts (Public)
+
+// Get all posts for the logged-in user
 exports.getUserPosts = async (req, res) => {
   try {
     if (!req.user) {
