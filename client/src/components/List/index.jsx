@@ -13,13 +13,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
 import "../developer.css";
-import { Link } from "react-router-dom";
 import { Pagination } from "swiper/modules";
 import Navbar from "../Navbar/Navbar";
 import { IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
+import Tooltip from '@mui/material/Tooltip';
 
 
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -179,34 +179,36 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) =>
                 alt={movie.title || movie.name}
                 onError={(e) => (e.target.src = DEFAULT_IMAGE)}
               />
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent navigation when clicking the like button
-                  handleLike(movie.id);
-                }}
-                style={{
-                  position: "absolute",
-                  top: 10,
-                  right: 10,
-                  color: likedMovies.has(movie.id) ? "red" : "white",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
-                  borderRadius: "50%", // Circular button
-                  padding: "8px", // Padding for better touch area
-                  transition: "all 0.3s ease", // Smooth transition
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker on hover
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // Restore on hover out
-                }}
-              >
-                {likedMovies.has(movie.id) ? (
-                  <FavoriteIcon style={{ fontSize: "24px" }} /> // Larger icon when liked
-                ) : (
-                  <FavoriteBorderIcon style={{ fontSize: "24px" }} /> // Larger icon when unliked
-                )}
-              </IconButton>
+             <Tooltip title={likedMovies.has(movie.id) ? "Unlike" : "Like"}>
+  <IconButton
+    onClick={(e) => {
+      e.stopPropagation(); 
+      handleLike(movie.id);
+    }}
+    style={{
+      position: "absolute",
+      top: 10,
+      right: 10,
+      color: likedMovies.has(movie.id) ? "red" : "white", 
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      borderRadius: "50%", 
+      padding: "8px",
+      transition: "all 0.3s ease",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; 
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; 
+    }}
+  >
+    {likedMovies.has(movie.id) ? (
+      <FavoriteIcon style={{ fontSize: "24px", color: "red" }} /> 
+    ) : (
+      <FavoriteBorderIcon style={{ fontSize: "24px", color: "white" }} /> 
+    )}
+  </IconButton>
+</Tooltip>
             </div>
           </SwiperSlide>
         ))}

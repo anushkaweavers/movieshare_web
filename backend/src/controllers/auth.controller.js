@@ -72,8 +72,29 @@ const logout = async (req, res) => {
 
 // Refresh tokens
 const refreshTokens = catchAsync(async (req, res) => {
-  const tokens = await authService.refreshAuth(req.body.refreshToken);
-  res.send(tokens);
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Refresh token is required');
+  }
+
+  // Verify the refresh token
+  const payload = jwt.verify(refreshToken, config.jwt.secret);
+  if (payload.type !== tokenTypes.REFRESH) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token type');
+  }
+
+  // Check if the refresh token exists in the database and is not invalidated
+  const tokenDoc = await Token.findOne({ token: refreshToken, type: tokenTypes.REFRESH, invalidated: false });
+  if (!tokenDoc) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid refresh token');
+  }
+
+  // Generate a new access token
+  const accessExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
+  const accessToken = generateToken(payload.userId, accessExpires, tokenTypes.ACCESS);
+
+  res.send({ accessToken });
 });
 
 // Forgot password

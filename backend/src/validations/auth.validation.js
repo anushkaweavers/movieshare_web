@@ -12,8 +12,8 @@ const register = {
       .label("Birthday"),
     gender: Joi.string().valid("Male", "Female", "Other").required().label("Gender"),
     password: Joi.string().min(6).required().label("Password"),
-    confirmPassword: Joi.string().valid(Joi.ref('password')).required().label("Confirm Password"), // Ensure password and confirmPassword match
-    termsAccepted: Joi.boolean().valid(true).required().label("Terms Accepted"), // Ensure terms are accepted
+    confirmPassword: Joi.string().valid(Joi.ref('password')).required().label("Confirm Password"), 
+    termsAccepted: Joi.boolean().valid(true).required().label("Terms Accepted"), 
   }),
 };
 const login = {

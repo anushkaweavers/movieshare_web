@@ -4,8 +4,8 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
-const bcrypt = require('bcryptjs');  
-const User = require('../models/user.model');  
+const bcrypt = require('bcryptjs');
+const User = require('../models/user.model');
 
 /**
  * Log in a user with email and password.
@@ -18,20 +18,22 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    console.log("Login failed: Email not found");
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
+
   const match = await bcrypt.compare(password, user.passwordHash);
   if (!match) {
-    console.log(" Login failed: Incorrect password for", email);
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
+
   return user;
 };
+
 /**
  * Log out a user by invalidating their refresh token.
  * @param {string} refreshToken - The refresh token to invalidate.
  * @returns {Promise<void>}
+ * @throws {ApiError} - If the refresh token is invalid.
  */
 const logout = async (refreshToken) => {
   if (!refreshToken) {
@@ -39,10 +41,11 @@ const logout = async (refreshToken) => {
   }
   await tokenService.invalidateToken(refreshToken);
 };
+
 /**
  * Refresh authentication tokens using a valid refresh token.
- * @param {string} refreshToken - The refresh token to use.
- * @returns {Promise<Object>} - The new tokens.
+ * @param {string} refreshToken - The refresh token.
+ * @returns {Promise<Object>} - The new access token.
  * @throws {ApiError} - If the refresh token is invalid or expired.
  */
 const refreshAuth = async (refreshToken) => {
@@ -52,52 +55,39 @@ const refreshAuth = async (refreshToken) => {
   return tokenService.refreshAuth(refreshToken);
 };
 
+/**
+ * Verify a reset password token.
+ * @param {string} token - The reset password token.
+ * @returns {Promise<Object>} - The decoded token payload.
+ * @throws {ApiError} - If the token is invalid or expired.
+ */
 const verifyResetPasswordToken = async (token) => {
   if (!token) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Token must be provided");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token must be provided');
   }
-  try {
-    const payload = jwt.verify(token, config.jwt.secret);
-    if (payload.type !== tokenTypes.RESET_PASSWORD) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid token type");
-    }
-    return payload; 
-  } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      throw new ApiError(httpStatus.UNAUTHORIZED, "Reset password token has expired");
-    }
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid reset password token");
-  }
+  return tokenService.verifyResetPasswordToken(token);
 };
 
+/**
+ * Reset a user's password.
+ * @param {string} userId - The user ID.
+ * @param {string} hashedPassword - The new hashed password.
+ * @returns {Promise<void>}
+ * @throws {ApiError} - If the user is not found.
+ */
 const resetPassword = async (userId, hashedPassword) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  user.passwordHash = hashedPassword; // Update passwordHash
+  user.passwordHash = hashedPassword;
   await user.save();
-};
-
-/**                                                   
- * Verify a user's email using a valid verification token.
- * @param {string} verifyEmailToken - The email verification token.
- * @returns {Promise<void>}
- * @throws {ApiError} - If the verification token is invalid or expired.
- */
-const verifyEmail = async (verifyEmailToken) => {
-  if (!verifyEmailToken) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Verification token is required');
-  }
-  await tokenService.verifyEmail(verifyEmailToken);
 };
 
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
+  verifyResetPasswordToken,
   resetPassword,
-  verifyEmail,
-  verifyResetPasswordToken
 };
-/* */

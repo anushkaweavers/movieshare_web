@@ -29,14 +29,14 @@ export const useLogin = () => {
       setPending(true);
       const loginData = await logInApi(values);
       console.log("✅ API Response:", loginData);
-
+  
       if (loginData?.tokens?.accessToken && loginData?.user?._id) {
         storeUserData(loginData.tokens, loginData.user);
         dispatch(updateUserData(loginData.user));
-
+  
         setLoginMessage("✅ Login successful! Redirecting...");
         setIsError(false);
-
+  
         // Redirect to /community after a brief delay
         setTimeout(() => navigate("/community"), 1000);
       } else {
@@ -44,7 +44,7 @@ export const useLogin = () => {
       }
     } catch (error) {
       console.error("❌ Login Error:", error);
-
+  
       let errorMessage = "❌ Incorrect email or password.";
       if (error.response) {
         console.error("🔴 Error Response:", error.response);
@@ -53,25 +53,28 @@ export const useLogin = () => {
         console.error("🔴 Error Message:", error.message);
         errorMessage = error.message;
       }
-
+  
       setLoginMessage(errorMessage);
       setIsError(true);
     } finally {
       setPending(false);
     }
   };
-
   const storeUserData = (tokens, user) => {
     if (!tokens || !user?._id) return;
-
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("access_token", tokens.accessToken);
-    localStorage.setItem("refresh_token", tokens.refreshToken);
-
-    cookies.set("access_token", tokens.accessToken, { path: "/", sameSite: "Lax" });
-    cookies.set("refresh_token", tokens.refreshToken, { path: "/", sameSite: "Lax" });
-
-    console.log("🔹 Tokens stored successfully:", tokens);
+  
+    try {
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("access_token", tokens.accessToken);
+      localStorage.setItem("refresh_token", tokens.refreshToken);
+  
+      cookies.set("access_token", tokens.accessToken, { path: "/", sameSite: "Lax" });
+      cookies.set("refresh_token", tokens.refreshToken, { path: "/", sameSite: "Lax" });
+  
+      console.log("🔹 Tokens stored successfully:", tokens);
+    } catch (error) {
+      console.error("Failed to store user data:", error);
+    }
   };
 
   return {

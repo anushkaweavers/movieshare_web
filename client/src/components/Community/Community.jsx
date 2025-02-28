@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
+import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid } from '@mui/material';
 import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
-import { Grid } from "@mui/material";
 import './Community.css';
 
 const Community = () => {
@@ -15,8 +14,9 @@ const Community = () => {
   const [mediaUrl, setMediaUrl] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
-  const [editingPostId, setEditingPostId] = useState(null); 
+  const [editingPostId, setEditingPostId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -56,7 +56,7 @@ const Community = () => {
         method: 'POST',
         body: formData,
       });
-      if (!response.ok) throw new Error("Cloudinary upload failed");  
+      if (!response.ok) throw new Error("Cloudinary upload failed");
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
@@ -104,8 +104,9 @@ const Community = () => {
         await axiosCustom.post("/posts", postData);
       }
       fetchPosts();
-      setEditingPostId(null); // Reset editing state
+      setEditingPostId(null);
       resetForm();
+      setShowForm(false);
     } catch (error) {
       console.error("Error saving post:", error);
       alert("Failed to save post. Please try again.");
@@ -121,11 +122,13 @@ const Community = () => {
     setTags(post.tags || []);
     setMediaUrl(post.mediaFile);
     setPreviewUrl(post.mediaFile);
+    setShowForm(true);
   };
 
   const handleCancelEdit = () => {
     setEditingPostId(null);
     resetForm();
+    setShowForm(false);
   };
 
   const handleDeletePost = async (postId) => {
@@ -160,15 +163,102 @@ const Community = () => {
             </Select>
           </FormControl>
         </div>
-        <Button 
-          variant="contained" 
-          onClick={() => setShowForm(!showForm)} 
+        <Button
+          variant="contained"
+          onClick={() => setShowForm(!showForm)}
           sx={{ mb: 2, backgroundColor: '#7b1fa2', '&:hover': { backgroundColor: '#6a1b9a' } }}
         >
           Write a Post
         </Button>
+        {showForm && (
+          <Card className="post-card" sx={{ mb: 4 }}>
+            <CardContent>
+              <Grid container spacing={2}>
+                {/* Left Side: Media Upload */}
+                <Grid item xs={12} sm={4}>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleMediaChange}
+                    hidden
+                    id="media-upload"
+                  />
+                  <label htmlFor="media-upload">
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      fullWidth
+                      startIcon={<AddPhotoAlternate />}
+                      sx={{ mb: 2 }}
+                    >
+                      Upload Media
+                    </Button>
+                  </label>
+                  {previewUrl && (
+                    <CardMedia
+                      component="img"
+                      className="form-media-preview"
+                      image={previewUrl}
+                      alt="Preview"
+                      sx={{ borderRadius: 1 }}
+                    />
+                  )}
+                </Grid>
+                {/* Right Side: Form */}
+                <Grid item xs={12} sm={8}>
+                  <form onSubmit={handleCreateOrUpdatePost}>
+                    <TextField
+                      label="Title"
+                      fullWidth
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      margin="normal"
+                      sx={{ mb: 2 }}
+                    />
+                    <TextField
+                      label="Details"
+                      fullWidth
+                      multiline
+                      rows={4}
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      margin="normal"
+                      sx={{ mb: 2 }}
+                    />
+                    <TextField
+                      label="Add Tag"
+                      fullWidth
+                      margin="normal"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && e.target.value.trim()) {
+                          e.preventDefault();
+                          setTags([...tags, e.target.value.trim()]);
+                          e.target.value = '';
+                        }
+                      }}
+                      sx={{ mb: 2 }}
+                    />
+                    <div className="post-tags">
+                      {tags.map((tag, index) => (
+                        <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} sx={{ mr: 1, mb: 1 }} />
+                      ))}
+                    </div>
+                    <div className="post-actions">
+                      <IconButton type="submit" color="primary">
+                        <Save />
+                      </IconButton>
+                      <IconButton onClick={() => setShowForm(false)} color="secondary">
+                        <Cancel />
+                      </IconButton>
+                    </div>
+                  </form>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        )}
         {posts.map((post) => (
-          <Card key={post._id} className="post-card">
+          <Card key={post._id} className="post-card" sx={{ mb: 2 }}>
             <Grid container>
               {post.mediaFile && (
                 <Grid item xs={12} sm={4}>
@@ -201,17 +291,17 @@ const Community = () => {
                         onChange={(e) => setContent(e.target.value)}
                         margin="normal"
                       />
-                      <TextField 
-                        label="Add Tag" 
-                        fullWidth 
-                        margin="normal" 
+                      <TextField
+                        label="Add Tag"
+                        fullWidth
+                        margin="normal"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter' && e.target.value.trim()) {
                             e.preventDefault();
                             setTags([...tags, e.target.value.trim()]);
                             e.target.value = '';
                           }
-                        }} 
+                        }}
                       />
                       <div className="post-tags">
                         {tags.map((tag, index) => (

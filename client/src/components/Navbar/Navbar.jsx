@@ -40,31 +40,34 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   const handleLogout = async () => {
     let refreshToken = cookies.get("refresh_token") || localStorage.getItem("refresh_token");
-
+  
     if (!refreshToken) {
-      console.error("No refresh token found! Proceeding with logout locally.");
+      console.error("No refresh token found! Proceeding with local logout.");
       dispatch(userLogout());
       navigate("/login");
       return;
     }
-
+  
+    console.log("Logging out with refresh token:", refreshToken); // Debugging log
+  
     try {
-      await axiosCustom.post("auth/logout", { refreshToken });
-
+      const response = await axiosCustom.post("auth/logout", { refreshToken });
+      console.log("Logout successful:", response.data);
+  
       dispatch(userLogout());
       cookies.remove("refresh_token", { path: "/" });
       cookies.remove("access_token", { path: "/" });
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("access_token");
-
+  
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error.response?.data || error.message);
     }
   };
+  
 
   return (
     <nav className="navbar">
