@@ -103,10 +103,8 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movi
 
   useEffect(() => {
     if (propMovies) {
-      // If movies are passed as a prop, use them directly
       setMovies(propMovies);
     } else {
-      // Otherwise, fetch movies from the endpoint
       const fetchMovies = async () => {
         const data = await fetchData(endpoint, params);
         if (data?.results) {
@@ -132,7 +130,8 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movi
     fetchLikedMovies();
   }, []);
 
-  const handleLike = async (movieId) => {
+  const handleLike = async (movieId, e) => {
+    e.stopPropagation(); // Prevent event bubbling
     try {
       const endpoint = likedMovies.has(movieId) ? "/like/unlike" : "/like/like";
       const response = await axiosCustom.post(endpoint, { movieId });
@@ -153,8 +152,9 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movi
     }
   };
 
-  const handleNavigate = (movieId) => {
-    navigate(`/movie/${movieId}`);
+  const handleNavigate = (movieId, e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    navigate(`/movie/${movieId}`); // Navigate immediately
   };
 
   const DEFAULT_IMAGE = "/images/movie-default.png";
@@ -173,7 +173,7 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movi
           <SwiperSlide key={movie.id}>
             <div
               style={{ position: "relative", cursor: "pointer" }}
-              onClick={() => handleNavigate(movie.id)} // Navigate on click
+              onClick={(e) => handleNavigate(movie.id, e)} // Pass event to handleNavigate
             >
               <img
                 className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`}
@@ -187,10 +187,7 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movi
               />
               <Tooltip title={likedMovies.has(movie.id) ? "Unlike" : "Like"}>
                 <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleLike(movie.id);
-                  }}
+                  onClick={(e) => handleLike(movie.id, e)} // Pass event to handleLike
                   style={{
                     position: "absolute",
                     top: 10,
@@ -280,7 +277,6 @@ const MovieList = () => {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState([]);
 
-  // Memoizing filter state to avoid re-renders
   const isFilterApplied = useMemo(() => {
     return filters.genre || filters.releaseYear || filters.rating || filters.sortBy;
   }, [filters]);
@@ -294,7 +290,6 @@ const MovieList = () => {
     return params;
   }, [filters]);
 
-  // Fetch filtered movies
   useEffect(() => {
     if (isFilterApplied) {
       const fetchFilteredMovies = async () => {
@@ -305,21 +300,15 @@ const MovieList = () => {
     }
   }, [isFilterApplied, buildParams]);
 
-  // Fetch liked movies from your database and then fetch their details from TMDB
   const fetchLikedMovies = async () => {
     try {
-      // Fetch liked movie IDs from your database
       const response = await axiosCustom.get("/like/liked-movies");
       if (response.status === 200) {
         const likedMovieIds = response.data.map((item) => item.movieId);
-
-        // Fetch movie details from TMDB for each liked movie ID
         const movieDetailsPromises = likedMovieIds.map((movieId) =>
           fetchData(`/movie/${movieId}`)
         );
         const movieDetails = await Promise.all(movieDetailsPromises);
-
-        // Filter out any null or undefined results
         const validMovies = movieDetails.filter((movie) => movie !== null);
         return validMovies;
       }
@@ -329,7 +318,6 @@ const MovieList = () => {
     }
   };
 
-  // Fetch liked movies on component mount
   useEffect(() => {
     const fetchAndSetLikedMovies = async () => {
       const movies = await fetchLikedMovies();
@@ -364,14 +352,14 @@ const MovieList = () => {
             <p className="no-results">No movies found.</p>
           )
         ) : (
-          <> {likedMovies.length > 0 && (
-            <Row title="Movies Liked by You" movies={likedMovies} isLargeRow={true} />
-          )}
+          <>
+            {likedMovies.length > 0 && (
+              <Row title="Movies Liked by You" movies={likedMovies} isLargeRow={true} />
+            )}
             <Row title="Trending Movies" endpoint="/trending/movie/week" />
             <Row title="Top Rated Movies" endpoint="/movie/top_rated" />
             <Row title="Upcoming Movies" endpoint="/movie/upcoming" />
             <Row title="Now Playing" endpoint="/movie/now_playing" />
-           
           </>
         )}
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid } from '@mui/material';
@@ -17,42 +17,22 @@ const Community = () => {
   const [editingPostId, setEditingPostId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  
-
-  const fetchPosts = useCallback(async () => {
-    if (!hasMore) return;
-    setIsLoading(true);
-    try {
-      const response = await axiosCustom.get(`/posts?page=${page}`);
-      const newPosts = response.data;
-      setPosts(prevPosts => [...prevPosts, ...newPosts]);
-      setHasMore(newPosts.length > 0);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, hasMore]);
 
   useEffect(() => {
     fetchPosts();
-  }, [fetchPosts]);
+  }, [sortBy]);
 
-  const handleScroll = useCallback(() => {
-    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || isLoading) {
-      return;
+  const fetchPosts = async () => {
+    try {
+      const response = await axiosCustom.get('/posts');
+      const sortedPosts = sortPosts(response.data, sortBy);
+      setPosts(sortedPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
     }
-    setPage(prevPage => prevPage + 1);
-  }, [isLoading]);
+  };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
-
-  const sortPosts = useMemo(() => (posts, sortBy) => {
+  const sortPosts = (posts, sortBy) => {
     return posts.sort((a, b) => {
       if (sortBy === 'date') {
         return new Date(b.createdAt) - new Date(a.createdAt);
@@ -61,7 +41,7 @@ const Community = () => {
       }
       return 0;
     });
-  }, [sortBy]);
+  };
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
@@ -377,8 +357,6 @@ const Community = () => {
             </Grid>
           </Card>
         ))}
-        {isLoading && <CircularProgress />}
-        {!hasMore && <Typography variant="body1" align="center">No more posts to load.</Typography>}
       </Container>
     </>
   );
