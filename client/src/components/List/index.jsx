@@ -21,7 +21,6 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import Tooltip from '@mui/material/Tooltip';
 
-
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -43,7 +42,7 @@ const fetchData = async (endpoint, params = {}) => {
   }
 };
 
-// Banner Component 
+// Banner Component
 const Banner = React.memo(() => {
   const [movies, setMovies] = useState([]);
   const navigate = useNavigate();
@@ -96,20 +95,27 @@ const Banner = React.memo(() => {
   );
 });
 
-const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) => {
+// Row Component
+const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false, movies: propMovies }) => {
   const [movies, setMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      const data = await fetchData(endpoint, params);
-      if (data?.results) {
-        setMovies(data.results);
-      }
-    };
-    fetchMovies();
-  }, [endpoint, params]);
+    if (propMovies) {
+      // If movies are passed as a prop, use them directly
+      setMovies(propMovies);
+    } else {
+      // Otherwise, fetch movies from the endpoint
+      const fetchMovies = async () => {
+        const data = await fetchData(endpoint, params);
+        if (data?.results) {
+          setMovies(data.results);
+        }
+      };
+      fetchMovies();
+    }
+  }, [endpoint, params, propMovies]);
 
   useEffect(() => {
     const fetchLikedMovies = async () => {
@@ -179,36 +185,36 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) =>
                 alt={movie.title || movie.name}
                 onError={(e) => (e.target.src = DEFAULT_IMAGE)}
               />
-             <Tooltip title={likedMovies.has(movie.id) ? "Unlike" : "Like"}>
-  <IconButton
-    onClick={(e) => {
-      e.stopPropagation(); 
-      handleLike(movie.id);
-    }}
-    style={{
-      position: "absolute",
-      top: 10,
-      right: 10,
-      color: likedMovies.has(movie.id) ? "red" : "white", 
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      borderRadius: "50%", 
-      padding: "8px",
-      transition: "all 0.3s ease",
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; 
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; 
-    }}
-  >
-    {likedMovies.has(movie.id) ? (
-      <FavoriteIcon style={{ fontSize: "24px", color: "red" }} /> 
-    ) : (
-      <FavoriteBorderIcon style={{ fontSize: "24px", color: "white" }} /> 
-    )}
-  </IconButton>
-</Tooltip>
+              <Tooltip title={likedMovies.has(movie.id) ? "Unlike" : "Like"}>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike(movie.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    color: likedMovies.has(movie.id) ? "red" : "white",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    borderRadius: "50%",
+                    padding: "8px",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+                  }}
+                >
+                  {likedMovies.has(movie.id) ? (
+                    <FavoriteIcon style={{ fontSize: "24px", color: "red" }} />
+                  ) : (
+                    <FavoriteBorderIcon style={{ fontSize: "24px", color: "white" }} />
+                  )}
+                </IconButton>
+              </Tooltip>
             </div>
           </SwiperSlide>
         ))}
@@ -216,6 +222,7 @@ const Row = React.memo(({ title, endpoint, params = {}, isLargeRow = false }) =>
     </div>
   );
 });
+
 // Filter Component
 const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -271,6 +278,7 @@ const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
 const MovieList = () => {
   const [filters, setFilters] = useState({ genre: "", releaseYear: "", rating: "", sortBy: "" });
   const [filteredMovies, setFilteredMovies] = useState([]);
+  const [likedMovies, setLikedMovies] = useState([]);
 
   // Memoizing filter state to avoid re-renders
   const isFilterApplied = useMemo(() => {
@@ -286,8 +294,7 @@ const MovieList = () => {
     return params;
   }, [filters]);
 
-  const handleResetFilters = () => setFilters({ genre: "", releaseYear: "", rating: "", sortBy: "" });
-
+  // Fetch filtered movies
   useEffect(() => {
     if (isFilterApplied) {
       const fetchFilteredMovies = async () => {
@@ -298,17 +305,49 @@ const MovieList = () => {
     }
   }, [isFilterApplied, buildParams]);
 
+  // Fetch liked movies from your database and then fetch their details from TMDB
+  const fetchLikedMovies = async () => {
+    try {
+      // Fetch liked movie IDs from your database
+      const response = await axiosCustom.get("/like/liked-movies");
+      if (response.status === 200) {
+        const likedMovieIds = response.data.map((item) => item.movieId);
+
+        // Fetch movie details from TMDB for each liked movie ID
+        const movieDetailsPromises = likedMovieIds.map((movieId) =>
+          fetchData(`/movie/${movieId}`)
+        );
+        const movieDetails = await Promise.all(movieDetailsPromises);
+
+        // Filter out any null or undefined results
+        const validMovies = movieDetails.filter((movie) => movie !== null);
+        return validMovies;
+      }
+    } catch (error) {
+      console.error("Error fetching liked movies:", error);
+      return [];
+    }
+  };
+
+  // Fetch liked movies on component mount
+  useEffect(() => {
+    const fetchAndSetLikedMovies = async () => {
+      const movies = await fetchLikedMovies();
+      setLikedMovies(movies);
+    };
+    fetchAndSetLikedMovies();
+  }, []);
+
+  const handleResetFilters = () => setFilters({ genre: "", releaseYear: "", rating: "", sortBy: "" });
+
   return (
     <div className="movie-list">
       <Navbar />
-
-      {/* Ensuring Banner does not re-render */}
       <Banner />
-
-      <Filter 
-        filters={filters} 
-        onFilterChange={(field, value) => setFilters((prev) => ({ ...prev, [field]: value }))} 
-        onResetFilters={handleResetFilters} 
+      <Filter
+        filters={filters}
+        onFilterChange={(field, value) => setFilters((prev) => ({ ...prev, [field]: value }))}
+        onResetFilters={handleResetFilters}
         genres={[
           { id: 28, name: "Action" },
           { id: 35, name: "Comedy" },
@@ -317,8 +356,6 @@ const MovieList = () => {
           { id: 10749, name: "Romance" },
         ]}
       />
-
-      {/* Fixing Flicker: Keeping Swiper Visible */}
       <div className="movie-container">
         {isFilterApplied ? (
           filteredMovies.length > 0 ? (
@@ -327,17 +364,19 @@ const MovieList = () => {
             <p className="no-results">No movies found.</p>
           )
         ) : (
-          <>
+          <> {likedMovies.length > 0 && (
+            <Row title="Movies Liked by You" movies={likedMovies} isLargeRow={true} />
+          )}
             <Row title="Trending Movies" endpoint="/trending/movie/week" />
             <Row title="Top Rated Movies" endpoint="/movie/top_rated" />
             <Row title="Upcoming Movies" endpoint="/movie/upcoming" />
             <Row title="Now Playing" endpoint="/movie/now_playing" />
+           
           </>
         )}
       </div>
     </div>
   );
 };
-
 
 export default MovieList;
