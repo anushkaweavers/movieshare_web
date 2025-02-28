@@ -4,7 +4,6 @@ import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
 import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import { Grid } from "@mui/material";
-
 import './Community.css';
 
 const Community = () => {
@@ -16,7 +15,6 @@ const Community = () => {
   const [mediaUrl, setMediaUrl] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
-  const [showForm, setShowForm] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null); 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,6 +31,7 @@ const Community = () => {
       console.error('Error fetching posts:', error);
     }
   };
+
   const sortPosts = (posts, sortBy) => {
     return posts.sort((a, b) => {
       if (sortBy === 'date') {
@@ -43,26 +42,29 @@ const Community = () => {
       return 0;
     });
   };
+
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
+
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset',import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
     try {
       const response = await fetch(import.meta.env.VITE_CLOUDINARY_URL, {
         method: 'POST',
         body: formData,
       });
-        if (!response.ok) throw new Error("Cloudinary upload failed");  
+      if (!response.ok) throw new Error("Cloudinary upload failed");  
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
       console.error("Error uploading to Cloudinary:", error);
       return null;
     }
-  }; 
+  };
+
   const handleMediaChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -79,6 +81,7 @@ const Community = () => {
       }
     }
   };
+
   const handleCreateOrUpdatePost = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -101,7 +104,7 @@ const Community = () => {
         await axiosCustom.post("/posts", postData);
       }
       fetchPosts();
-      setShowForm(false);
+      setEditingPostId(null); // Reset editing state
       resetForm();
     } catch (error) {
       console.error("Error saving post:", error);
@@ -110,19 +113,21 @@ const Community = () => {
       setIsLoading(false);
     }
   };
+
   const handleEditPost = (post) => {
     setEditingPostId(post._id);
     setTitle(post.title);
     setContent(post.content);
-    setTags(post.tags);
+    setTags(post.tags || []);
     setMediaUrl(post.mediaFile);
     setPreviewUrl(post.mediaFile);
-    setShowForm(true);
   };
+
   const handleCancelEdit = () => {
     setEditingPostId(null);
     resetForm();
   };
+
   const handleDeletePost = async (postId) => {
     try {
       await axiosCustom.delete(`/posts/${postId}`);
@@ -131,15 +136,16 @@ const Community = () => {
       console.error('Error deleting post:', error);
     }
   };
+
   const resetForm = () => {
     setTitle('');
     setContent('');
     setTags([]);
     setMediaFile(null);
     setPreviewUrl(null);
-    setEditingPostId(null);
     setMediaUrl(null);
   };
+
   return (
     <>
       <Navbar />
@@ -159,58 +165,8 @@ const Community = () => {
           onClick={() => setShowForm(!showForm)} 
           sx={{ mb: 2, backgroundColor: '#7b1fa2', '&:hover': { backgroundColor: '#6a1b9a' } }}
         >
-          {showForm ? 'Cancel' : 'Write a Post'}
+          Write a Post
         </Button>
-        {showForm && (
-          <form onSubmit={handleCreateOrUpdatePost} className="form-container">
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="media-upload" />
-                <label htmlFor="media-upload">
-                  <IconButton component="span">
-                    <AddPhotoAlternate />
-                  </IconButton>
-                  Upload Media
-                </label>
-                {previewUrl && (
-                  <CardMedia
-                    component="img"
-                    className="form-media-preview"
-                    image={previewUrl}
-                    alt="Preview"
-                  />
-                )}
-                {isLoading && <CircularProgress />}
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField label="Title" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} margin="normal" />
-                <TextField label="Details" fullWidth multiline rows={3} value={content} onChange={(e) => setContent(e.target.value)} margin="normal" />
-                <TextField label="Add Tag" fullWidth margin="normal" onKeyPress={(e) => {
-                  if (e.key === 'Enter' && e.target.value.trim()) {
-                    e.preventDefault();
-                    setTags([...tags, e.target.value.trim()]);
-                    e.target.value = '';
-                  }
-                }} />
-                <div className="post-tags">
-                  {tags.map((tag, index) => (
-                    <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} />
-                  ))}
-                </div>
-                <div className="form-actions">
-                  <Button 
-                    type="submit" 
-                    variant="contained" 
-                    disabled={isLoading}
-                    sx={{ backgroundColor: '#7b1fa2', '&:hover': { backgroundColor: '#6a1b9a' } }}
-                  >
-                    {isLoading ? <CircularProgress size={24} /> : editingPostId ? 'Update Post' : 'Create Post'}
-                  </Button>
-                </div>
-              </Grid>
-            </Grid>
-          </form>
-        )}
         {posts.map((post) => (
           <Card key={post._id} className="post-card">
             <Grid container>
@@ -226,8 +182,9 @@ const Community = () => {
               )}
               <Grid item xs={12} sm={post.mediaFile ? 8 : 12}>
                 <CardContent className="post-content">
-                  {editingPostId === post._id ? (                    
-                    <>
+                  {editingPostId === post._id ? (
+                    // Edit Form
+                    <form onSubmit={handleCreateOrUpdatePost}>
                       <TextField
                         label="Title"
                         fullWidth
@@ -277,15 +234,16 @@ const Community = () => {
                         />
                       )}
                       <div className="post-actions">
-                        <IconButton onClick={handleCreateOrUpdatePost}>
+                        <IconButton type="submit">
                           <Save />
                         </IconButton>
                         <IconButton onClick={handleCancelEdit}>
                           <Cancel />
                         </IconButton>
                       </div>
-                    </>
-                  ) : (            
+                    </form>
+                  ) : (
+                    // Post Content
                     <>
                       <Typography variant="h6" className="post-title">{post.title}</Typography>
                       <Typography className="post-details">{post.content}</Typography>
@@ -313,4 +271,5 @@ const Community = () => {
     </>
   );
 };
+
 export default Community;
