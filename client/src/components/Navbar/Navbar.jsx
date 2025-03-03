@@ -42,32 +42,38 @@ const Navbar = () => {
   }, []);
   const handleLogout = async () => {
     let refreshToken = cookies.get("refresh_token") || localStorage.getItem("refresh_token");
-  
+
     if (!refreshToken) {
-      console.error("No refresh token found! Proceeding with local logout.");
-      dispatch(userLogout());
-      navigate("/login");
-      return;
+        console.warn("No refresh token found. Logging out locally.");
+        dispatch(userLogout());
+        cleanupTokens();
+        navigate("/login");
+        return;
     }
-  
-    console.log("Logging out with refresh token:", refreshToken); // Debugging log
-  
+
+    console.log("Attempting server logout with refresh token:", refreshToken);
+
     try {
-      const response = await axiosCustom.post("auth/logout", { refreshToken });
-      console.log("Logout successful:", response.data);
-  
-      dispatch(userLogout());
-      cookies.remove("refresh_token", { path: "/" });
-      cookies.remove("access_token", { path: "/" });
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("access_token");
-  
-      navigate("/login");
+        await axiosCustom.post("auth/logout", { refreshToken });
+
+        console.log("Logout successful. Clearing local storage.");
+        dispatch(userLogout());
     } catch (error) {
-      console.error("Logout failed:", error.response?.data || error.message);
+        console.error("Logout API call failed:", error.response?.data || error.message);
+    } finally {
+        cleanupTokens();
+        navigate("/login");
     }
-  };
-  
+};
+
+// Helper function to remove tokens
+const cleanupTokens = () => {
+    cookies.remove("refresh_token", { path: "/" });
+    cookies.remove("access_token", { path: "/" });
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("access_token");
+};
+
 
   return (
     <nav className="navbar">

@@ -541,3 +541,22 @@ body {
   .movie-row__posterLarge {
     max-height: 250px; /* Adjust for larger posters */
   }
+  .liked-movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .see-all-link {
+    display: block;
+    text-align: right;
+    margin-top: 16px;
+    font-size: 1.2em;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .see-all-link:hover {
+    text-decoration: underline;
+  }
