@@ -7,8 +7,6 @@ import "swiper/css/scrollbar";
 import { useNavigate } from "react-router-dom";
 import "./MovieList.css";
 import { Navigation, Scrollbar, Pagination } from "swiper/modules";
-import { FaStar } from "react-icons/fa";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../responsive.css";
 import "../dark.css";
@@ -123,7 +121,6 @@ const MovieList = () => {
   const [likedMovies, setLikedMovies] = useState([]);
   const [likedMovieIds, setLikedMovieIds] = useState(new Set());
 
-  // Fetch all movies (trending, top-rated, upcoming, now-playing)
   useEffect(() => {
     const fetchMovies = async () => {
       const [trending, topRated, upcoming, nowPlaying] = await fetchData([
@@ -137,7 +134,6 @@ const MovieList = () => {
     fetchMovies();
   }, []);
 
-  // Fetch liked movies from the database
   useEffect(() => {
     const fetchLikedMovies = async () => {
       try {
