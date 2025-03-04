@@ -75,19 +75,18 @@ const LikedMovies = () => {
   const handleLike = async (movieId, e) => {
     e.stopPropagation();
     try {
-      const isLiked = likedMovies.some((movie) => movie.id === movieId);
-      const endpoint = isLiked ? "/like/unlike" : "/like/like";
-      const response = await axiosCustom.post(endpoint, { movieId });
-
+      // Always call the "unlike" endpoint because the movie is already liked
+      const response = await axiosCustom.post("/like/unlike", { movieId });
+  
       if (response.status === 200) {
-        setLikedMovies((prev) =>
-          isLiked ? prev.filter((movie) => movie.id !== movieId) : [...prev, { id: movieId }]
-        );
+        // Update the state to remove the movie from the liked list
+        setLikedMovies((prev) => prev.filter((movie) => movie.id !== movieId));
       }
     } catch (error) {
       console.error("Error toggling like:", error);
     }
   };
+  
 
   const handleNavigate = (movieId, e) => {
     e.stopPropagation();
@@ -120,22 +119,15 @@ const LikedMovies = () => {
               <div className="movie-info">
                 <h4>{movie.title || movie.name}</h4>
               </div>
-              <Tooltip title={likedMovies.some((m) => m.id === movie.id) ? "Unlike" : "Like"}>
-                <IconButton
-                  onClick={(e) => handleLike(movie.id, e)}
-                  className="like-button"
-                >
-                  {likedMovies.some((m) => m.id === movie.id) ? (
-                    <FavoriteIcon className="liked" />
-                  ) : (
-                    <FavoriteBorderIcon className="not-liked" />
-                  )}
-                </IconButton>
+              <Tooltip title="Unlike">
+              <IconButton onClick={(e) => handleLike(movie.id, e)} className="like-button">
+              <FavoriteIcon className="liked" />
+              </IconButton>
               </Tooltip>
+
             </motion.div>
           ))}
         </div>
-
         {loading && <CircularProgress className="loading-spinner" />}
       </div>
     </div>
