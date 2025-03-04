@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useNavigate } from "react-router-dom";
-import "./MovieList.css";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip, CircularProgress } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import Tooltip from '@mui/material/Tooltip';
 import Navbar from "../Navbar/Navbar";
+import { motion } from "framer-motion";
+import "./LikeList.css";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -15,9 +15,7 @@ const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  params: {
-    api_key: API_KEY,
-  },
+  params: { api_key: API_KEY },
 });
 
 const fetchData = async (endpoint, params = {}) => {
@@ -32,36 +30,59 @@ const fetchData = async (endpoint, params = {}) => {
 
 const LikedMovies = () => {
   const [likedMovies, setLikedMovies] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchLikedMovies = async () => {
-      try {
-        const response = await axiosCustom.get("/like/liked-movies");
-        if (response.status === 200) {
-          const likedMovieIds = response.data.map((item) => item.movieId);
-          const movieDetailsPromises = likedMovieIds.map((movieId) =>
-            fetchData(`/movie/${movieId}`)
-          );
-          const movieDetails = await Promise.all(movieDetailsPromises);
-          const validMovies = movieDetails.filter((movie) => movie !== null);
-          setLikedMovies(validMovies);
-        }
-      } catch (error) {
-        console.error("Error fetching liked movies:", error);
+  const fetchLikedMovies = useCallback(async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+
+    try {
+      const response = await axiosCustom.get(`/like/liked-movies?page=${page}&limit=8`);
+      if (response.status === 200) {
+        const likedMovieIds = response.data.map((item) => item.movieId);
+        const movieDetailsPromises = likedMovieIds.map((movieId) => fetchData(`/movie/${movieId}`));
+        const movieDetails = await Promise.all(movieDetailsPromises);
+        const validMovies = movieDetails.filter((movie) => movie !== null);
+
+        setLikedMovies((prev) => [...prev, ...validMovies]);
+        setHasMore(validMovies.length === 8);
+        setPage((prevPage) => prevPage + 1);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching liked movies:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, loading, hasMore]);
+
+  useEffect(() => {
     fetchLikedMovies();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 50) {
+        fetchLikedMovies();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [fetchLikedMovies]);
+
   const handleLike = async (movieId, e) => {
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     try {
-      const endpoint = likedMovies.some((movie) => movie.id === movieId) ? "/like/unlike" : "/like/like";
+      const isLiked = likedMovies.some((movie) => movie.id === movieId);
+      const endpoint = isLiked ? "/like/unlike" : "/like/like";
       const response = await axiosCustom.post(endpoint, { movieId });
 
       if (response.status === 200) {
-        setLikedMovies((prev) => prev.filter((movie) => movie.id !== movieId));
+        setLikedMovies((prev) =>
+          isLiked ? prev.filter((movie) => movie.id !== movieId) : [...prev, { id: movieId }]
+        );
       }
     } catch (error) {
       console.error("Error toggling like:", error);
@@ -69,8 +90,8 @@ const LikedMovies = () => {
   };
 
   const handleNavigate = (movieId, e) => {
-    e.stopPropagation(); // Prevent event bubbling
-    navigate(`/movie/${movieId}`); // Navigate immediately
+    e.stopPropagation();
+    navigate(`/movie/${movieId}`);
   };
 
   const DEFAULT_IMAGE = "/images/movie-default.png";
@@ -79,54 +100,43 @@ const LikedMovies = () => {
     <div className="movie-list">
       <Navbar />
       <div className="movie-container">
-        <h2 className="movie-row__title">Movies Liked by You</h2>
+        <h2 className="movie-row__title">Movies You Liked ❤️</h2>
+
         <div className="liked-movies-grid">
           {likedMovies.map((movie) => (
-            <div
+            <motion.div
               key={movie.id}
-              style={{ position: "relative", cursor: "pointer" }}
+              className="movie-card"
               onClick={(e) => handleNavigate(movie.id, e)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <img
-                className="movie-row__poster"
-                src={
-                  movie.poster_path || movie.backdrop_path
-                    ? `${IMAGE_BASE_URL}${movie.poster_path}`
-                    : DEFAULT_IMAGE
-                }
+                className="movie-poster"
+                src={movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : DEFAULT_IMAGE}
                 alt={movie.title || movie.name}
                 onError={(e) => (e.target.src = DEFAULT_IMAGE)}
               />
+              <div className="movie-info">
+                <h4>{movie.title || movie.name}</h4>
+              </div>
               <Tooltip title={likedMovies.some((m) => m.id === movie.id) ? "Unlike" : "Like"}>
                 <IconButton
                   onClick={(e) => handleLike(movie.id, e)}
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    color: likedMovies.some((m) => m.id === movie.id) ? "red" : "white",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    borderRadius: "50%",
-                    padding: "8px",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-                  }}
+                  className="like-button"
                 >
                   {likedMovies.some((m) => m.id === movie.id) ? (
-                    <FavoriteIcon style={{ fontSize: "24px", color: "red" }} />
+                    <FavoriteIcon className="liked" />
                   ) : (
-                    <FavoriteBorderIcon style={{ fontSize: "24px", color: "white" }} />
+                    <FavoriteBorderIcon className="not-liked" />
                   )}
                 </IconButton>
               </Tooltip>
-            </div>
+            </motion.div>
           ))}
         </div>
+
+        {loading && <CircularProgress className="loading-spinner" />}
       </div>
     </div>
   );
