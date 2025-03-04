@@ -109,23 +109,23 @@ const Row = lazy(() => Promise.resolve({
                       position: "absolute",
                       top: 10,
                       right: 10,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark semi-transparent background
-                      borderRadius: "50%", // Circular background
-                      padding: "8px", // Add some padding
-                      color: likedMovieIds.has(movie.id) ? "red" : "rgba(255, 255, 255, 0.8)", // Red for liked, light gray for unliked
-                      transition: "all 0.3s ease", // Smooth transition
+                      backgroundColor: "rgba(0, 0, 0, 0.5)", 
+                      borderRadius: "50%", 
+                      padding: "8px", 
+                      color: likedMovieIds.has(movie.id) ? "red" : "rgba(255, 255, 255, 0.8)", 
+                      transition: "all 0.3s ease", 
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker on hover
+                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; 
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // Restore on hover out
+                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; 
                     }}
                   >
                     {likedMovieIds.has(movie.id) ? (
-                      <FavoriteIcon style={{ color: "red" }} /> // Red heart for liked movies
+                      <FavoriteIcon style={{ color: "red" }} /> 
                     ) : (
-                      <FavoriteBorderIcon style={{ color: "rgba(255, 255, 255, 0.8)" }} /> // Light gray heart for unliked movies
+                      <FavoriteBorderIcon style={{ color: "rgba(255, 255, 255, 0.8)" }} /> 
                     )}
                   </IconButton>
                 </Tooltip>
@@ -180,7 +180,7 @@ const MovieList = () => {
       const response = await axiosCustom.post(endpoint, { movieId });
   
       if (response.status === 200) {
-        // Update likedMovieIds state
+        
         setLikedMovieIds((prev) => {
           const newLikedMovieIds = new Set(prev);
           if (newLikedMovieIds.has(movieId)) {
@@ -191,7 +191,7 @@ const MovieList = () => {
           return newLikedMovieIds;
         });
   
-        // Update likedMovies state
+        
         if (likedMovieIds.has(movieId)) {
           setLikedMovies((prev) => prev.filter((movie) => movie.id !== movieId));
         } else {
