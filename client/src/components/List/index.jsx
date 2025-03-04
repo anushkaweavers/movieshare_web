@@ -103,8 +103,30 @@ const Row = lazy(() => Promise.resolve({
               <div style={{ position: "relative", cursor: "pointer" }} onClick={(e) => handleNavigate(movie.id, e)}>
                 <img className={`movie-row__poster ${isLargeRow ? "movie-row__posterLarge" : ""}`} src={IMAGE_BASE_URL + movie.poster_path} alt={movie.title || movie.name} loading="lazy" />
                 <Tooltip title={likedMovieIds.has(movie.id) ? "Unlike" : "Like"}>
-                  <IconButton onClick={(e) => { e.stopPropagation(); onLike(movie.id); }} style={{ position: "absolute", top: 10, right: 10, color: likedMovieIds.has(movie.id) ? "red" : "white" }}>
-                    {likedMovieIds.has(movie.id) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  <IconButton
+                    onClick={(e) => { e.stopPropagation(); onLike(movie.id); }}
+                    style={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark semi-transparent background
+                      borderRadius: "50%", // Circular background
+                      padding: "8px", // Add some padding
+                      color: likedMovieIds.has(movie.id) ? "red" : "rgba(255, 255, 255, 0.8)", // Red for liked, light gray for unliked
+                      transition: "all 0.3s ease", // Smooth transition
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker on hover
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // Restore on hover out
+                    }}
+                  >
+                    {likedMovieIds.has(movie.id) ? (
+                      <FavoriteIcon style={{ color: "red" }} /> // Red heart for liked movies
+                    ) : (
+                      <FavoriteBorderIcon style={{ color: "rgba(255, 255, 255, 0.8)" }} /> // Light gray heart for unliked movies
+                    )}
                   </IconButton>
                 </Tooltip>
               </div>
@@ -141,7 +163,8 @@ const MovieList = () => {
         if (response.status === 200) {
           const likedIds = new Set(response.data.map((item) => item.movieId));
           setLikedMovieIds(likedIds);
-          const likedDetails = await Promise.all([...likedIds].map((id) => fetchData([`/movie/${id}`])));
+          const first10LikedIds = [...likedIds].slice(0, 10);
+          const likedDetails = await Promise.all(first10LikedIds.map((id) => fetchData([`/movie/${id}`])));
           setLikedMovies(likedDetails.map(res => res[0]));
         }
       } catch (error) {
@@ -151,12 +174,11 @@ const MovieList = () => {
     fetchLikedMovies();
   }, []);
 
-  // Handle like/unlike functionality
   const handleLike = async (movieId) => {
     try {
       const endpoint = likedMovieIds.has(movieId) ? "/like/unlike" : "/like/like";
       const response = await axiosCustom.post(endpoint, { movieId });
-
+  
       if (response.status === 200) {
         // Update likedMovieIds state
         setLikedMovieIds((prev) => {
@@ -168,7 +190,7 @@ const MovieList = () => {
           }
           return newLikedMovieIds;
         });
-
+  
         // Update likedMovies state
         if (likedMovieIds.has(movieId)) {
           setLikedMovies((prev) => prev.filter((movie) => movie.id !== movieId));
@@ -186,10 +208,8 @@ const MovieList = () => {
     <div className="movie-list">
       <Navbar />
       <Suspense fallback={<CircularProgress />}>
-        {/* Banner with at least 5 movies */}
         <Banner movies={movies.trending.slice(0, 5)} />
 
-        {/* Movies Liked by You (limited to 10 movies) */}
         {likedMovies.length > 0 && (
           <div className="liked-movies-section">
             <Row
@@ -205,7 +225,6 @@ const MovieList = () => {
           </div>
         )}
 
-        {/* Other movie rows */}
         <Row
           title="Trending Movies"
           movies={movies.trending}
@@ -234,5 +253,4 @@ const MovieList = () => {
     </div>
   );
 };
-
 export default MovieList;
