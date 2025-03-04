@@ -13,6 +13,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Navbar from '../Navbar/Navbar';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert } from "@mui/material";
+import { IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 SwiperCore.use([Navigation]);
 const API_KEY= import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -39,6 +44,8 @@ function MovieDetails() {
   const [selectedReview, setSelectedReview] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [setError] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); // For dropdown menu
+  const [isLiked, setIsLiked] = useState(false);
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
@@ -61,7 +68,25 @@ function MovieDetails() {
     setOpenDialog(false);
     setSelectedReview(null);
   };
-
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+    // Handle dropdown menu close
+    const handleMenuClose = () => {
+      setAnchorEl(null);
+    };
+  
+    // Handle "Create +" option click
+    const handleCreatePlaylist = () => {
+      navigate("/playlist");
+      handleMenuClose();
+    };
+  
+    // Handle like button click
+    const handleLike = () => {
+      setIsLiked((prev) => !prev);
+    };
+  
   // Confirm Delete Review
   const confirmDelete = async () => {
     if (selectedReview) {
@@ -287,21 +312,49 @@ const fetchReviews = async () => {
 
 
 
-          {/* Movie Info */}
-          <div className="movie-details__info">
-            <h1 className="movie-details__title">{movie.title}</h1>
-            <p className="movie-details__year">
-              {movie.release_date?.split("-")[0]} • {movie.runtime} min
-            </p>
-            <p className="movie-details__overview">{movie.overview}</p>
-            <div className="movie-details__actions">
-              <button className="movie-details__rent-button">Rent Movie ($0.99)</button>
-              <button className="movie-details__playlist-button">
-                Add to Playlist <span className="arrow-down">▼</span>
-              </button>
-            </div>
-          </div>
+  <div className="movie-details__info">
+      <h1 className="movie-details__title">{movie.title}</h1>
+      <p className="movie-details__year">
+        {movie.release_date?.split("-")[0]} • {movie.runtime} min
+      </p>
+      <p className="movie-details__overview">{movie.overview}</p>
+      <div className="movie-details__actions">
+        <button className="movie-details__rent-button">Rent Movie ($0.99)</button>
+
+        {/* Add to Playlist Button with Dropdown */}
+        <div className="movie-details__playlist-container">
+          <button
+            className="movie-details__playlist-button"
+            onClick={handleMenuOpen}
+          >
+            <PlaylistAddIcon className="save-icon" /> Add to Playlist{" "}
+            <ArrowDropDownIcon className="dropdown-icon" />
+          </button>
+
+          {/* Dropdown Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleCreatePlaylist}>Create +</MenuItem>
+            {/* Add more playlist options here if needed */}
+          </Menu>
         </div>
+
+        {/* Heart Icon */}
+        <Tooltip title={isLiked ? "Unlike" : "Like"}>
+          <IconButton onClick={handleLike} className="heart-icon">
+            {isLiked ? (
+              <FavoriteIcon style={{ color: "red" }} />
+            ) : (
+              <FavoriteBorderIcon style={{ color: "rgba(255, 255, 255, 0.8)" }} />
+            )}
+          </IconButton>
+        </Tooltip>
+      </div>
+    </div>
+  </div>
 
         {/* Tabs Section */}
         <div className="movie-details__tabs">
@@ -689,8 +742,8 @@ const fetchReviews = async () => {
       </div>
     </div>
   </div>
-);
 
+);
 }
 
 export default MovieDetails;
