@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./MovieList.css";
 import { Navigation, Scrollbar, Pagination } from "swiper/modules";
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,7 +17,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import Tooltip from "@mui/material/Tooltip";
-import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import DatePicker from "react-datepicker";
 import { FaStar } from "react-icons/fa";
@@ -136,6 +135,30 @@ const Row = ({ title, movies, isLargeRow = false, likedMovieIds, onLike }) => {
   );
 };
 
+const PlaylistRow = ({ playlists }) => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="movie-row">
+      <h2 className="movie-row__title">Your Playlists</h2>
+      <Swiper modules={[Navigation, Scrollbar]} navigation scrollbar={{ draggable: true }} spaceBetween={10} slidesPerView={5}>
+        {playlists.map((playlist) => (
+          <SwiperSlide key={playlist._id}>
+            <div
+              style={{ position: "relative", cursor: "pointer" }}
+              onClick={() => navigate(`/playlist/${playlist._id}`)} // Navigate to detailed view
+            >
+              <img className="movie-row__poster" src={playlist.thumbnail} alt={playlist.playlistTitle} loading="lazy" />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      <Link to="/playlists" className="see-all-link">
+        See All →
+      </Link>
+    </div>
+  );
+};
 const Filter = ({ onFilterChange, onResetFilters, genres, filters }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -198,6 +221,7 @@ const MovieList = () => {
     sortBy: "",
   });
   const [isFiltered, setIsFiltered] = useState(false);
+  const [playlists, setPlaylists] = useState([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -230,6 +254,18 @@ const MovieList = () => {
       }
     };
     fetchLikedMovies();
+  }, []);
+
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        const response = await axiosCustom.get("/playlist");
+        setPlaylists(response.data.slice(0, 10)); // Fetch first 10 playlists
+      } catch (error) {
+        console.error("Error fetching playlists:", error);
+      }
+    };
+    fetchPlaylists();
   }, []);
 
   const handleLike = async (movieId) => {
@@ -333,6 +369,10 @@ const MovieList = () => {
                 See All →
               </Link>
             </div>
+          )}
+
+          {playlists.length > 0 && (
+            <PlaylistRow playlists={playlists} />
           )}
 
           <Row

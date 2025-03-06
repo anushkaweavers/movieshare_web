@@ -46,6 +46,7 @@ function MovieDetails() {
   const [setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null); // For dropdown menu
   const [isLiked, setIsLiked] = useState(false);
+  const [playlists, setPlaylists] = useState([]); // State to store user's playlists
   const toggleCrewVisibility = () => {
     setShowAllCrew((prev) => !prev);
   };
@@ -68,24 +69,43 @@ function MovieDetails() {
     setOpenDialog(false);
     setSelectedReview(null);
   };
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = async (event) => {
     setAnchorEl(event.currentTarget);
+    try {
+      const response = await axiosCustom.get("/playlist"); // Fetch playlists
+      setPlaylists(response.data);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+    }
   };
-    // Handle dropdown menu close
-    const handleMenuClose = () => {
-      setAnchorEl(null);
-    };
-  
-    // Handle "Create +" option click
-    const handleCreatePlaylist = () => {
-      navigate("/playlist");
-      handleMenuClose();
-    };
-  
-    // Handle like button click
-    const handleLike = () => {
-      setIsLiked((prev) => !prev);
-    };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCreatePlaylist = () => {
+    // Logic to create a new playlist
+    console.log("Create new playlist");
+    handleMenuClose();
+  };
+
+  const handleAddToPlaylist = async (playlistId) => {
+    try {
+      const playlist = await axiosCustom.get(`/playlist/${playlistId}`); // Fetch playlist details
+      const updatedMovies = [...playlist.data.movies, movie]; // Add the current movie to the playlist
+      await axiosCustom.put(`/playlist/${playlistId}`, { movies: updatedMovies }); // Update the playlist
+      alert("Movie added to playlist successfully!");
+    } catch (error) {
+      console.error("Error adding movie to playlist:", error);
+      alert("Failed to add movie to playlist. Please try again.");
+    }
+    handleMenuClose();
+  };
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+  };
+
   
   // Confirm Delete Review
   const confirmDelete = async () => {
@@ -311,7 +331,6 @@ const fetchReviews = async () => {
   {console.log("Poster URL:", `${IMAGE_BASE_URL}${movie.poster_path}`)}
 
 
-
   <div className="movie-details__info">
       <h1 className="movie-details__title">{movie.title}</h1>
       <p className="movie-details__year">
@@ -338,10 +357,16 @@ const fetchReviews = async () => {
             onClose={handleMenuClose}
           >
             <MenuItem onClick={handleCreatePlaylist}>Create +</MenuItem>
-            {/* Add more playlist options here if needed */}
+            {playlists.map((playlist) => (
+              <MenuItem
+                key={playlist._id}
+                onClick={() => handleAddToPlaylist(playlist._id)}
+              >
+                {playlist.playlistTitle}
+              </MenuItem>
+            ))}
           </Menu>
         </div>
-
         {/* Heart Icon */}
         <Tooltip title={isLiked ? "Unlike" : "Like"}>
           <IconButton onClick={handleLike} className="heart-icon">

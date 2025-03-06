@@ -14,6 +14,9 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
 import EditReviewPage from "./components/Review/EditReviewPage";
 import LikedMovies from "./components/List/Likedmovies";
+import PlaylistPage from "./components/Playlist/Playlist";
+import PlaylistList from "./components/List/playlistlist";
+import PlaylistDetails from "./components/Playlist/playlistDetails"; // Add this import
 
 const App = () => {
   return (
@@ -31,6 +34,9 @@ const App = () => {
         <Route path="/community" element={<Community />} />
         <Route path="/list" element={<MovieList />} />
         <Route path="/liked-movies" element={<LikedMovies />} />
+        <Route path="/playlists" element={<PlaylistList />} />
+        <Route path="/playlist/:playlistId" element={<PlaylistDetails />} /> {/* Add this route */}
+        <Route path="/playlist" element={<PlaylistPage />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/write-review/:movieId" element={<WriteReviewPage />} />
         <Route path="/edit-review/:reviewId" element={<EditReviewPage />} />
