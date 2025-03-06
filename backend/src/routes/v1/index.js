@@ -3,11 +3,14 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 const { Blob } = require("buffer"); // Import Blob from the buffer module
 
+
+
 const authRoute = require("./auth.route");
 const userRoute = require("./user.route");
 const reviewRoute = require("./review.route");
 const postRoute = require("./post.route");
-const likeRoute=require("./like.route");
+const likeRoute = require("./like.route");
+const playlistRoute = require("./playlist.route"); // Import the new playlist route
 
 dotenv.config();
 const router = express.Router();
@@ -20,12 +23,14 @@ const defaultRoutes = [
   { path: "/users", route: userRoute },
   { path: "/reviews", route: reviewRoute },
   { path: "/posts", route: postRoute },
-  {path:"/like",route: likeRoute}
+  { path: "/like", route: likeRoute },
+  { path: "/playlist", route: playlistRoute }, // Add the new playlist route
 ];
 
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
+
 router.post("/upload/image", async (req, res) => {
   try {
     const { imageUrl } = req.body;

@@ -1,22 +1,18 @@
 const mongoose = require('mongoose');
 
-const PlaylistSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Owner of the playlist
-  title: { type: String, required: true },
-  description: { type: String },
-  thumbnail: { type: String }, // Cloudinary URL
+const playlistSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  playlistTitle: { type: String, required: true },
+  description: { type: String, required: true },
+  thumbnail: { type: String, required: true },
   isPrivate: { type: Boolean, default: false },
-  allowedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
-  movies: [
-    {
-      movieId: { type: String, required: true }, 
-      title: { type: String, required: true },
-      poster: { type: String }, 
-      addedAt: { type: Date, default: Date.now }
-    }
-  ],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  movies: [{
+    id: { type: String, required: true },
+    title: { type: String, required: true },
+    poster_path: { type: String, required: true },
+    release_date: { type: String, required: true },
+  }],
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Playlist', PlaylistSchema);
+module.exports = mongoose.model('Playlist', playlistSchema);
