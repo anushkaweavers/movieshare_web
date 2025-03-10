@@ -84,16 +84,13 @@ function MovieDetails() {
   };
 
   const handleCreatePlaylist = () => {
-    // Logic to create a new playlist
-    console.log("Create new playlist");
-    handleMenuClose();
+    navigate("/playlist"); // Navigate to the PlaylistPage
   };
-
   const handleAddToPlaylist = async (playlistId) => {
     try {
-      const playlist = await axiosCustom.get(`/playlist/${playlistId}`); // Fetch playlist details
-      const updatedMovies = [...playlist.data.movies, movie]; // Add the current movie to the playlist
-      await axiosCustom.put(`/playlist/${playlistId}`, { movies: updatedMovies }); // Update the playlist
+      const playlist = await axiosCustom.get(`/playlist/${playlistId}`);
+      const updatedMovies = [...playlist.data.movies, movie]; 
+      await axiosCustom.put(`/playlist/${playlistId}`, { movies: updatedMovies }); 
       alert("Movie added to playlist successfully!");
     } catch (error) {
       console.error("Error adding movie to playlist:", error);
@@ -356,7 +353,7 @@ const fetchReviews = async () => {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleCreatePlaylist}>Create +</MenuItem>
+            <MenuItem onClick={handleCreatePlaylist}>Create +</MenuItem> {/* Navigates to /playlist */}
             {playlists.map((playlist) => (
               <MenuItem
                 key={playlist._id}

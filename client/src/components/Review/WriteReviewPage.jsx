@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Navbar from "../Navbar/Navbar";
+import Sidebar from "../Sidebar/Sidebar";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useSelector } from "react-redux";
 import "./WriteReviewPage.css";
@@ -151,6 +152,7 @@ const WriteReviewPage = () => {
   return (
     <>
       <Navbar />
+      <Sidebar/>
       <div className="write-review-wrapper">
         <div className="review-page-container">
           <div className="review-page">

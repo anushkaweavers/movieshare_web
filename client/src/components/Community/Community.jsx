@@ -4,7 +4,7 @@ import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid } from '@mui/material';
 import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import './Community.css';
-
+import Sidebar from '../Sidebar/Sidebar';
 const Community = () => {
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
@@ -151,6 +151,7 @@ const Community = () => {
 
   return (
     <>
+    <Sidebar/>
       <Navbar />
       <Container maxWidth="md" className="community-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

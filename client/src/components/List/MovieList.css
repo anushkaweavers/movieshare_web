@@ -560,3 +560,60 @@ body {
   .see-all-link:hover {
     text-decoration: underline;
   }
+ /* Playlist Row Styling */
+.playlist-card {
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 15px;
+    width: 100%; /* Ensure cards take full width of their container */
+    height: 200px; /* Fixed height for all cards */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--surface1); /* Use a surface color for consistency */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure content doesn't overflow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.playlist-card:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.playlist-banner {
+    width: 100%;
+    height: 70%; /* Fixed height for the banner */
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.playlist-name {
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color); /* Use theme text color */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 10px; /* Add padding to prevent text overflow */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .playlist-card {
+        height: 180px; /* Slightly smaller height for mobile */
+    }
+
+    .playlist-banner {
+        height: 65%; /* Adjust banner height for mobile */
+    }
+
+    .playlist-name {
+        font-size: 14px; /* Smaller font size for mobile */
+    }
+}

@@ -2,8 +2,9 @@
 
 .community-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin-left: 20px;
   padding: 20px;
+  margin-top: 70px;
 }
 
 .post-card {

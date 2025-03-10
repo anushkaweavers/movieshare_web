@@ -20,6 +20,7 @@ import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import DatePicker from "react-datepicker";
 import { FaStar } from "react-icons/fa";
+import { Typography } from "@mui/material";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -141,14 +142,30 @@ const PlaylistRow = ({ playlists }) => {
   return (
     <div className="movie-row">
       <h2 className="movie-row__title">Your Playlists</h2>
-      <Swiper modules={[Navigation, Scrollbar]} navigation scrollbar={{ draggable: true }} spaceBetween={10} slidesPerView={5}>
+      <Swiper
+        modules={[Navigation, Scrollbar]}
+        navigation
+        scrollbar={{ draggable: true }}
+        spaceBetween={10}
+        slidesPerView={5}
+      >
         {playlists.map((playlist) => (
           <SwiperSlide key={playlist._id}>
             <div
-              style={{ position: "relative", cursor: "pointer" }}
-              onClick={() => navigate(`/playlist/${playlist._id}`)} // Navigate to detailed view
+              className="playlist-card"
+              onClick={() => navigate(`/playlist/${playlist._id}`)}
             >
-              <img className="movie-row__poster" src={playlist.thumbnail} alt={playlist.playlistTitle} loading="lazy" />
+              {/* Playlist Banner */}
+              <div
+                className="playlist-banner"
+                style={{
+                  backgroundImage: `url(${playlist.thumbnail})`,
+                }}
+              ></div>
+              {/* Playlist Name */}
+              <Typography variant="h6" className="playlist-name">
+                {playlist.playlistTitle}
+              </Typography>
             </div>
           </SwiperSlide>
         ))}

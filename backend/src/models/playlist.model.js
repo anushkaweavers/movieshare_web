@@ -9,8 +9,8 @@ const playlistSchema = new mongoose.Schema({
   movies: [{
     id: { type: String, required: true },
     title: { type: String, required: true },
-    poster_path: { type: String, required: true },
-    release_date: { type: String, required: true },
+    poster_path: { type: String},
+    release_date: { type: String},
   }],
   createdAt: { type: Date, default: Date.now }
 });

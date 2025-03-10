@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import {
-  Container, Typography, Grid, Card, CardMedia, CardContent, IconButton,
-  CardActions, Select, MenuItem, FormControl, InputLabel, Button, TextField, Box
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  IconButton,
+  CardActions,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  TextField,
+  Box,
 } from "@mui/material";
 import { Edit, Delete, Save, Close } from "@mui/icons-material";
 import Navbar from "../Navbar/Navbar";
 import "./playlistDetails.css";
+import { AddAPhoto } from "@mui/icons-material";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -23,7 +37,7 @@ const apiClient = axios.create({
 
 const PlaylistDetails = () => {
   const { playlistId } = useParams();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -64,7 +78,9 @@ const PlaylistDetails = () => {
     if (searchQuery) {
       const fetchMovies = async () => {
         try {
-          const response = await apiClient.get(`/search/movie`, { params: { query: searchQuery } });
+          const response = await apiClient.get(`/search/movie`, {
+            params: { query: searchQuery },
+          });
           setSearchResults(response.data.results);
         } catch (error) {
           console.error("Error fetching movies from TMDB:", error);
@@ -120,7 +136,6 @@ const PlaylistDetails = () => {
   const handleUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -173,20 +188,40 @@ const PlaylistDetails = () => {
     return 0;
   });
 
-  // Function to handle movie card click
   const handleMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`); // Navigate to the movie details page
+    navigate(`/movie/${movieId}`);
   };
 
   if (loading) return <Typography>Loading...</Typography>;
   if (!playlist) return <Typography>Playlist not found.</Typography>;
 
   return (
+    <>
+    <Navbar /> {/* Navbar is outside the constrained container */}
     <div className="playlist-container light-theme">
-      <Navbar />
-      {/* Banner Section */}
+      {/* Editable Banner Section */}
       <Box className="playlist-banner" sx={{ position: "relative", height: "300px", overflow: "hidden" }}>
-        <img src={playlist.thumbnail} alt={playlist.playlistTitle} className="banner-image" />
+        {isEditing ? (
+          <label htmlFor="thumbnail-upload" className="upload-banner">
+            {editData.thumbnail ? (
+              <img src={editData.thumbnail} alt="Updated Thumbnail" className="banner-image" />
+            ) : (
+              <Box className="upload-placeholder">
+                <AddAPhoto fontSize="large" />
+                <Typography>Upload Thumbnail</Typography>
+              </Box>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              id="thumbnail-upload"
+              style={{ display: "none" }}
+              onChange={handleUpload}
+            />
+          </label>
+        ) : (
+          <img src={playlist.thumbnail} alt={playlist.playlistTitle} className="banner-image" />
+        )}
       </Box>
 
       {/* Playlist Content */}
@@ -242,21 +277,10 @@ const PlaylistDetails = () => {
               onChange={(e) => setEditData({ ...editData, description: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              style={{ display: "none" }}
-              id="thumbnail-upload"
-            />
-            <label htmlFor="thumbnail-upload">
-              <Button variant="contained" component="span" sx={{ mb: 2 }}>
-                Upload Thumbnail
-              </Button>
-            </label>
-
             {/* Add Movie Section */}
-            <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>Add Movies</Typography>
+            <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
+              Add Movies
+            </Typography>
             <TextField
               fullWidth
               label="Search for movies..."
@@ -266,16 +290,19 @@ const PlaylistDetails = () => {
             />
             <Grid container spacing={2}>
               {searchResults.map((movie) => (
-                <Grid item key={movie.id} xs={6} sm={4} md={3}>
-                  <Card onClick={() => handleAddMovie(movie)}>
+                <Grid item key={movie.id} xs={4} sm={3} md={2} lg={2}>
+                  <Card onClick={() => handleAddMovie(movie)} className="movie-card">
                     <CardMedia
                       component="img"
                       height="140"
                       image={`${IMAGE_BASE_URL}${movie.poster_path}`}
                       alt={movie.title}
+                      className="movie-image"
                     />
-                    <CardContent>
-                      <Typography variant="body2">{movie.title}</Typography>
+                    <CardContent className="movie-content">
+                      <Typography variant="body2" className="movie-title">
+                        {movie.title}
+                      </Typography>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -332,31 +359,33 @@ const PlaylistDetails = () => {
         </Box>
 
         {/* Movies Grid */}
-        <Grid container spacing={3} className="movies-grid">
+        <Grid container spacing={2} className="movies-grid">
           {sortedMovies.length > 0 ? (
             sortedMovies.map((movie) => (
-              <Grid item key={movie.id} xs={6} sm={4} md={3} lg={2}>
+              <Grid item key={movie.id} xs={4} sm={3} md={2} lg={2}>
                 <Card className="movie-card" onClick={() => handleMovieClick(movie.id)}>
                   <CardMedia
                     component="img"
-                    height="220"
+                    height="140"
                     image={movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : "/placeholder.jpg"}
                     alt={movie.title}
                     className="movie-image"
                   />
                   <CardContent className="movie-content">
-                    <Typography variant="body2" className="movie-title">{movie.title}</Typography>
+                    <Typography variant="body2" className="movie-title">
+                      {movie.title}
+                    </Typography>
                   </CardContent>
                   {isEditing && (
-                  <IconButton
-                  onClick={(event) => {
-                    event.stopPropagation(); // Prevents the parent click event from triggering
-                    handleRemoveMovie(movie.id);
-                  }}
-                >
-                  <Close />
-                </IconButton>
-                
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleRemoveMovie(movie.id);
+                      }}
+                      className="remove-icon"
+                    >
+                      <Close />
+                    </IconButton>
                   )}
                 </Card>
               </Grid>
@@ -367,6 +396,7 @@ const PlaylistDetails = () => {
         </Grid>
       </Container>
     </div>
+    </>
   );
 };
 

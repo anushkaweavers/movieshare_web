@@ -1,6 +1,6 @@
 /* General Wrapper for Write Review Page */
 .write-review-wrapper {
-  background-color: hsl(285, 45%, 5%);
+  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,20 +11,20 @@
 
 /* Main Review Page Container */
 .review-page {
-  background-color: hsl(285, 35%, 9%);
-  color: #ffffff;
+  background-color: white;
+  color: #000000;
   padding: 20px;
   max-width: 600px;
   width: 100%;
   border-radius: 15px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 15px rgba(98, 4, 221, 0.3);
   font-family: Arial, sans-serif;
 }
 
 /* Header */
 .review-page .review-header {
   text-align: center;
-  color: #e6e6e6;
+  color: #000000;
   font-size: 20px;
   margin-bottom: 10px;
 }
@@ -62,37 +62,49 @@
 
 /* Input Field Styles */
 .review-page .input-field {
-  background-color: hsl(285, 35%, 9%);
-  color: #ffffff;
+  background-color: white;
+  color: #000000;
   border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 8px;
 }
 
+.review-page .input-field:focus {
+  border-color: #6848f8;
+  outline: none;
+}
+
+/* Material UI Input Styling */
 .review-page .MuiOutlinedInput-root {
-  background-color: hsl(285, 35%, 9%);
-  color: #ffffff;
-  border-radius: 5px;
+  background-color: white !important;
+  color: #000000 !important;
+  border-radius: 5px !important;
+}
+
+.review-page .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #6848f8 !important;
 }
 
 .review-page .MuiOutlinedInput-input {
-  color: #ffffff;
+  color: #000000 !important;
   padding: 4px;
 }
 
 .review-page .MuiInputBase-input::placeholder {
-  color: #f0f0f0 !important;
+  color: #888 !important;
   opacity: 1 !important;
 }
 
 .review-page .MuiInputBase-input.Mui-disabled {
-  -webkit-text-fill-color: #ffffff !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 .review-page .MuiInputLabel-root {
-  color: #f0f0f0;
+  color: #888 !important;
 }
 
 .review-page .MuiOutlinedInput-notchedOutline {
-  border-color: #f0f0f0;
+  border-color: #ccc !important;
   border-width: 1px;
 }
 
@@ -103,7 +115,7 @@
 }
 
 .review-page .rating-header {
-  color: #fbf9fd;
+  color: #000000;
 }
 
 .review-page .rating-grid {
@@ -111,14 +123,15 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 15px;
   margin-top: 10px;
-  color: #e6e6e6;
+  color: #000000;
 }
 
 .review-page .rating-box {
   text-align: center;
-  background-color: hsl(285, 35%, 9%);
+  background-color: white;
   padding: 10px;
   border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 /* Buttons */
@@ -134,20 +147,14 @@
   border-radius: 12px !important;
   height: 30px;
   color: #ffffff !important;
-}
-
-.review-page .cancel-button {
-  background-color: hsl(285, 35%, 9%) !important;
+  background-color: #4B0082 !important; /* Dark Violet */
 }
 
 .review-page .cancel-button:hover,
 .review-page .post-button:hover {
-  background-color: #69396c !important;
+  background-color: #69396c !important; /* Slightly lighter violet */
 }
 
-.review-page .post-button {
-  background-color: #6848f8 !important;
-}
 /* Add tag display styling */
 .review-page .tag-input-box {
   display: flex;
@@ -172,9 +179,37 @@
 .review-page .MuiChip-deleteIcon {
   color: #fff;
 }
+
+/* Post Image */
 .post-image {
-  width: 100%; /* Ensure the image takes full width */
-  height: 200px; /* Fixed height for consistency */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
   border-radius: 8px;
+}
+/* Buttons */
+.review-page .button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.review-page .button-container button {
+  padding: 8px 15px !important;
+  border-radius: 12px !important;
+  height: 35px;
+  color: #ffffff !important;
+  background-color:#350355 !important; /* Dark Violet */
+}
+
+.review-page .button-container button:hover {
+  background-color: #69396c !important; /* Slightly lighter violet */
+}
+
+/* Checkbox Label Styling */
+.review-page .button-container label {
+  font-size: 14px;
+  color: #000;
+  margin-left: 10px;
 }

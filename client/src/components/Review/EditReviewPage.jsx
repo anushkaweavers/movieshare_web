@@ -6,7 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useSelector } from "react-redux";
 import "./WriteReviewPage.css";
-
+import Sidebar from "../Sidebar/Sidebar";
 const EditReviewPage = () => {
   const { state } = useLocation();
   const { reviewId } = useParams();
@@ -70,6 +70,7 @@ const EditReviewPage = () => {
   return (
     <>
       <Navbar />
+      <Sidebar/>
       <div className="write-review-wrapper">
         <div className="review-page-container">
           <div className="review-page">
