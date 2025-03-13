@@ -5,12 +5,10 @@ import { userLogout } from "../../redux/Auth/user.slice";
 
 export const SERVER_URL = "http://localhost:3000";
 const cookies = new Cookies();
-
 const axiosCustom = axios.create({
   baseURL: `${SERVER_URL}/v1/`,
   headers: { "Content-Type": "application/json" },
 });
-
 let isRefreshing = false;
 let failedRequestsQueue = [];
 
@@ -108,9 +106,7 @@ axiosCustom.interceptors.response.use(
         isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );
-
 export default axiosCustom;

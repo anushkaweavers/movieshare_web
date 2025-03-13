@@ -27,7 +27,7 @@ const getPlaylists = async (userId) => {
 // Get a playlist by ID (for a specific user)
 const getPlaylistById = async (playlistId, userId) => {
   try {
-    const playlist = await Playlist.findOne({ _id: playlistId, userId });
+    const playlist = await Playlist.findOne({ _id: playlistId,userId });
     if (!playlist) {
       throw new Error("Playlist not found");
     }
@@ -37,7 +37,6 @@ const getPlaylistById = async (playlistId, userId) => {
   }
 };
 
-// Update a playlist by ID
 // Update a playlist by ID
 const updatePlaylist = async (playlistId, userId, updateData) => {
   try {

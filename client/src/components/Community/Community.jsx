@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid } from '@mui/material';
+import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid, Modal, Box } from '@mui/material';
 import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import './Community.css';
 import Sidebar from '../Sidebar/Sidebar';
+
 const Community = () => {
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
@@ -15,8 +16,9 @@ const Community = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
   const [editingPostId, setEditingPostId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Fixed initialization
   const [showForm, setShowForm] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -107,6 +109,7 @@ const Community = () => {
       setEditingPostId(null);
       resetForm();
       setShowForm(false);
+      setOpenModal(false);
     } catch (error) {
       console.error("Error saving post:", error);
       alert("Failed to save post. Please try again.");
@@ -122,13 +125,13 @@ const Community = () => {
     setTags(post.tags || []);
     setMediaUrl(post.mediaFile);
     setPreviewUrl(post.mediaFile);
-    setShowForm(true);
+    setOpenModal(true);
   };
 
   const handleCancelEdit = () => {
     setEditingPostId(null);
     resetForm();
-    setShowForm(false);
+    setOpenModal(false);
   };
 
   const handleDeletePost = async (postId) => {
@@ -151,7 +154,7 @@ const Community = () => {
 
   return (
     <>
-    <Sidebar/>
+      <Sidebar />
       <Navbar />
       <Container maxWidth="md" className="community-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -263,104 +266,116 @@ const Community = () => {
             <Grid container>
               {post.mediaFile && (
                 <Grid item xs={12} sm={4}>
-                  <CardMedia
-                    component="img"
-                    className="post-media"
-                    image={post.mediaFile}
-                    alt="Post Media"
-                  />
+                  <div className="post-media-container">
+                    <CardMedia
+                      component="img"
+                      className="post-media"
+                      image={post.mediaFile}
+                      alt="Post Media"
+                    />
+                  </div>
                 </Grid>
               )}
               <Grid item xs={12} sm={post.mediaFile ? 8 : 12}>
                 <CardContent className="post-content">
-                  {editingPostId === post._id ? (
-                    // Edit Form
-                    <form onSubmit={handleCreateOrUpdatePost}>
-                      <TextField
-                        label="Title"
-                        fullWidth
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        margin="normal"
-                      />
-                      <TextField
-                        label="Details"
-                        fullWidth
-                        multiline
-                        rows={3}
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        margin="normal"
-                      />
-                      <TextField
-                        label="Add Tag"
-                        fullWidth
-                        margin="normal"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter' && e.target.value.trim()) {
-                            e.preventDefault();
-                            setTags([...tags, e.target.value.trim()]);
-                            e.target.value = '';
-                          }
-                        }}
-                      />
-                      <div className="post-tags">
-                        {tags.map((tag, index) => (
-                          <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} />
-                        ))}
-                      </div>
-                      <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="edit-media-upload" />
-                      <label htmlFor="edit-media-upload">
-                        <IconButton component="span">
-                          <AddPhotoAlternate />
-                        </IconButton>
-                        Change Media
-                      </label>
-                      {previewUrl && (
-                        <CardMedia
-                          component="img"
-                          className="form-media-preview"
-                          image={previewUrl}
-                          alt="Preview"
-                        />
-                      )}
-                      <div className="post-actions">
-                        <IconButton type="submit">
-                          <Save />
-                        </IconButton>
-                        <IconButton onClick={handleCancelEdit}>
-                          <Cancel />
-                        </IconButton>
-                      </div>
-                    </form>
-                  ) : (
-                    // Post Content
-                    <>
-                      <Typography variant="h6" className="post-title">{post.title}</Typography>
-                      <Typography className="post-details">{post.content}</Typography>
-                      <div className="post-tags">
-                        {post.tags.map((tag, index) => (
-                          <Chip key={index} label={tag} style={{ marginRight: '5px', marginBottom: '5px' }} />
-                        ))}
-                      </div>
-                      <div className="post-actions">
-                        <IconButton onClick={() => handleEditPost(post)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton onClick={() => handleDeletePost(post._id)}>
-                          <Delete />
-                        </IconButton>
-                      </div>
-                    </>
-                  )}
+                  <Typography variant="h6" className="post-title">{post.title}</Typography>
+                  <Typography className="post-details">{post.content}</Typography>
+                  <div className="post-tags">
+                    {post.tags.map((tag, index) => (
+                      <Chip key={index} label={tag} style={{ marginRight: '5px', marginBottom: '5px' }} />
+                    ))}
+                  </div>
+                  <div className="post-actions">
+                    <IconButton onClick={() => handleEditPost(post)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeletePost(post._id)}>
+                      <Delete />
+                    </IconButton>
+                  </div>
                 </CardContent>
               </Grid>
             </Grid>
           </Card>
         ))}
+        {/* Modal for Editing Post */}
+        <Modal open={openModal} onClose={handleCancelEdit}>
+          <Box className="modal-box">
+            <Card className="post-card">
+              <CardContent>
+                <form onSubmit={handleCreateOrUpdatePost}>
+                  <TextField
+                    label="Title"
+                    fullWidth
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    margin="normal"
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Details"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    margin="normal"
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Add Tag"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && e.target.value.trim()) {
+                        e.preventDefault();
+                        setTags([...tags, e.target.value.trim()]);
+                        e.target.value = '';
+                      }
+                    }}
+                    sx={{ mb: 2 }}
+                  />
+                  <div className="post-tags">
+                    {tags.map((tag, index) => (
+                      <Chip key={index} label={tag} onDelete={() => setTags(tags.filter(t => t !== tag))} sx={{ mr: 1, mb: 1 }} />
+                    ))}
+                  </div>
+                  <input type="file" accept="image/*,video/*" onChange={handleMediaChange} hidden id="edit-media-upload" />
+                  <label htmlFor="edit-media-upload">
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      fullWidth
+                      startIcon={<AddPhotoAlternate />}
+                      sx={{ mb: 2 }}
+                    >
+                      Change Media
+                    </Button>
+                  </label>
+                  {previewUrl && (
+                    <CardMedia
+                      component="img"
+                      className="form-media-preview"
+                      image={previewUrl}
+                      alt="Preview"
+                      sx={{ borderRadius: 1, objectFit: 'contain' }} 
+                    />
+                  )}
+                  <div className="post-actions">
+                    <IconButton type="submit" color="primary">
+                      <Save />
+                    </IconButton>
+                    <IconButton onClick={handleCancelEdit} color="secondary">
+                      <Cancel />
+                    </IconButton>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </Box>
+        </Modal>
       </Container>
     </>
   );
 };
-
 export default Community;
