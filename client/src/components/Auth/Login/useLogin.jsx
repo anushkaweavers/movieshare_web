@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { logInApi } from "../../../actions/auth.actions";
 import { updateUserData } from "../../../redux/Auth/user.slice";
 import loginValidation from "../../../Validations/Auth/login.validation";
-
+import { refreshTokenApi } from "../../../actions/auth.actions";
 export const useLogin = () => {
   const cookies = new Cookies();
   const dispatch = useDispatch();
@@ -87,4 +87,24 @@ export const useLogin = () => {
     loginMessage,
     isError,
   };
+};
+const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  if (!refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  try {
+    const response = await refreshTokenApi({ refreshToken });
+    const { accessToken } = response;
+
+    localStorage.setItem("access_token", accessToken);
+    cookies.set("access_token", accessToken, { path: "/", sameSite: "Lax" });
+
+    return accessToken;
+  } catch (error) {
+    console.error("Failed to refresh access token:", error);
+    throw error;
+  }
 };

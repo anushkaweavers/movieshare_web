@@ -63,7 +63,6 @@
 }
 .auth-form-outer {
   -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 .auth-form-wrap {
   max-width: 520px;

@@ -151,3 +151,7 @@ export const generateTokenApi = catchAsync(async (value) => {
     throw new Error(error.response?.data?.message || error.message);
   }
 });
+export const refreshTokenApi = async (refreshToken) => {
+  const response = await apiClient.post("/auth/refresh-tokens", { refreshToken });
+  return response.data;
+};
