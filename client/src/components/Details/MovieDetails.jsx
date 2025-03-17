@@ -723,8 +723,8 @@ const fetchReviews = async () => {
   <h2 className="section-title">Similar Movies</h2>
   {similarMovies.length > 0 ? (
     <Swiper
-      spaceBetween={20} // Space between slides
-      slidesPerView={3} // Number of slides visible at once
+      spaceBetween={20}
+      slidesPerView={3} 
       breakpoints={{
         1024: {
           slidesPerView: 3,
