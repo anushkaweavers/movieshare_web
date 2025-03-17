@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Tooltip, CircularProgress } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Navbar from "../Navbar/Navbar";
 import { motion } from "framer-motion";
 import "./LikeList.css";
@@ -34,70 +33,69 @@ const LikedMovies = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
+  const observer = useRef(null);
 
   // Fetch liked movies
   const fetchLikedMovies = useCallback(async () => {
-    if (loading || !hasMore) return; // Avoid duplicate requests
+    if (loading || !hasMore) return;
     setLoading(true);
 
     try {
       const response = await axiosCustom.get(`/like/liked-movies?page=${page}&limit=8`);
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.length > 0) {
         const likedMovieIds = response.data.map((item) => item.movieId);
 
         // Fetch movie details for each liked movie ID
-        const movieDetailsPromises = likedMovieIds.map((movieId) => fetchData(`/movie/${movieId}`));
-        const movieDetails = await Promise.all(movieDetailsPromises);
+        const movieDetails = await Promise.all(
+          likedMovieIds.map((movieId) => fetchData(`/movie/${movieId}`))
+        );
+
         const validMovies = movieDetails.filter((movie) => movie !== null);
 
-        // Update state with new movies
         setLikedMovies((prev) => [...prev, ...validMovies]);
-        setHasMore(validMovies.length === 8); // Check if there are more movies to load
-        setPage((prevPage) => prevPage + 1); // Increment page for the next request
+        setHasMore(response.data.length === 8); // Update `hasMore` based on response size
+        setPage((prevPage) => prevPage + 1);
+      } else {
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching liked movies:", error);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   }, [page, loading, hasMore]);
 
-  // Initial fetch on component mount
   useEffect(() => {
     fetchLikedMovies();
   }, []);
 
-  // Add scroll event listener for infinite scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  // Intersection Observer for Infinite Scrolling
+  const lastMovieRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          fetchLikedMovies();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
-      // Fetch more movies if the user is near the bottom of the page
-      if (scrollTop + clientHeight >= scrollHeight - 50 && !loading && hasMore) {
-        fetchLikedMovies();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [fetchLikedMovies, loading, hasMore]);
-
-  // Handle "unlike" action
   const handleLike = async (movieId, e) => {
     e.stopPropagation();
     try {
       const response = await axiosCustom.post("/like/unlike", { movieId });
-
       if (response.status === 200) {
-        // Remove the movie from the liked list
         setLikedMovies((prev) => prev.filter((movie) => movie.id !== movieId));
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
+      console.error("Error unliking movie:", error);
     }
   };
 
-  // Navigate to movie details page
   const handleNavigate = (movieId, e) => {
     e.stopPropagation();
     navigate(`/movie/${movieId}`);
@@ -112,13 +110,14 @@ const LikedMovies = () => {
         <h2 className="movie-row__title">Movies You Liked ❤️</h2>
 
         <div className="liked-movies-grid">
-          {likedMovies.map((movie) => (
+          {likedMovies.map((movie, index) => (
             <motion.div
               key={movie.id}
               className="movie-card"
               onClick={(e) => handleNavigate(movie.id, e)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              ref={index === likedMovies.length - 1 ? lastMovieRef : null} // Attach observer to last item
             >
               <img
                 className="movie-poster"
@@ -138,10 +137,7 @@ const LikedMovies = () => {
           ))}
         </div>
 
-        {/* Show loading spinner when fetching more movies */}
         {loading && <CircularProgress className="loading-spinner" />}
-
-        {/* Show a message if there are no more movies to load */}
         {!hasMore && <p className="no-more-movies">No more movies to load.</p>}
       </div>
     </div>

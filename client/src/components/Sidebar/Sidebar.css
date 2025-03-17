@@ -13,6 +13,13 @@
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
 }
 
+/* Hide sidebar on small screens */
+@media (max-width: 1200px) {
+  .sidebar {
+    display: none; /* Completely hide the sidebar on smaller screens */
+  }
+}
+
 /* Sidebar Drawer */
 .sidebar .MuiDrawer-paper {
   width: 240px;
@@ -20,19 +27,8 @@
   color: black;
   padding-top: 64px; /* Matches the sidebar padding */
   height: 100vh;
-  border-right: 1px solid #E0E0E0;
+  border-right: 1px solid #e0e0e0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
-}
-
-/* Logo Section */
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 12px;
-  color: black;
 }
 
 /* Navigation Items */
@@ -50,18 +46,18 @@
 
 .nav-item:hover {
   background-color: #f5d6fa; /* Light Purple Hover */
-  color: #6A1B9A;
+  color: #6a1b9a;
   box-shadow: 0 4px 8px rgba(106, 27, 154, 0.2); /* Add shadow on hover */
 }
 
 .nav-icon {
-  color: #6A1B9A;
+  color: #6a1b9a;
 }
 
 /* Active Item */
 .nav-item.active {
-  background-color: #E1BEE7;
-  color: #6A1B9A;
+  background-color: #e1bee7;
+  color: #6a1b9a;
   box-shadow: 0 4px 8px rgba(106, 27, 154, 0.2); /* Add shadow for active item */
 }
 
@@ -73,13 +69,6 @@
   text-transform: uppercase;
   padding: 10px 16px;
   margin: 8px 0; /* Add margin for better spacing */
-}
-
-/* Houses & Friends Section */
-.houses-list, .friends-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
 /* Friends List */
@@ -103,5 +92,5 @@
 /* Divider */
 .MuiDivider-root {
   margin: 8px 0; /* Add margin for better spacing */
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
 }

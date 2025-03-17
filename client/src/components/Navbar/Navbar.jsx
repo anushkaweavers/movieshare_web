@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faComments, faCog, faPlus, faBars, faTimes, faUsers, faFilm } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTimes, faUsers, faGlobe, faPlus, faComments, faBell, faCog } from "@fortawesome/free-solid-svg-icons";
 import SearchIcon from "@mui/icons-material/Search";
 import { userLogout } from "../../redux/Auth/user.slice";
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
@@ -21,25 +21,13 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    const storedProfileImage = localStorage.getItem("profileImage");
-    if (storedProfileImage) {
-      setProfileImage(storedProfileImage);
-    }
-  }, []);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
 
   const handleLogout = async () => {
     let refreshToken = cookies.get("refresh_token") || localStorage.getItem("refresh_token");
@@ -75,6 +63,12 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
+      {/* Hamburger button for smaller screens */}
+      <button className="hamburger" onClick={toggleMenu}>
+        <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
+      </button>
+
+      {/* Logo */}
       <div className="logo">
         <span className="logo-icon">🎥</span>
         <span className="brand">
@@ -82,31 +76,30 @@ const Navbar = () => {
         </span>
       </div>
 
-      {/* Hamburger button for smaller screens */}
-      <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-        <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
-      </button>
+      {/* Overlay for background when sidebar is open */}
+      <div className={`overlay ${menuOpen ? "open" : ""}`} onClick={closeMenu} />
 
       {/* Sidebar menu (visible on mobile when hamburger is clicked) */}
       <div className={`sidebar-menu ${menuOpen ? "open" : ""}`} ref={menuRef}>
-        <Link to="/community" onClick={() => setMenuOpen(false)}>
-          <FontAwesomeIcon icon={faUsers} /> Community
+        <Link to="/community" onClick={closeMenu}>
+          <FontAwesomeIcon icon={faUsers} /> Feed
         </Link>
-        <Link to="/list" onClick={() => setMenuOpen(false)}>
-          <FontAwesomeIcon icon={faFilm} /> Movies
+        <Link to="/list" onClick={closeMenu}>
+          <FontAwesomeIcon icon={faGlobe} /> Explore
         </Link>
-        <button className="create-btn" onClick={() => setMenuOpen(false)}>
+        <button className="sidebar-create-btn" onClick={closeMenu}>
           <FontAwesomeIcon icon={faPlus} /> Create
         </button>
       </div>
 
+      {/* Navbar links and search container */}
       <div className="nav-center">
         <div className="nav-links">
           <Link to="/community">
             <FontAwesomeIcon icon={faUsers} /> Community
           </Link>
           <Link to="/list">
-            <FontAwesomeIcon icon={faFilm} /> Movies
+            <FontAwesomeIcon icon={faGlobe} /> Movies
           </Link>
         </div>
         <div className="search-container">
@@ -115,6 +108,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Navbar icons */}
       <div className="nav-icons">
         <button className="create-btn">
           <FontAwesomeIcon icon={faPlus} /> Create

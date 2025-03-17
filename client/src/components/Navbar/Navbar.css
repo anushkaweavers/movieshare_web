@@ -293,3 +293,96 @@
     height: 30px;
   }
 }
+/* Navbar Base Styles */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 10px 20px;
+  color: black;
+  font-family: "Arial", sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: visible; /* Allow dropdown to overflow */
+  box-sizing: border-box;
+}
+
+/* Hamburger Button */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: black; /* Change to black or any color that fits your design */
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: auto; /* Push the hamburger to the left */
+}
+
+/* Sidebar Menu (Mobile Navigation) */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: -250px; /* Hide sidebar by default */
+  width: 250px;
+  height: 100%;
+  background: #2b1d35;
+  padding-top: 60px; /* Adjust based on your navbar height */
+  transition: left 0.3s ease-in-out;
+  z-index: 2500;
+}
+
+.sidebar-menu.open {
+  left: 0; /* Show sidebar when open */
+}
+
+.sidebar-menu a,
+.sidebar-menu button {
+  color: white;
+  padding: 12px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+/* Overlay for Background */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2400;
+}
+
+.overlay.open {
+  display: block;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-center,
+  .nav-links {
+    display: none;
+  }
+
+  .sidebar-menu {
+    display: flex;
+  }
+}

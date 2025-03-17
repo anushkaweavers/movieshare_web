@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Drawer,
   List,
@@ -8,7 +9,7 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import { Home, Public } from "@mui/icons-material"; // Globe icon for Explore
+import { Home, Public } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
 
@@ -28,15 +29,18 @@ const Sidebar = () => {
 
   return (
     <Drawer variant="permanent" className="sidebar">
-
       {/* Navigation */}
       <List>
-        <ListItem button component={Link} to="/community" className="nav-item">
-          <ListItemIcon><Home className="nav-icon" /></ListItemIcon>
+        <ListItem component={Link} to="/community" className="nav-item">
+          <ListItemIcon>
+            <Home className="nav-icon" />
+          </ListItemIcon>
           <ListItemText primary="My Feed" />
         </ListItem>
-        <ListItem button component={Link} to="/list" className="nav-item">
-          <ListItemIcon><Public className="nav-icon" /></ListItemIcon>
+        <ListItem component={Link} to="/list" className="nav-item">
+          <ListItemIcon>
+            <Public className="nav-icon" />
+          </ListItemIcon>
           <ListItemText primary="Explore" />
         </ListItem>
       </List>
@@ -44,7 +48,9 @@ const Sidebar = () => {
       <Divider />
 
       {/* Houses Section */}
-      <Typography variant="body2" className="section-title">YOUR HOUSES</Typography>
+      <Typography variant="body2" className="section-title">
+        YOUR HOUSES
+      </Typography>
       <List>
         {houses.map((house) => (
           <ListItem button key={house.name} className="nav-item">
@@ -57,12 +63,16 @@ const Sidebar = () => {
       <Divider />
 
       {/* Friends Online Section */}
-      <Typography variant="body2" className="section-title">FRIENDS ONLINE</Typography>
+      <Typography variant="body2" className="section-title">
+        FRIENDS ONLINE
+      </Typography>
       <List>
         {friends.map((friend) => (
           <ListItem button key={friend.name} className="nav-item">
             <ListItemIcon>
-              <Avatar className={`friend-avatar ${friend.online ? "online" : "offline"}`}>{friend.avatar}</Avatar>
+              <Avatar className={`friend-avatar ${friend.online ? "online" : "offline"}`}>
+                {friend.avatar}
+              </Avatar>
             </ListItemIcon>
             <ListItemText primary={friend.name} />
           </ListItem>
