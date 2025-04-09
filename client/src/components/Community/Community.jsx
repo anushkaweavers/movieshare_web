@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axiosCustom from "../../Services/AxiosConfig/axiosCustom";
-import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid, Modal, Box } from '@mui/material';
-import { AddPhotoAlternate, Edit, Delete, Save, Cancel } from '@mui/icons-material';
+import { Container, Typography, TextField, Button, Card, CardContent, CardMedia, Chip, IconButton, MenuItem, Select, FormControl, InputLabel, CircularProgress, Grid, Modal, Box, Divider } from '@mui/material';
+import { AddPhotoAlternate, Edit, Delete, Save, Cancel, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import './Community.css';
 import Sidebar from '../Sidebar/Sidebar';
 
@@ -15,31 +15,36 @@ const Community = () => {
   const [mediaUrl, setMediaUrl] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [editingPostId, setEditingPostId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Fixed initialization
+  const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     fetchPosts();
-  }, [sortBy]);
+  }, [sortBy, sortOrder]);
 
   const fetchPosts = async () => {
     try {
       const response = await axiosCustom.get('/posts');
-      const sortedPosts = sortPosts(response.data, sortBy);
+      const sortedPosts = sortPosts(response.data, sortBy, sortOrder);
       setPosts(sortedPosts);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
 
-  const sortPosts = (posts, sortBy) => {
-    return posts.sort((a, b) => {
+  const sortPosts = (posts, sortBy, order) => {
+    return [...posts].sort((a, b) => {
       if (sortBy === 'date') {
-        return new Date(b.createdAt) - new Date(a.createdAt);
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return order === 'asc' ? dateA - dateB : dateB - dateA;
       } else if (sortBy === 'title') {
-        return a.title.localeCompare(b.title);
+        return order === 'asc' 
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
       }
       return 0;
     });
@@ -49,6 +54,9 @@ const Community = () => {
     setSortBy(e.target.value);
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -157,25 +165,40 @@ const Community = () => {
       <Sidebar />
       <Navbar />
       <Container maxWidth="md" className="community-container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <Typography variant="h4" gutterBottom>Community</Typography>
-          <FormControl variant="outlined" size="small" style={{ minWidth: '120px' }}>
-            <InputLabel>Sort By</InputLabel>
-            <Select value={sortBy} onChange={handleSortChange} label="Sort By">
-              <MenuItem value="date">Date</MenuItem>
-              <MenuItem value="title">Title</MenuItem>
-            </Select>
-          </FormControl>
+        {/* Top Section with Create Post and Sort */}
+        <div className="top-controls-container">
+          <Button
+            variant="contained"
+            onClick={() => setShowForm(!showForm)}
+            className="create-post-button"
+            sx={{ 
+              backgroundColor: '#7b1fa2', 
+              '&:hover': { backgroundColor: '#6a1b9a' },
+            }}
+          >
+            {showForm ? 'Cancel' : 'Write a Post'}
+          </Button>
+          
+          <div className="sort-controls">
+            <Typography variant="body1" sx={{ mr: 1 }}>Sort by:</Typography>
+            <FormControl variant="outlined" size="small" sx={{ minWidth: 120, mr: 1 }}>
+              <Select
+                value={sortBy}
+                onChange={handleSortChange}
+              >
+                <MenuItem value="date">Date</MenuItem>
+                <MenuItem value="title">Title</MenuItem>
+              </Select>
+            </FormControl>
+            <IconButton onClick={toggleSortOrder} size="small">
+              {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
+            </IconButton>
+          </div>
         </div>
-        <Button
-          variant="contained"
-          onClick={() => setShowForm(!showForm)}
-          sx={{ mb: 2, backgroundColor: '#7b1fa2', '&:hover': { backgroundColor: '#6a1b9a' } }}
-        >
-          Write a Post
-        </Button>
+
+        {/* Create Post Form */}
         {showForm && (
-          <Card className="post-card" sx={{ mb: 4 }}>
+          <Card className="create-post-form" sx={{ mb: 3, mt: 2 }}>
             <CardContent>
               <Grid container spacing={2}>
                 {/* Left Side: Media Upload */}
@@ -248,12 +271,27 @@ const Community = () => {
                       ))}
                     </div>
                     <div className="post-actions">
-                      <IconButton type="submit" color="primary">
-                        <Save />
-                      </IconButton>
-                      <IconButton onClick={() => setShowForm(false)} color="secondary">
-                        <Cancel />
-                      </IconButton>
+                      <Button 
+                        type="submit" 
+                        variant="contained" 
+                        className="submit-post-button"
+                        startIcon={<Save />}
+                        sx={{ 
+                          mr: 2,
+                          backgroundColor: '#7b1fa2',
+                          '&:hover': { backgroundColor: '#6a1b9a' }
+                        }}
+                      >
+                        Post
+                      </Button>
+                      <Button 
+                        onClick={() => setShowForm(false)} 
+                        variant="outlined" 
+                        color="secondary"
+                        startIcon={<Cancel />}
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   </form>
                 </Grid>
@@ -261,6 +299,10 @@ const Community = () => {
             </CardContent>
           </Card>
         )}
+
+        <Divider sx={{ my: 2 }} />
+
+        {/* Posts List */}
         {posts.map((post) => (
           <Card key={post._id} className="post-card" sx={{ mb: 2 }}>
             <Grid container>
@@ -298,6 +340,7 @@ const Community = () => {
             </Grid>
           </Card>
         ))}
+
         {/* Modal for Editing Post */}
         <Modal open={openModal} onClose={handleCancelEdit}>
           <Box className="modal-box">
@@ -362,12 +405,27 @@ const Community = () => {
                     />
                   )}
                   <div className="post-actions">
-                    <IconButton type="submit" color="primary">
-                      <Save />
-                    </IconButton>
-                    <IconButton onClick={handleCancelEdit} color="secondary">
-                      <Cancel />
-                    </IconButton>
+                    <Button 
+                      type="submit" 
+                      variant="contained" 
+                      className="submit-post-button"
+                      startIcon={<Save />}
+                      sx={{ 
+                        mr: 2,
+                        backgroundColor: '#7b1fa2',
+                        '&:hover': { backgroundColor: '#6a1b9a' }
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button 
+                      onClick={handleCancelEdit} 
+                      variant="outlined" 
+                      color="secondary"
+                      startIcon={<Cancel />}
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 </form>
               </CardContent>
@@ -378,4 +436,5 @@ const Community = () => {
     </>
   );
 };
+
 export default Community;
