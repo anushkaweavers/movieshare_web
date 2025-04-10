@@ -42,8 +42,7 @@ tokenSchema.plugin(toJSON);
  */
 tokenSchema.methods.invalidate = async function() {
   if (this.blacklisted) {
-    // If the token is already blacklisted, no need to do anything
-    return;
+    
   }
 
   this.blacklisted = true;

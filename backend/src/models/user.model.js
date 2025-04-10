@@ -51,11 +51,6 @@ const userSchema = mongoose.Schema(
       type: String,
       default: null,
     },
-    bio: {
-      type: String,
-      trim: true,
-      default: null,
-    },
     birthday: {
       type: Date,
       default: null,
