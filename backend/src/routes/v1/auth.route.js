@@ -26,10 +26,11 @@ router.post(
     validate(authValidation.resetPassword),
     authController.resetPassword
   );
+  
 // Send verification email route
-router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
+//router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 
 // Verify email route
-router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
+//router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 
 module.exports = router;
