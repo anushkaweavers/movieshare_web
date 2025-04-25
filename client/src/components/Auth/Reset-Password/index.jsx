@@ -104,7 +104,6 @@ const ResetPassword = () => {
                       : ""
                   }
                 />
-
                 <ButtonField
                   type="submit"
                   fullWidth
@@ -116,24 +115,18 @@ const ResetPassword = () => {
           </Box>
         </Grid>
       </Grid>
-
-      {/* Success Dialog */}
 <Dialog open={openConfirmModal} onClose={gotoLogin}>
   <DialogContent>
     <h3>Password Reset Successfully</h3>
-    <p>Your password has been successfully reset.</p>
+    <p>Your password has been successfully reset</p>
     <p>You can now log in.</p>
     <Button onClick={gotoLogin} className="p-btn">
       Log In
     </Button>
   </DialogContent>
 </Dialog>
-
-     
     <FullScreenLoader open={isPending} />
     </Container>
   );
 };
-
 export default ResetPassword;
-
