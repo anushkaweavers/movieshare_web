@@ -120,14 +120,6 @@ const ResetPassword = () => {
       {/* Success Dialog */}
 <Dialog open={openConfirmModal} onClose={gotoLogin}>
   <DialogContent>
-    <Box>
-      <img
-        width={34}
-        height={34}
-        src="/images/successfully-icon.svg"
-        alt="Success"
-      />
-    </Box>
     <h3>Password Reset Successfully</h3>
     <p>Your password has been successfully reset.</p>
     <p>You can now log in.</p>

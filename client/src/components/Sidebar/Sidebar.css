@@ -2,7 +2,7 @@
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background-color: white; /* Light theme */
+  background-color:#c490ce; /* Light theme */
   color: black;
   padding-top: 6px; /* Space for Navbar */
   height: 100vh; /* Full height */

@@ -120,7 +120,7 @@ const Community = () => {
       setOpenModal(false);
     } catch (error) {
       console.error("Error saving post:", error);
-      alert("Failed to save post. Please try again.");
+      alert("Failed to save post. Please try again")
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +165,6 @@ const Community = () => {
       <Sidebar />
       <Navbar />
       <Container maxWidth="md" className="community-container">
-        {/* Top Section with Create Post and Sort */}
         <div className="top-controls-container">
           <Button
             variant="contained"
@@ -195,8 +194,6 @@ const Community = () => {
             </IconButton>
           </div>
         </div>
-
-        {/* Create Post Form */}
         {showForm && (
           <Card className="create-post-form" sx={{ mb: 3, mt: 2 }}>
             <CardContent>
@@ -231,7 +228,6 @@ const Community = () => {
                     />
                   )}
                 </Grid>
-                {/* Right Side: Form */}
                 <Grid item xs={12} sm={8}>
                   <form onSubmit={handleCreateOrUpdatePost}>
                     <TextField
@@ -256,6 +252,7 @@ const Community = () => {
                       label="Add Tag"
                       fullWidth
                       margin="normal"
+
                       onKeyPress={(e) => {
                         if (e.key === 'Enter' && e.target.value.trim()) {
                           e.preventDefault();
@@ -299,10 +296,7 @@ const Community = () => {
             </CardContent>
           </Card>
         )}
-
         <Divider sx={{ my: 2 }} />
-
-        {/* Posts List */}
         {posts.map((post) => (
           <Card key={post._id} className="post-card" sx={{ mb: 2 }}>
             <Grid container>
